@@ -1,0 +1,2340 @@
+   1              	 .cpu cortex-m0
+   2              	 .fpu softvfp
+   3              	 .eabi_attribute 20,1
+   4              	 .eabi_attribute 21,1
+   5              	 .eabi_attribute 23,3
+   6              	 .eabi_attribute 24,1
+   7              	 .eabi_attribute 25,1
+   8              	 .eabi_attribute 26,1
+   9              	 .eabi_attribute 30,1
+  10              	 .eabi_attribute 34,0
+  11              	 .eabi_attribute 18,4
+  12              	 .code 16
+  13              	 .file "modbus_if.c"
+  14              	 .text
+  15              	.Ltext0:
+  16              	 .cfi_sections .debug_frame
+  17              	 .section .text.eMBRegInputCB,"ax",%progbits
+  18              	 .align 2
+  19              	 .global eMBRegInputCB
+  20              	 .code 16
+  21              	 .thumb_func
+  23              	eMBRegInputCB:
+  24              	.LFB464:
+  25              	 .file 1 "../modbus_if.c"
+   1:../modbus_if.c **** /******************************************************************************
+   2:../modbus_if.c **** * Software License Agreement
+   3:../modbus_if.c **** *
+   4:../modbus_if.c **** * Copyright (c) 2016, Infineon Technologies AG
+   5:../modbus_if.c **** * All rights reserved.
+   6:../modbus_if.c **** *
+   7:../modbus_if.c **** * Redistribution and use in source and binary forms, with or without
+   8:../modbus_if.c **** * modification, are permitted provided that the following conditions are met:
+   9:../modbus_if.c **** *
+  10:../modbus_if.c **** * Redistributions of source code must retain the above copyright notice,
+  11:../modbus_if.c **** * this list of conditions and the following disclaimer.
+  12:../modbus_if.c **** *
+  13:../modbus_if.c **** * Redistributions in binary form must reproduce the above copyright notice,
+  14:../modbus_if.c **** * this list of conditions and the following disclaimer in the documentation
+  15:../modbus_if.c **** * and/or other materials provided with the distribution.
+  16:../modbus_if.c **** *
+  17:../modbus_if.c **** * Neither the name of the copyright holders nor the names of its contributors
+  18:../modbus_if.c **** * may be used to endorse or promote products derived from this software
+  19:../modbus_if.c **** * without specific prior written permission
+  20:../modbus_if.c **** 
+  21:../modbus_if.c **** * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  22:../modbus_if.c **** * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  23:../modbus_if.c **** * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  24:../modbus_if.c **** * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+  25:../modbus_if.c **** * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+  26:../modbus_if.c **** * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+  27:../modbus_if.c **** * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+  28:../modbus_if.c **** * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+  29:../modbus_if.c **** * CONTRACT, STRICT LIABILITY,OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  30:../modbus_if.c **** * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  31:../modbus_if.c **** * POSSIBILITY OF SUCH DAMAGE.
+  32:../modbus_if.c **** *
+  33:../modbus_if.c **** * To improve the quality of the software, users are encouraged to share
+  34:../modbus_if.c **** * modifications, enhancements or bug fixes with Infineon Technologies AG
+  35:../modbus_if.c **** * (dave@infineon.com).
+  36:../modbus_if.c **** *
+  37:../modbus_if.c **** *****************************************************************************/
+  38:../modbus_if.c **** 
+  39:../modbus_if.c **** /****************************************************************
+  40:../modbus_if.c **** * HEADER FILES
+  41:../modbus_if.c **** ***************************************************************/
+  42:../modbus_if.c **** #include "port.h"
+  43:../modbus_if.c **** #include "mbutils.h"
+  44:../modbus_if.c **** #include "mb.h"
+  45:../modbus_if.c **** #include "GPIO.h"
+  46:../modbus_if.c **** /****************************************************************
+  47:../modbus_if.c **** * MACROS AND DEFINES
+  48:../modbus_if.c **** ***************************************************************/
+  49:../modbus_if.c **** /* Input Register Definition (16 bit; Read-Only) */
+  50:../modbus_if.c **** /* Input Register Start Address */
+  51:../modbus_if.c **** #define REG_INPUT_START_ADDR 1U
+  52:../modbus_if.c **** /* No of Input Registers*/
+  53:../modbus_if.c **** #define REG_INPUT_COUNT 4U
+  54:../modbus_if.c **** 
+  55:../modbus_if.c **** /* Holding Register Definition (16 bit; Read-Write) */
+  56:../modbus_if.c **** /* Holding Register Start Address */
+  57:../modbus_if.c **** #define REG_HOLDING_START_ADDR 0U
+  58:../modbus_if.c **** /* No of Holding Registers */
+  59:../modbus_if.c **** #define REG_HOLDING_COUNT 4U
+  60:../modbus_if.c **** 
+  61:../modbus_if.c **** /* Coil Register Definition (1 bit; Read-Write) */
+  62:../modbus_if.c **** /* Coil Register Start Address */
+  63:../modbus_if.c **** #define REG_COILS_START_ADDR 1000U
+  64:../modbus_if.c **** /* No of Coil Registers*/
+  65:../modbus_if.c **** #define REG_COILS_COUNT 8U
+  66:../modbus_if.c **** 
+  67:../modbus_if.c **** /* Discrete Inputs Definition (1 bit; Read-Only) */
+  68:../modbus_if.c **** /* Discrete Inputs Start Address */
+  69:../modbus_if.c **** #define REG_DISC_START_ADDR 2000U
+  70:../modbus_if.c **** /* No of Discrete Inputs */
+  71:../modbus_if.c **** #define REG_DISC_COUNT 8U
+  72:../modbus_if.c **** 
+  73:../modbus_if.c **** /****************************************************************
+  74:../modbus_if.c **** * LOCAL DATA
+  75:../modbus_if.c **** ***************************************************************/
+  76:../modbus_if.c **** /* Allocate buffer for Input Register (16bit; Read-Only) */
+  77:../modbus_if.c **** static uint16_t reg_input_buffer[REG_INPUT_COUNT];
+  78:../modbus_if.c **** /* Allocate buffer for Holding Register (16bit; Read-Write) */
+  79:../modbus_if.c **** static volatile uint16_t reg_holding_buffer[REG_HOLDING_COUNT];
+  80:../modbus_if.c **** /* Allocate buffer for discrete input register (1bit; Read-Only) */
+  81:../modbus_if.c **** static uint8_t reg_discrete_input_buffer[ (((uint16_t)REG_DISC_COUNT-1U) / 8U) + 1U];
+  82:../modbus_if.c **** /* Allocate buffer for coil register (1bit; Read-Write) */
+  83:../modbus_if.c **** static uint8_t reg_coils_buffers[ (((uint16_t)REG_COILS_COUNT-1U) / 8U) + 1U];
+  84:../modbus_if.c **** 
+  85:../modbus_if.c **** /****************************************************************
+  86:../modbus_if.c **** * API PROTOTYPES
+  87:../modbus_if.c **** ***************************************************************/
+  88:../modbus_if.c **** void Rx_Cb(void);
+  89:../modbus_if.c **** void Tx_Cb(void);
+  90:../modbus_if.c **** 
+  91:../modbus_if.c **** typedef enum {
+  92:../modbus_if.c **** 	FF_PIN_ADC=0,
+  93:../modbus_if.c **** 	FF_PIN_LINE,
+  94:../modbus_if.c **** 	FF_PIN_START
+  95:../modbus_if.c **** }FF_CNTRL_PIN_t;
+  96:../modbus_if.c **** 
+  97:../modbus_if.c **** /* Shall be called every 1ms from somewhere */
+  98:../modbus_if.c **** typedef enum {
+  99:../modbus_if.c **** 	FF_FSM_IDLE,
+ 100:../modbus_if.c **** 	FF_FSM_START_POS_READ,
+ 101:../modbus_if.c **** 	FF_FSM_POS_REG_COMP,
+ 102:../modbus_if.c **** 	FF_FSM_START_MOVE,
+ 103:../modbus_if.c **** 	FF_FSM_START_MOVE_WAIT_START,
+ 104:../modbus_if.c **** 	FF_FSM_START_STOP,
+ 105:../modbus_if.c **** 	FF_FSM_TOGGLE_START,
+ 106:../modbus_if.c **** }FF_FSM_STATE_t;
+ 107:../modbus_if.c **** 
+ 108:../modbus_if.c **** 
+ 109:../modbus_if.c **** 
+ 110:../modbus_if.c **** void clr_pin(FF_CNTRL_PIN_t pin);
+ 111:../modbus_if.c **** void set_pin(FF_CNTRL_PIN_t pin);
+ 112:../modbus_if.c **** 
+ 113:../modbus_if.c **** /****************************************************************
+ 114:../modbus_if.c **** * API IMPLEMENTATION
+ 115:../modbus_if.c **** ***************************************************************/
+ 116:../modbus_if.c **** /**
+ 117:../modbus_if.c ****  * @eMBRegInputCB
+ 118:../modbus_if.c ****  *
+ 119:../modbus_if.c ****  * Callback function called by the protocol stack for reading the 16bit value of input
+ 120:../modbus_if.c ****  * register(s)
+ 121:../modbus_if.c ****  *
+ 122:../modbus_if.c ****  * @input :  - buffer  : Pointer to a buffer which is used to return the
+ 123:../modbus_if.c ****  *                        current value of the modbus input registers to the stack.
+ 124:../modbus_if.c ****  *           - address : Starting address of the registers.
+ 125:../modbus_if.c ****  *           - count   : Number of registers to be returned.
+ 126:../modbus_if.c ****  *
+ 127:../modbus_if.c ****  * @output : - buffer  : Buffer which is updated with the modbus input registers.
+ 128:../modbus_if.c ****  *
+ 129:../modbus_if.c ****  * @return : MB_ENOERR if success
+ 130:../modbus_if.c ****  *           MB_ENOREG if failure (illegal register access)
+ 131:../modbus_if.c ****  *
+ 132:../modbus_if.c ****  * */
+ 133:../modbus_if.c **** eMBErrorCode eMBRegInputCB( uint8_t *buffer, uint16_t address, uint16_t count )
+ 134:../modbus_if.c **** {
+  26              	 .loc 1 134 0
+  27              	 .cfi_startproc
+  28              	.LVL0:
+ 135:../modbus_if.c ****   eMBErrorCode status = MB_ENOERR;
+ 136:../modbus_if.c ****   uint16_t     register_index;
+ 137:../modbus_if.c **** 
+ 138:../modbus_if.c ****   if (( address >= (uint16_t)REG_INPUT_START_ADDR )
+  29              	 .loc 1 138 0
+  30 0000 0029     	 cmp r1,#0
+  31 0002 0FD0     	 beq .L5
+ 139:../modbus_if.c ****      && ( (uint16_t)(address + count) <= (uint16_t)(REG_INPUT_START_ADDR + REG_INPUT_COUNT) ))
+  32              	 .loc 1 139 0
+  33 0004 8918     	 add r1,r1,r2
+  34              	.LVL1:
+  35 0006 89B2     	 uxth r1,r1
+  36 0008 0529     	 cmp r1,#5
+  37 000a 07D9     	 bls .L3
+ 140:../modbus_if.c ****   {
+ 141:../modbus_if.c ****     register_index = ( uint16_t )( address - REG_INPUT_START_ADDR );
+ 142:../modbus_if.c ****     while( count > 0U )
+ 143:../modbus_if.c ****     {
+ 144:../modbus_if.c ****       /* Pass current register values to the protocol stack. */
+ 145:../modbus_if.c ****       *buffer = ( uint8_t )( reg_input_buffer[register_index] >> 8 );
+ 146:../modbus_if.c ****       buffer++;
+ 147:../modbus_if.c ****       *buffer = ( uint8_t )( reg_input_buffer[register_index] & 0xFFU );
+ 148:../modbus_if.c ****       buffer++;
+ 149:../modbus_if.c ****       register_index++;
+ 150:../modbus_if.c ****       count--;
+ 151:../modbus_if.c ****     }
+ 152:../modbus_if.c ****   }
+ 153:../modbus_if.c ****   else
+ 154:../modbus_if.c ****   {
+ 155:../modbus_if.c ****     status = MB_ENOREG;
+  38              	 .loc 1 155 0
+  39 000c 0120     	 mov r0,#1
+  40              	.LVL2:
+  41 000e 0AE0     	 b .L2
+  42              	.LVL3:
+  43              	.L4:
+ 145:../modbus_if.c ****       buffer++;
+  44              	 .loc 1 145 0
+  45 0010 0023     	 mov r3,#0
+  46 0012 0370     	 strb r3,[r0]
+  47              	.LVL4:
+ 147:../modbus_if.c ****       buffer++;
+  48              	 .loc 1 147 0
+  49 0014 4370     	 strb r3,[r0,#1]
+ 148:../modbus_if.c ****       register_index++;
+  50              	 .loc 1 148 0
+  51 0016 0230     	 add r0,r0,#2
+  52              	.LVL5:
+ 150:../modbus_if.c ****     }
+  53              	 .loc 1 150 0
+  54 0018 013A     	 sub r2,r2,#1
+  55              	.LVL6:
+  56 001a 92B2     	 uxth r2,r2
+  57              	.LVL7:
+  58              	.L3:
+ 142:../modbus_if.c ****     {
+  59              	 .loc 1 142 0
+  60 001c 002A     	 cmp r2,#0
+  61 001e F7D1     	 bne .L4
+ 135:../modbus_if.c ****   uint16_t     register_index;
+  62              	 .loc 1 135 0
+  63 0020 0020     	 mov r0,#0
+  64              	.LVL8:
+  65 0022 00E0     	 b .L2
+  66              	.LVL9:
+  67              	.L5:
+  68              	 .loc 1 155 0
+  69 0024 0120     	 mov r0,#1
+  70              	.LVL10:
+  71              	.L2:
+ 156:../modbus_if.c ****   }
+ 157:../modbus_if.c ****   return status;
+ 158:../modbus_if.c **** }
+  72              	 .loc 1 158 0
+  73              	 
+  74 0026 7047     	 bx lr
+  75              	 .cfi_endproc
+  76              	.LFE464:
+  78              	 .section .text.eMBRegHoldingCB,"ax",%progbits
+  79              	 .align 2
+  80              	 .global eMBRegHoldingCB
+  81              	 .code 16
+  82              	 .thumb_func
+  84              	eMBRegHoldingCB:
+  85              	.LFB465:
+ 159:../modbus_if.c **** 
+ 160:../modbus_if.c **** /**
+ 161:../modbus_if.c ****  * @eMBRegHoldingCB
+ 162:../modbus_if.c ****  *
+ 163:../modbus_if.c ****  * Callback function called by the protocol stack for reading/writing the 16bit value of
+ 164:../modbus_if.c ****  * holding register(s)
+ 165:../modbus_if.c ****  *
+ 166:../modbus_if.c ****  * @input :  - buffer  : Pointer to a buffer which is used to exchange (read/write)
+ 167:../modbus_if.c ****  *                       current value of the modbus holding registers with the protocol stack.
+ 168:../modbus_if.c ****  *           - address : Starting address of the register(s).
+ 169:../modbus_if.c ****  *           - count   : Number of registers to be exchanged (read/write).
+ 170:../modbus_if.c ****  *           - mode    : MB_REG_WRITE Protocol stack is writing input register(s).
+ 171:../modbus_if.c ****  *                       MB_REG_READ  Protocol stack is reading input register(s).
+ 172:../modbus_if.c ****  *
+ 173:../modbus_if.c ****  * @output : - buffer  : Buffer which is updated with the modbus holding registers.
+ 174:../modbus_if.c ****  *
+ 175:../modbus_if.c ****  * @return:  MB_ENOERR if success
+ 176:../modbus_if.c ****  *           MB_ENOREG if failure (illegal register access)
+ 177:../modbus_if.c ****  *
+ 178:../modbus_if.c ****  * */
+ 179:../modbus_if.c **** eMBErrorCode eMBRegHoldingCB( uint8_t *buffer, uint16_t address, uint16_t count, eMBRegisterMode mo
+ 180:../modbus_if.c **** {
+  86              	 .loc 1 180 0
+  87              	 .cfi_startproc
+  88              	.LVL11:
+  89 0000 70B5     	 push {r4,r5,r6,lr}
+  90              	.LCFI0:
+  91              	 .cfi_def_cfa_offset 16
+  92              	 .cfi_offset 4,-16
+  93              	 .cfi_offset 5,-12
+  94              	 .cfi_offset 6,-8
+  95              	 .cfi_offset 14,-4
+  96              	.LVL12:
+ 181:../modbus_if.c ****   eMBErrorCode status = MB_ENOERR;
+ 182:../modbus_if.c ****   uint16_t register_index;
+ 183:../modbus_if.c **** 
+ 184:../modbus_if.c ****   if ( ( address >= REG_HOLDING_START_ADDR ) &&
+ 185:../modbus_if.c ****      ( (uint16_t)(address + count) <= (uint16_t)(REG_HOLDING_START_ADDR + REG_HOLDING_COUNT)) )
+  97              	 .loc 1 185 0
+  98 0002 8C18     	 add r4,r1,r2
+  99 0004 A4B2     	 uxth r4,r4
+ 184:../modbus_if.c ****      ( (uint16_t)(address + count) <= (uint16_t)(REG_HOLDING_START_ADDR + REG_HOLDING_COUNT)) )
+ 100              	 .loc 1 184 0
+ 101 0006 042C     	 cmp r4,#4
+ 102 0008 2FD8     	 bhi .L15
+ 103              	.LVL13:
+ 186:../modbus_if.c ****   {
+ 187:../modbus_if.c ****     register_index = ( uint16_t )( address - REG_HOLDING_START_ADDR );
+ 188:../modbus_if.c ****     switch ( mode )
+ 104              	 .loc 1 188 0
+ 105 000a 002B     	 cmp r3,#0
+ 106 000c 02D0     	 beq .L8
+ 107 000e 012B     	 cmp r3,#1
+ 108 0010 27D0     	 beq .L9
+ 109 0012 2CE0     	 b .L17
+ 110              	.L8:
+ 189:../modbus_if.c ****     {
+ 190:../modbus_if.c ****       /* Pass current register values to the protocol stack. */
+ 191:../modbus_if.c ****       case MB_REG_READ:
+ 192:../modbus_if.c ****     	if(register_index>0){
+ 111              	 .loc 1 192 0
+ 112 0014 0029     	 cmp r1,#0
+ 113 0016 0ED0     	 beq .L11
+ 193:../modbus_if.c ****     		register_index--;
+ 114              	 .loc 1 193 0
+ 115 0018 0139     	 sub r1,r1,#1
+ 116              	.LVL14:
+ 117 001a 89B2     	 uxth r1,r1
+ 118              	.LVL15:
+ 119 001c 0BE0     	 b .L11
+ 120              	.LVL16:
+ 121              	.L12:
+ 194:../modbus_if.c ****     	}
+ 195:../modbus_if.c ****         while( count > 0U )
+ 196:../modbus_if.c ****         {
+ 197:../modbus_if.c ****           *buffer = (uint8_t)( reg_holding_buffer[register_index] >> 8 );
+ 122              	 .loc 1 197 0
+ 123 001e 154C     	 ldr r4,.L18
+ 124 0020 4D00     	 lsl r5,r1,#1
+ 125 0022 2B5B     	 ldrh r3,[r5,r4]
+ 126 0024 1B0A     	 lsr r3,r3,#8
+ 127 0026 0370     	 strb r3,[r0]
+ 128              	.LVL17:
+ 198:../modbus_if.c ****           buffer++;
+ 199:../modbus_if.c ****           *buffer = (uint8_t)( reg_holding_buffer[register_index] & 0xFFU );
+ 129              	 .loc 1 199 0
+ 130 0028 2B5B     	 ldrh r3,[r5,r4]
+ 131 002a 4370     	 strb r3,[r0,#1]
+ 200:../modbus_if.c ****           buffer++;
+ 132              	 .loc 1 200 0
+ 133 002c 0230     	 add r0,r0,#2
+ 134              	.LVL18:
+ 201:../modbus_if.c ****           register_index++;
+ 135              	 .loc 1 201 0
+ 136 002e 0131     	 add r1,r1,#1
+ 137              	.LVL19:
+ 138 0030 89B2     	 uxth r1,r1
+ 139              	.LVL20:
+ 202:../modbus_if.c ****           count--;
+ 140              	 .loc 1 202 0
+ 141 0032 013A     	 sub r2,r2,#1
+ 142              	.LVL21:
+ 143 0034 92B2     	 uxth r2,r2
+ 144              	.LVL22:
+ 145              	.L11:
+ 195:../modbus_if.c ****         {
+ 146              	 .loc 1 195 0
+ 147 0036 002A     	 cmp r2,#0
+ 148 0038 F1D1     	 bne .L12
+ 181:../modbus_if.c ****   uint16_t register_index;
+ 149              	 .loc 1 181 0
+ 150 003a 0020     	 mov r0,#0
+ 151              	.LVL23:
+ 152 003c 18E0     	 b .L7
+ 153              	.LVL24:
+ 154              	.L14:
+ 203:../modbus_if.c ****         }
+ 204:../modbus_if.c ****         break;
+ 205:../modbus_if.c ****       /* Update current register values with new values from the
+ 206:../modbus_if.c ****        * protocol stack. */
+ 207:../modbus_if.c ****       case MB_REG_WRITE:
+ 208:../modbus_if.c ****         while( count > 0U )
+ 209:../modbus_if.c ****         {
+ 210:../modbus_if.c ****           if(register_index>0){
+ 155              	 .loc 1 210 0
+ 156 003e 0029     	 cmp r1,#0
+ 157 0040 01D0     	 beq .L13
+ 211:../modbus_if.c ****         	  register_index--;
+ 158              	 .loc 1 211 0
+ 159 0042 0139     	 sub r1,r1,#1
+ 160              	.LVL25:
+ 161 0044 89B2     	 uxth r1,r1
+ 162              	.LVL26:
+ 163              	.L13:
+ 212:../modbus_if.c ****           }
+ 213:../modbus_if.c ****           reg_holding_buffer[register_index] = (uint16_t)((uint16_t)*buffer << 8);
+ 164              	 .loc 1 213 0
+ 165 0046 0578     	 ldrb r5,[r0]
+ 166 0048 2D02     	 lsl r5,r5,#8
+ 167 004a 0A4B     	 ldr r3,.L18
+ 168 004c 4C00     	 lsl r4,r1,#1
+ 169 004e E552     	 strh r5,[r4,r3]
+ 170              	.LVL27:
+ 214:../modbus_if.c ****           buffer++;
+ 215:../modbus_if.c ****           reg_holding_buffer[register_index] |= *buffer;
+ 171              	 .loc 1 215 0
+ 172 0050 E65A     	 ldrh r6,[r4,r3]
+ 173 0052 4578     	 ldrb r5,[r0,#1]
+ 174 0054 3543     	 orr r5,r6
+ 175 0056 E552     	 strh r5,[r4,r3]
+ 216:../modbus_if.c ****           buffer++;
+ 176              	 .loc 1 216 0
+ 177 0058 0230     	 add r0,r0,#2
+ 178              	.LVL28:
+ 217:../modbus_if.c ****           register_index++;
+ 179              	 .loc 1 217 0
+ 180 005a 0131     	 add r1,r1,#1
+ 181              	.LVL29:
+ 182 005c 89B2     	 uxth r1,r1
+ 183              	.LVL30:
+ 218:../modbus_if.c ****           count--;
+ 184              	 .loc 1 218 0
+ 185 005e 013A     	 sub r2,r2,#1
+ 186              	.LVL31:
+ 187 0060 92B2     	 uxth r2,r2
+ 188              	.LVL32:
+ 189              	.L9:
+ 208:../modbus_if.c ****         {
+ 190              	 .loc 1 208 0
+ 191 0062 002A     	 cmp r2,#0
+ 192 0064 EBD1     	 bne .L14
+ 181:../modbus_if.c ****   uint16_t register_index;
+ 193              	 .loc 1 181 0
+ 194 0066 0020     	 mov r0,#0
+ 195              	.LVL33:
+ 196 0068 02E0     	 b .L7
+ 197              	.LVL34:
+ 198              	.L15:
+ 219:../modbus_if.c ****         }
+ 220:../modbus_if.c ****         break;
+ 221:../modbus_if.c ****       default:
+ 222:../modbus_if.c ****         status = MB_ENOREG;
+ 223:../modbus_if.c ****         break;
+ 224:../modbus_if.c ****     }
+ 225:../modbus_if.c ****   }
+ 226:../modbus_if.c ****   else
+ 227:../modbus_if.c ****   {
+ 228:../modbus_if.c ****       status = MB_ENOREG;
+ 199              	 .loc 1 228 0
+ 200 006a 0120     	 mov r0,#1
+ 201              	.LVL35:
+ 202 006c 00E0     	 b .L7
+ 203              	.LVL36:
+ 204              	.L17:
+ 222:../modbus_if.c ****         break;
+ 205              	 .loc 1 222 0
+ 206 006e 0120     	 mov r0,#1
+ 207              	.LVL37:
+ 208              	.L7:
+ 229:../modbus_if.c ****   }
+ 230:../modbus_if.c ****   return status;
+ 231:../modbus_if.c **** }
+ 209              	 .loc 1 231 0
+ 210              	 
+ 211 0070 70BD     	 pop {r4,r5,r6,pc}
+ 212              	.L19:
+ 213 0072 C046     	 .align 2
+ 214              	.L18:
+ 215 0074 00000000 	 .word .LANCHOR0
+ 216              	 .cfi_endproc
+ 217              	.LFE465:
+ 219              	 .section .text.eMBRegCoilsCB,"ax",%progbits
+ 220              	 .align 2
+ 221              	 .global eMBRegCoilsCB
+ 222              	 .code 16
+ 223              	 .thumb_func
+ 225              	eMBRegCoilsCB:
+ 226              	.LFB466:
+ 232:../modbus_if.c **** 
+ 233:../modbus_if.c **** /**
+ 234:../modbus_if.c ****  * @eMBRegCoilsCB
+ 235:../modbus_if.c ****  *
+ 236:../modbus_if.c ****  * Callback function called by the protocol stack for reading/writing the 1bit value of coil regist
+ 237:../modbus_if.c ****  *
+ 238:../modbus_if.c ****  * @input :  - buffer  : Pointer to a buffer which is used to exchange (read/write)
+ 239:../modbus_if.c ****  *                       current value of the modbus coil regitser(s) with the protocol stack.
+ 240:../modbus_if.c ****  *           - address : Starting address of the register(s).
+ 241:../modbus_if.c ****  *           - count   : Number of registers bits to be exchanged (read/write).
+ 242:../modbus_if.c ****  *           - mode    : MB_REG_WRITE Protocol stack is writing coil register(s).
+ 243:../modbus_if.c ****  *                       MB_REG_READ  Protocol stack is reading coil register(s).
+ 244:../modbus_if.c ****  *
+ 245:../modbus_if.c ****  * @output : - buffer  : Buffer which is updated with the modbus coil register(s).
+ 246:../modbus_if.c ****  *
+ 247:../modbus_if.c ****  * @return:  MB_ENOERR if success
+ 248:../modbus_if.c ****  *           MB_ENOREG if failure (illegal register access)
+ 249:../modbus_if.c ****  *
+ 250:../modbus_if.c ****  * */
+ 251:../modbus_if.c **** eMBErrorCode eMBRegCoilsCB( uint8_t *buffer, uint16_t address, uint16_t count, eMBRegisterMode mode
+ 252:../modbus_if.c **** {
+ 227              	 .loc 1 252 0
+ 228              	 .cfi_startproc
+ 229              	.LVL38:
+ 230 0000 70B5     	 push {r4,r5,r6,lr}
+ 231              	.LCFI1:
+ 232              	 .cfi_def_cfa_offset 16
+ 233              	 .cfi_offset 4,-16
+ 234              	 .cfi_offset 5,-12
+ 235              	 .cfi_offset 6,-8
+ 236              	 .cfi_offset 14,-4
+ 237 0002 061C     	 mov r6,r0
+ 238              	.LVL39:
+ 253:../modbus_if.c ****   eMBErrorCode status = MB_ENOERR;
+ 254:../modbus_if.c ****   int16_t signed_count = (int16_t)count;
+ 239              	 .loc 1 254 0
+ 240 0004 95B2     	 uxth r5,r2
+ 241              	.LVL40:
+ 255:../modbus_if.c ****   uint16_t bit_offset;
+ 256:../modbus_if.c **** 
+ 257:../modbus_if.c ****   /* Check if we have registers mapped at this block. */
+ 258:../modbus_if.c ****   if( ( address >= REG_COILS_START_ADDR ) &&
+ 242              	 .loc 1 258 0
+ 243 0006 2548     	 ldr r0,.L34
+ 244              	.LVL41:
+ 245 0008 8142     	 cmp r1,r0
+ 246 000a 41D9     	 bls .L30
+ 259:../modbus_if.c ****       ( (uint16_t)(address + count) <= (uint16_t)(REG_COILS_START_ADDR + REG_COILS_COUNT)) )
+ 247              	 .loc 1 259 0 discriminator 1
+ 248 000c 8A18     	 add r2,r1,r2
+ 249              	.LVL42:
+ 250 000e 92B2     	 uxth r2,r2
+ 258:../modbus_if.c ****       ( (uint16_t)(address + count) <= (uint16_t)(REG_COILS_START_ADDR + REG_COILS_COUNT)) )
+ 251              	 .loc 1 258 0 discriminator 1
+ 252 0010 0930     	 add r0,r0,#9
+ 253 0012 8242     	 cmp r2,r0
+ 254 0014 3ED8     	 bhi .L31
+ 260:../modbus_if.c ****   {
+ 261:../modbus_if.c ****     bit_offset = ( uint16_t )( address - REG_COILS_START_ADDR );
+ 255              	 .loc 1 261 0
+ 256 0016 224A     	 ldr r2,.L34+4
+ 257 0018 9446     	 mov ip,r2
+ 258 001a 6144     	 add r1,r1,ip
+ 259              	.LVL43:
+ 260 001c 8CB2     	 uxth r4,r1
+ 261              	.LVL44:
+ 262:../modbus_if.c ****     switch ( mode )
+ 262              	 .loc 1 262 0
+ 263 001e 002B     	 cmp r3,#0
+ 264 0020 17D0     	 beq .L22
+ 265 0022 012B     	 cmp r3,#1
+ 266 0024 2FD0     	 beq .L23
+ 267 0026 37E0     	 b .L33
+ 268              	.LVL45:
+ 269              	.L26:
+ 263:../modbus_if.c ****     {
+ 264:../modbus_if.c ****       /* Read current values and pass to protocol stack. */
+ 265:../modbus_if.c ****       case MB_REG_READ:
+ 266:../modbus_if.c ****         while( signed_count > 0 )
+ 267:../modbus_if.c ****         {
+ 268:../modbus_if.c ****           if (signed_count > 8)
+ 270              	 .loc 1 268 0
+ 271 0028 2BB2     	 sxth r3,r5
+ 272 002a 082B     	 cmp r3,#8
+ 273 002c 06DD     	 ble .L24
+ 269:../modbus_if.c ****           {
+ 270:../modbus_if.c ****             *buffer = xMBUtilGetBits( reg_coils_buffers, bit_offset, 8U);
+ 274              	 .loc 1 270 0
+ 275 002e 1D48     	 ldr r0,.L34+8
+ 276 0030 211C     	 mov r1,r4
+ 277 0032 0822     	 mov r2,#8
+ 278 0034 FFF7FEFF 	 bl xMBUtilGetBits
+ 279              	.LVL46:
+ 280 0038 3070     	 strb r0,[r6]
+ 281 003a 05E0     	 b .L25
+ 282              	.L24:
+ 271:../modbus_if.c ****           }
+ 272:../modbus_if.c ****           else
+ 273:../modbus_if.c ****           {
+ 274:../modbus_if.c ****             *buffer = xMBUtilGetBits( reg_coils_buffers, bit_offset, (uint8_t)signed_count);
+ 283              	 .loc 1 274 0
+ 284 003c EAB2     	 uxtb r2,r5
+ 285 003e 1948     	 ldr r0,.L34+8
+ 286 0040 211C     	 mov r1,r4
+ 287 0042 FFF7FEFF 	 bl xMBUtilGetBits
+ 288              	.LVL47:
+ 289 0046 3070     	 strb r0,[r6]
+ 290              	.L25:
+ 275:../modbus_if.c ****           }
+ 276:../modbus_if.c ****           buffer++;
+ 291              	 .loc 1 276 0
+ 292 0048 0136     	 add r6,r6,#1
+ 293              	.LVL48:
+ 277:../modbus_if.c ****           signed_count -= 8;
+ 294              	 .loc 1 277 0
+ 295 004a 083D     	 sub r5,r5,#8
+ 296              	.LVL49:
+ 297 004c ADB2     	 uxth r5,r5
+ 298              	.LVL50:
+ 278:../modbus_if.c ****           bit_offset += 8U;
+ 299              	 .loc 1 278 0
+ 300 004e 0834     	 add r4,r4,#8
+ 301              	.LVL51:
+ 302 0050 A4B2     	 uxth r4,r4
+ 303              	.LVL52:
+ 304              	.L22:
+ 266:../modbus_if.c ****         {
+ 305              	 .loc 1 266 0
+ 306 0052 2BB2     	 sxth r3,r5
+ 307 0054 002B     	 cmp r3,#0
+ 308 0056 E7DC     	 bgt .L26
+ 253:../modbus_if.c ****   int16_t signed_count = (int16_t)count;
+ 309              	 .loc 1 253 0
+ 310 0058 0020     	 mov r0,#0
+ 311 005a 1EE0     	 b .L21
+ 312              	.L29:
+ 279:../modbus_if.c ****         }
+ 280:../modbus_if.c ****         break;
+ 281:../modbus_if.c ****       /* Update current register values. */
+ 282:../modbus_if.c ****       case MB_REG_WRITE:
+ 283:../modbus_if.c ****         while( signed_count > 0 )
+ 284:../modbus_if.c ****         {
+ 285:../modbus_if.c ****           if (signed_count > 8)
+ 313              	 .loc 1 285 0
+ 314 005c 2BB2     	 sxth r3,r5
+ 315 005e 082B     	 cmp r3,#8
+ 316 0060 06DD     	 ble .L27
+ 286:../modbus_if.c ****           {
+ 287:../modbus_if.c ****             xMBUtilSetBits( reg_coils_buffers, bit_offset, 8U, *buffer );
+ 317              	 .loc 1 287 0
+ 318 0062 3378     	 ldrb r3,[r6]
+ 319 0064 0F48     	 ldr r0,.L34+8
+ 320 0066 211C     	 mov r1,r4
+ 321 0068 0822     	 mov r2,#8
+ 322 006a FFF7FEFF 	 bl xMBUtilSetBits
+ 323              	.LVL53:
+ 324 006e 05E0     	 b .L28
+ 325              	.L27:
+ 288:../modbus_if.c ****           }
+ 289:../modbus_if.c ****           else
+ 290:../modbus_if.c ****           {
+ 291:../modbus_if.c ****             xMBUtilSetBits( reg_coils_buffers, bit_offset, (uint8_t)signed_count, *buffer );
+ 326              	 .loc 1 291 0
+ 327 0070 EAB2     	 uxtb r2,r5
+ 328 0072 3378     	 ldrb r3,[r6]
+ 329 0074 0B48     	 ldr r0,.L34+8
+ 330 0076 211C     	 mov r1,r4
+ 331 0078 FFF7FEFF 	 bl xMBUtilSetBits
+ 332              	.LVL54:
+ 333              	.L28:
+ 292:../modbus_if.c ****           }
+ 293:../modbus_if.c ****           buffer++;
+ 334              	 .loc 1 293 0
+ 335 007c 0136     	 add r6,r6,#1
+ 336              	.LVL55:
+ 294:../modbus_if.c ****           signed_count -= 8;
+ 337              	 .loc 1 294 0
+ 338 007e 083D     	 sub r5,r5,#8
+ 339              	.LVL56:
+ 340 0080 ADB2     	 uxth r5,r5
+ 341              	.LVL57:
+ 295:../modbus_if.c ****           bit_offset += (uint8_t)8;
+ 342              	 .loc 1 295 0
+ 343 0082 0834     	 add r4,r4,#8
+ 344              	.LVL58:
+ 345 0084 A4B2     	 uxth r4,r4
+ 346              	.LVL59:
+ 347              	.L23:
+ 283:../modbus_if.c ****         {
+ 348              	 .loc 1 283 0
+ 349 0086 2BB2     	 sxth r3,r5
+ 350 0088 002B     	 cmp r3,#0
+ 351 008a E7DC     	 bgt .L29
+ 253:../modbus_if.c ****   int16_t signed_count = (int16_t)count;
+ 352              	 .loc 1 253 0
+ 353 008c 0020     	 mov r0,#0
+ 354 008e 04E0     	 b .L21
+ 355              	.LVL60:
+ 356              	.L30:
+ 296:../modbus_if.c ****         }
+ 297:../modbus_if.c ****         break;
+ 298:../modbus_if.c ****       default:
+ 299:../modbus_if.c ****         status = MB_ENOREG;
+ 300:../modbus_if.c ****         break;
+ 301:../modbus_if.c ****     }
+ 302:../modbus_if.c ****   }
+ 303:../modbus_if.c ****   else
+ 304:../modbus_if.c ****   {
+ 305:../modbus_if.c ****     status = MB_ENOREG;
+ 357              	 .loc 1 305 0
+ 358 0090 0120     	 mov r0,#1
+ 359 0092 02E0     	 b .L21
+ 360              	.LVL61:
+ 361              	.L31:
+ 362 0094 0120     	 mov r0,#1
+ 363 0096 00E0     	 b .L21
+ 364              	.LVL62:
+ 365              	.L33:
+ 299:../modbus_if.c ****         break;
+ 366              	 .loc 1 299 0
+ 367 0098 0120     	 mov r0,#1
+ 368              	.LVL63:
+ 369              	.L21:
+ 306:../modbus_if.c ****   }
+ 307:../modbus_if.c ****   return status;
+ 308:../modbus_if.c **** }
+ 370              	 .loc 1 308 0
+ 371              	 
+ 372              	.LVL64:
+ 373              	.LVL65:
+ 374 009a 70BD     	 pop {r4,r5,r6,pc}
+ 375              	.L35:
+ 376              	 .align 2
+ 377              	.L34:
+ 378 009c E7030000 	 .word 999
+ 379 00a0 18FCFFFF 	 .word -1000
+ 380 00a4 00000000 	 .word .LANCHOR1
+ 381              	 .cfi_endproc
+ 382              	.LFE466:
+ 384              	 .section .text.eMBRegDiscreteCB,"ax",%progbits
+ 385              	 .align 2
+ 386              	 .global eMBRegDiscreteCB
+ 387              	 .code 16
+ 388              	 .thumb_func
+ 390              	eMBRegDiscreteCB:
+ 391              	.LFB467:
+ 309:../modbus_if.c **** 
+ 310:../modbus_if.c **** /**
+ 311:../modbus_if.c ****  * @eMBRegDiscreteCB
+ 312:../modbus_if.c ****  *
+ 313:../modbus_if.c ****  * Callback function called by the protocol stack for reading the 1bit value of discrete register(s
+ 314:../modbus_if.c ****  *
+ 315:../modbus_if.c ****  * @input :  - buffer  : Pointer to a buffer which is used to return the
+ 316:../modbus_if.c ****  *                       current value of the modbus discrete registers to the stack.
+ 317:../modbus_if.c ****  *           - address : Starting address of the registers.
+ 318:../modbus_if.c ****  *           - count   : Number of register bits to be returned.
+ 319:../modbus_if.c ****  *
+ 320:../modbus_if.c ****  * @output : - buffer  : Buffer which is updated with the modbus discrete registers.
+ 321:../modbus_if.c ****  *
+ 322:../modbus_if.c ****  * @return : MB_ENOERR if success
+ 323:../modbus_if.c ****  *           MB_ENOREG if failure (illegal register access)
+ 324:../modbus_if.c ****  *
+ 325:../modbus_if.c ****  * */
+ 326:../modbus_if.c **** eMBErrorCode eMBRegDiscreteCB( uint8_t *buffer, uint16_t address, uint16_t count )
+ 327:../modbus_if.c **** {
+ 392              	 .loc 1 327 0
+ 393              	 .cfi_startproc
+ 394              	.LVL66:
+ 395 0000 70B5     	 push {r4,r5,r6,lr}
+ 396              	.LCFI2:
+ 397              	 .cfi_def_cfa_offset 16
+ 398              	 .cfi_offset 4,-16
+ 399              	 .cfi_offset 5,-12
+ 400              	 .cfi_offset 6,-8
+ 401              	 .cfi_offset 14,-4
+ 402 0002 061C     	 mov r6,r0
+ 403              	.LVL67:
+ 328:../modbus_if.c ****   eMBErrorCode status = MB_ENOERR;
+ 329:../modbus_if.c ****   int16_t signed_count = (int16_t)count;
+ 404              	 .loc 1 329 0
+ 405 0004 94B2     	 uxth r4,r2
+ 406              	.LVL68:
+ 330:../modbus_if.c ****   uint16_t bit_offset;
+ 331:../modbus_if.c **** 
+ 332:../modbus_if.c ****   /* Check if we have registers mapped at this block. */
+ 333:../modbus_if.c ****   if( ( address >= REG_DISC_START_ADDR ) &&
+ 407              	 .loc 1 333 0
+ 408 0006 154B     	 ldr r3,.L44
+ 409 0008 9942     	 cmp r1,r3
+ 410 000a 23D9     	 bls .L42
+ 334:../modbus_if.c ****     ( (uint16_t)(address + count) <= (uint16_t)(REG_DISC_START_ADDR + REG_DISC_COUNT)) )
+ 411              	 .loc 1 334 0 discriminator 1
+ 412 000c 8A18     	 add r2,r1,r2
+ 413              	.LVL69:
+ 414 000e 92B2     	 uxth r2,r2
+ 333:../modbus_if.c ****     ( (uint16_t)(address + count) <= (uint16_t)(REG_DISC_START_ADDR + REG_DISC_COUNT)) )
+ 415              	 .loc 1 333 0 discriminator 1
+ 416 0010 0933     	 add r3,r3,#9
+ 417 0012 9A42     	 cmp r2,r3
+ 418 0014 20D8     	 bhi .L43
+ 335:../modbus_if.c ****   {
+ 336:../modbus_if.c ****     bit_offset = (uint16_t)( address - REG_DISC_START_ADDR );
+ 419              	 .loc 1 336 0
+ 420 0016 124B     	 ldr r3,.L44+4
+ 421 0018 9C46     	 mov ip,r3
+ 422 001a 6144     	 add r1,r1,ip
+ 423              	.LVL70:
+ 424 001c 8DB2     	 uxth r5,r1
+ 425              	.LVL71:
+ 337:../modbus_if.c ****     while( signed_count > 0 )
+ 426              	 .loc 1 337 0
+ 427 001e 14E0     	 b .L38
+ 428              	.LVL72:
+ 429              	.L41:
+ 338:../modbus_if.c ****     {
+ 339:../modbus_if.c ****       if (signed_count > 8)
+ 430              	 .loc 1 339 0
+ 431 0020 23B2     	 sxth r3,r4
+ 432 0022 082B     	 cmp r3,#8
+ 433 0024 06DD     	 ble .L39
+ 340:../modbus_if.c ****       {
+ 341:../modbus_if.c ****          *buffer = xMBUtilGetBits( reg_discrete_input_buffer, bit_offset, 8U );
+ 434              	 .loc 1 341 0
+ 435 0026 0F48     	 ldr r0,.L44+8
+ 436 0028 291C     	 mov r1,r5
+ 437 002a 0822     	 mov r2,#8
+ 438 002c FFF7FEFF 	 bl xMBUtilGetBits
+ 439              	.LVL73:
+ 440 0030 3070     	 strb r0,[r6]
+ 441 0032 05E0     	 b .L40
+ 442              	.L39:
+ 342:../modbus_if.c ****       }
+ 343:../modbus_if.c ****       else
+ 344:../modbus_if.c ****       {
+ 345:../modbus_if.c ****          *buffer = xMBUtilGetBits( reg_discrete_input_buffer, bit_offset, (uint8_t)signed_count);
+ 443              	 .loc 1 345 0
+ 444 0034 E2B2     	 uxtb r2,r4
+ 445 0036 0B48     	 ldr r0,.L44+8
+ 446 0038 291C     	 mov r1,r5
+ 447 003a FFF7FEFF 	 bl xMBUtilGetBits
+ 448              	.LVL74:
+ 449 003e 3070     	 strb r0,[r6]
+ 450              	.L40:
+ 346:../modbus_if.c ****       }
+ 347:../modbus_if.c ****       buffer++;
+ 451              	 .loc 1 347 0
+ 452 0040 0136     	 add r6,r6,#1
+ 453              	.LVL75:
+ 348:../modbus_if.c ****       signed_count -= 8;
+ 454              	 .loc 1 348 0
+ 455 0042 083C     	 sub r4,r4,#8
+ 456              	.LVL76:
+ 457 0044 A4B2     	 uxth r4,r4
+ 458              	.LVL77:
+ 349:../modbus_if.c ****       bit_offset += (uint8_t)8;
+ 459              	 .loc 1 349 0
+ 460 0046 0835     	 add r5,r5,#8
+ 461              	.LVL78:
+ 462 0048 ADB2     	 uxth r5,r5
+ 463              	.LVL79:
+ 464              	.L38:
+ 337:../modbus_if.c ****     {
+ 465              	 .loc 1 337 0
+ 466 004a 23B2     	 sxth r3,r4
+ 467 004c 002B     	 cmp r3,#0
+ 468 004e E7DC     	 bgt .L41
+ 328:../modbus_if.c ****   int16_t signed_count = (int16_t)count;
+ 469              	 .loc 1 328 0
+ 470 0050 0020     	 mov r0,#0
+ 471 0052 02E0     	 b .L37
+ 472              	.LVL80:
+ 473              	.L42:
+ 350:../modbus_if.c ****     }
+ 351:../modbus_if.c ****   }
+ 352:../modbus_if.c ****   else
+ 353:../modbus_if.c ****   {
+ 354:../modbus_if.c ****     status = MB_ENOREG;
+ 474              	 .loc 1 354 0
+ 475 0054 0120     	 mov r0,#1
+ 476              	.LVL81:
+ 477 0056 00E0     	 b .L37
+ 478              	.LVL82:
+ 479              	.L43:
+ 480 0058 0120     	 mov r0,#1
+ 481              	.LVL83:
+ 482              	.L37:
+ 355:../modbus_if.c ****   }
+ 356:../modbus_if.c ****   return status;
+ 357:../modbus_if.c **** }
+ 483              	 .loc 1 357 0
+ 484              	 
+ 485              	.LVL84:
+ 486              	.LVL85:
+ 487 005a 70BD     	 pop {r4,r5,r6,pc}
+ 488              	.L45:
+ 489              	 .align 2
+ 490              	.L44:
+ 491 005c CF070000 	 .word 1999
+ 492 0060 30F8FFFF 	 .word -2000
+ 493 0064 00000000 	 .word .LANCHOR2
+ 494              	 .cfi_endproc
+ 495              	.LFE467:
+ 497              	 .section .text.mb_stack_task,"ax",%progbits
+ 498              	 .align 2
+ 499              	 .global mb_stack_task
+ 500              	 .code 16
+ 501              	 .thumb_func
+ 503              	mb_stack_task:
+ 504              	.LFB468:
+ 358:../modbus_if.c **** 
+ 359:../modbus_if.c **** void mb_stack_task (void){
+ 505              	 .loc 1 359 0
+ 506              	 .cfi_startproc
+ 507 0000 08B5     	 push {r3,lr}
+ 508              	.LCFI3:
+ 509              	 .cfi_def_cfa_offset 8
+ 510              	 .cfi_offset 3,-8
+ 511              	 .cfi_offset 14,-4
+ 360:../modbus_if.c **** /* May every 8.6uS there be a new char */
+ 361:../modbus_if.c **** /* Process modbus protocol stack */
+ 362:../modbus_if.c **** (void)eMBPoll();
+ 512              	 .loc 1 362 0
+ 513 0002 FFF7FEFF 	 bl eMBPoll
+ 514              	.LVL86:
+ 363:../modbus_if.c **** /* All other housekeeping regarding modbus here */
+ 364:../modbus_if.c **** 
+ 365:../modbus_if.c ****  	
+ 366:../modbus_if.c **** }
+ 515              	 .loc 1 366 0
+ 516              	 
+ 517 0006 08BD     	 pop {r3,pc}
+ 518              	 .cfi_endproc
+ 519              	.LFE468:
+ 521              	 .section .text.Rx_Cb,"ax",%progbits
+ 522              	 .align 2
+ 523              	 .global Rx_Cb
+ 524              	 .code 16
+ 525              	 .thumb_func
+ 527              	Rx_Cb:
+ 528              	.LFB469:
+ 367:../modbus_if.c **** 
+ 368:../modbus_if.c **** /* Callback handler of UART receiving */
+ 369:../modbus_if.c **** void Rx_Cb(void)
+ 370:../modbus_if.c **** {
+ 529              	 .loc 1 370 0
+ 530              	 .cfi_startproc
+ 531 0000 08B5     	 push {r3,lr}
+ 532              	.LCFI4:
+ 533              	 .cfi_def_cfa_offset 8
+ 534              	 .cfi_offset 3,-8
+ 535              	 .cfi_offset 14,-4
+ 371:../modbus_if.c ****   MB_RxHandler();
+ 536              	 .loc 1 371 0
+ 537 0002 FFF7FEFF 	 bl MB_RxHandler
+ 538              	.LVL87:
+ 372:../modbus_if.c **** }
+ 539              	 .loc 1 372 0
+ 540              	 
+ 541 0006 08BD     	 pop {r3,pc}
+ 542              	 .cfi_endproc
+ 543              	.LFE469:
+ 545              	 .section .text.Tx_Cb,"ax",%progbits
+ 546              	 .align 2
+ 547              	 .global Tx_Cb
+ 548              	 .code 16
+ 549              	 .thumb_func
+ 551              	Tx_Cb:
+ 552              	.LFB470:
+ 373:../modbus_if.c **** 
+ 374:../modbus_if.c **** /* Callback handler of UART transmitting */
+ 375:../modbus_if.c **** void Tx_Cb(void)
+ 376:../modbus_if.c **** {
+ 553              	 .loc 1 376 0
+ 554              	 .cfi_startproc
+ 555 0000 08B5     	 push {r3,lr}
+ 556              	.LCFI5:
+ 557              	 .cfi_def_cfa_offset 8
+ 558              	 .cfi_offset 3,-8
+ 559              	 .cfi_offset 14,-4
+ 377:../modbus_if.c ****   MB_TxHandler();
+ 560              	 .loc 1 377 0
+ 561 0002 FFF7FEFF 	 bl MB_TxHandler
+ 562              	.LVL88:
+ 378:../modbus_if.c **** }
+ 563              	 .loc 1 378 0
+ 564              	 
+ 565 0006 08BD     	 pop {r3,pc}
+ 566              	 .cfi_endproc
+ 567              	.LFE470:
+ 569              	 .section .text.clr_pin,"ax",%progbits
+ 570              	 .align 2
+ 571              	 .global clr_pin
+ 572              	 .code 16
+ 573              	 .thumb_func
+ 575              	clr_pin:
+ 576              	.LFB473:
+ 379:../modbus_if.c **** 
+ 380:../modbus_if.c **** /* FF Control */
+ 381:../modbus_if.c **** 
+ 382:../modbus_if.c **** 
+ 383:../modbus_if.c **** 
+ 384:../modbus_if.c **** void ff_setup() {
+ 385:../modbus_if.c **** 
+ 386:../modbus_if.c **** 
+ 387:../modbus_if.c ****   set_pin(FF_PIN_START);
+ 388:../modbus_if.c ****   set_pin(FF_PIN_LINE);
+ 389:../modbus_if.c ****   set_pin(FF_PIN_ADC);
+ 390:../modbus_if.c **** 
+ 391:../modbus_if.c **** }
+ 392:../modbus_if.c **** 
+ 393:../modbus_if.c **** void ff_check_position(){
+ 394:../modbus_if.c **** 
+ 395:../modbus_if.c **** /* Modified to a Statemachine to keep other tasks running */
+ 396:../modbus_if.c **** 
+ 397:../modbus_if.c ****   static FF_FSM_STATE_t FSM_STATE = FF_FSM_IDLE;
+ 398:../modbus_if.c ****   static uint32_t u32Delay=0;
+ 399:../modbus_if.c ****   uint16_t position = 0;
+ 400:../modbus_if.c **** 
+ 401:../modbus_if.c **** 
+ 402:../modbus_if.c ****   switch(FSM_STATE){
+ 403:../modbus_if.c **** 
+ 404:../modbus_if.c ****   case FF_FSM_IDLE:{
+ 405:../modbus_if.c **** 	  FSM_STATE=FF_FSM_START_POS_READ;
+ 406:../modbus_if.c **** 	  u32Delay=0;
+ 407:../modbus_if.c ****   }break;
+ 408:../modbus_if.c **** 
+ 409:../modbus_if.c ****   case FF_FSM_START_POS_READ:{
+ 410:../modbus_if.c ****    clr_pin(FF_PIN_ADC);
+ 411:../modbus_if.c ****    clr_pin(FF_PIN_LINE);
+ 412:../modbus_if.c ****    if(u32Delay>0){
+ 413:../modbus_if.c **** 	   u32Delay--;
+ 414:../modbus_if.c ****    } else {
+ 415:../modbus_if.c ****    FSM_STATE=FF_FSM_POS_REG_COMP;
+ 416:../modbus_if.c ****    }
+ 417:../modbus_if.c ****   }break;
+ 418:../modbus_if.c **** 
+ 419:../modbus_if.c ****   case FF_FSM_POS_REG_COMP:{
+ 420:../modbus_if.c ****    /* This can be optimised by reading the port register */
+ 421:../modbus_if.c ****    reg_holding_buffer[3] = (uint16_t)(PORT1->IN & 0x0000003F);
+ 422:../modbus_if.c ****    position =reg_holding_buffer[3]- 1;
+ 423:../modbus_if.c ****    reg_holding_buffer[1]=position & 0x0000003F;
+ 424:../modbus_if.c ****   	   if((reg_holding_buffer[1] & 0x003F) != (reg_holding_buffer[0]&0x0003F) ){
+ 425:../modbus_if.c **** 		   /* We need to move on step and check again */
+ 426:../modbus_if.c **** 		   FSM_STATE = FF_FSM_START_MOVE;
+ 427:../modbus_if.c **** 	   } else {
+ 428:../modbus_if.c **** 		   FSM_STATE = FF_FSM_IDLE;
+ 429:../modbus_if.c **** 	   }
+ 430:../modbus_if.c ****   	set_pin(FF_PIN_ADC);
+ 431:../modbus_if.c ****     set_pin(FF_PIN_LINE);
+ 432:../modbus_if.c ****   }break;
+ 433:../modbus_if.c **** 
+ 434:../modbus_if.c ****   case FF_FSM_START_MOVE:{
+ 435:../modbus_if.c ****   /* Compare Position with register */
+ 436:../modbus_if.c **** 
+ 437:../modbus_if.c **** 	  clr_pin(FF_PIN_START);
+ 438:../modbus_if.c **** 	  clr_pin(FF_PIN_LINE);
+ 439:../modbus_if.c **** 	  clr_pin(FF_PIN_ADC);
+ 440:../modbus_if.c **** 	  u32Delay=100;
+ 441:../modbus_if.c **** 	  FSM_STATE = FF_FSM_START_MOVE_WAIT_START;
+ 442:../modbus_if.c ****   } break;
+ 443:../modbus_if.c **** 
+ 444:../modbus_if.c ****   case FF_FSM_START_MOVE_WAIT_START:{
+ 445:../modbus_if.c **** 	  if(u32Delay<=0){
+ 446:../modbus_if.c **** 		  set_pin(FF_PIN_LINE);
+ 447:../modbus_if.c **** 		  set_pin(FF_PIN_ADC);
+ 448:../modbus_if.c **** 		  u32Delay=30;
+ 449:../modbus_if.c **** 		  /* Next State */
+ 450:../modbus_if.c **** 		  FSM_STATE = FF_FSM_START_STOP;
+ 451:../modbus_if.c **** 	  } else {
+ 452:../modbus_if.c **** 		  u32Delay--;
+ 453:../modbus_if.c **** 		  FSM_STATE = FF_FSM_START_MOVE_WAIT_START;
+ 454:../modbus_if.c **** 	  }
+ 455:../modbus_if.c **** 
+ 456:../modbus_if.c ****   }break;
+ 457:../modbus_if.c **** 
+ 458:../modbus_if.c ****   case FF_FSM_START_STOP:{
+ 459:../modbus_if.c **** 	  if(u32Delay<=0){
+ 460:../modbus_if.c **** 		  set_pin(FF_PIN_START);
+ 461:../modbus_if.c **** 		  u32Delay=125;
+ 462:../modbus_if.c **** 		  /* Next State */
+ 463:../modbus_if.c **** 		  FSM_STATE = FF_FSM_TOGGLE_START;
+ 464:../modbus_if.c **** 	  } else {
+ 465:../modbus_if.c **** 		  u32Delay--;
+ 466:../modbus_if.c **** 		  FSM_STATE = FF_FSM_START_STOP;
+ 467:../modbus_if.c **** 
+ 468:../modbus_if.c **** 	  }
+ 469:../modbus_if.c **** 
+ 470:../modbus_if.c ****   }break;
+ 471:../modbus_if.c **** 
+ 472:../modbus_if.c ****   case FF_FSM_TOGGLE_START:{
+ 473:../modbus_if.c **** 	  /* Toggle FF_PIN_ADC */
+ 474:../modbus_if.c **** 	  /* This will be done for 500ms ( 1000 * 0.5ms) */
+ 475:../modbus_if.c **** 	  if(u32Delay>0){
+ 476:../modbus_if.c **** 		  if(u32Delay%2==0){
+ 477:../modbus_if.c **** 			  clr_pin(FF_PIN_ADC);
+ 478:../modbus_if.c **** 		  } else {
+ 479:../modbus_if.c **** 			  set_pin(FF_PIN_ADC);
+ 480:../modbus_if.c **** 		  }
+ 481:../modbus_if.c **** 		  u32Delay--;
+ 482:../modbus_if.c **** 		  FSM_STATE = FF_FSM_TOGGLE_START;
+ 483:../modbus_if.c **** 	  }else{
+ 484:../modbus_if.c **** 	   /* Change State */
+ 485:../modbus_if.c **** 	     FSM_STATE = FF_FSM_IDLE;
+ 486:../modbus_if.c **** 	  /* Move to idle */
+ 487:../modbus_if.c **** 	  }
+ 488:../modbus_if.c ****   /* May the FF Display stops now */
+ 489:../modbus_if.c ****   }break;
+ 490:../modbus_if.c **** 
+ 491:../modbus_if.c ****   default:{
+ 492:../modbus_if.c **** 	FSM_STATE = FF_FSM_IDLE;
+ 493:../modbus_if.c ****   }
+ 494:../modbus_if.c ****  }
+ 495:../modbus_if.c **** 
+ 496:../modbus_if.c **** }
+ 497:../modbus_if.c **** 
+ 498:../modbus_if.c **** 
+ 499:../modbus_if.c **** 
+ 500:../modbus_if.c **** 
+ 501:../modbus_if.c **** void clr_pin(FF_CNTRL_PIN_t pin)
+ 502:../modbus_if.c **** {
+ 577              	 .loc 1 502 0
+ 578              	 .cfi_startproc
+ 579              	.LVL89:
+ 503:../modbus_if.c ****   switch(pin){
+ 580              	 .loc 1 503 0
+ 581 0000 0128     	 cmp r0,#1
+ 582 0002 09D0     	 beq .L51
+ 583 0004 0028     	 cmp r0,#0
+ 584 0006 02D0     	 beq .L52
+ 585 0008 0228     	 cmp r0,#2
+ 586 000a 0AD0     	 beq .L53
+ 587 000c 0DE0     	 b .L49
+ 588              	.L52:
+ 589              	.LBB14:
+ 590              	.LBB15:
+ 591              	 .file 2 "../GPIO.h"
+   1:../GPIO.h     **** #ifndef __GPIO_H__
+   2:../GPIO.h     **** #define __GPIO_H__
+   3:../GPIO.h     **** 
+   4:../GPIO.h     **** /* Generated for XMC1100_TSSOP38 */
+   5:../GPIO.h     **** 
+   6:../GPIO.h     **** #include <XMC1100.h>
+   7:../GPIO.h     **** 
+   8:../GPIO.h     **** #define INPUT           0x00U
+   9:../GPIO.h     **** #define INPUT_PD        0x08U
+  10:../GPIO.h     **** #define INPUT_PU        0x10U
+  11:../GPIO.h     **** #define INPUT_PPS       0x18U
+  12:../GPIO.h     **** #define INPUT_INV       0x20U
+  13:../GPIO.h     **** #define INPUT_INV_PD    0x28U
+  14:../GPIO.h     **** #define INPUT_INV_PU    0x30U
+  15:../GPIO.h     **** #define INPUT_INV_PPS   0x38U
+  16:../GPIO.h     **** #define OUTPUT_PP_GP    0x80U
+  17:../GPIO.h     **** #define OUTPUT_PP_AF1   0x88U
+  18:../GPIO.h     **** #define OUTPUT_PP_AF2   0x90U
+  19:../GPIO.h     **** #define OUTPUT_PP_AF3   0x98U
+  20:../GPIO.h     **** #define OUTPUT_PP_AF4   0xA0U
+  21:../GPIO.h     **** #define OUTPUT_PP_AF5   0xA8U
+  22:../GPIO.h     **** #define OUTPUT_PP_AF6   0xB0U
+  23:../GPIO.h     **** #define OUTPUT_PP_AF7   0xB8U
+  24:../GPIO.h     **** #define OUTPUT_OD_GP    0xC0U
+  25:../GPIO.h     **** #define OUTPUT_OD_AF1   0xC8U
+  26:../GPIO.h     **** #define OUTPUT_OD_AF2   0xD0U
+  27:../GPIO.h     **** #define OUTPUT_OD_AF3   0xD8U
+  28:../GPIO.h     **** #define OUTPUT_OD_AF4   0XE0U
+  29:../GPIO.h     **** #define OUTPUT_OD_AF5   0xE8U
+  30:../GPIO.h     **** #define OUTPUT_OD_AF6   0xF0U
+  31:../GPIO.h     **** #define OUTPUT_OD_AF7   0XF8U
+  32:../GPIO.h     **** 
+  33:../GPIO.h     **** #define SOFTWARE        0x0UL
+  34:../GPIO.h     **** #define HW0             0x1UL
+  35:../GPIO.h     **** #define HW1             0x2UL
+  36:../GPIO.h     **** 
+  37:../GPIO.h     **** __STATIC_INLINE void P0_0_set_mode(uint8_t mode){
+  38:../GPIO.h     ****     PORT0->IOCR0 &= ~0x000000f8UL;
+  39:../GPIO.h     ****     PORT0->IOCR0 |= mode << 0;
+  40:../GPIO.h     **** }
+  41:../GPIO.h     **** 
+  42:../GPIO.h     **** __STATIC_INLINE void P0_0_set_hwsel(uint32_t config){
+  43:../GPIO.h     ****     PORT0->HWSEL &= ~0x00000003UL;
+  44:../GPIO.h     ****     PORT0->HWSEL |= config << 0;
+  45:../GPIO.h     **** }
+  46:../GPIO.h     **** 
+  47:../GPIO.h     **** __STATIC_INLINE void P0_0_set_standard_hysteresis(){
+  48:../GPIO.h     ****     PORT0->PHCR0 &= ~0x00000004UL;
+  49:../GPIO.h     **** }
+  50:../GPIO.h     **** 
+  51:../GPIO.h     **** __STATIC_INLINE void P0_0_set_large_hysteresis(){
+  52:../GPIO.h     ****     PORT0->PHCR0 |= 0x00000004UL;
+  53:../GPIO.h     **** }
+  54:../GPIO.h     **** 
+  55:../GPIO.h     **** __STATIC_INLINE void P0_0_set(void){
+  56:../GPIO.h     ****     PORT0->OMR = 0x00000001UL;
+  57:../GPIO.h     **** }
+  58:../GPIO.h     **** 
+  59:../GPIO.h     **** __STATIC_INLINE void P0_0_reset(void){
+  60:../GPIO.h     ****     PORT0->OMR = 0x00010000UL;
+  61:../GPIO.h     **** }
+  62:../GPIO.h     **** 
+  63:../GPIO.h     **** __STATIC_INLINE void P0_0_toggle(void){
+  64:../GPIO.h     ****     PORT0->OMR = 0x00010001UL;
+  65:../GPIO.h     **** }
+  66:../GPIO.h     **** 
+  67:../GPIO.h     **** __STATIC_INLINE uint32_t P0_0_read(void){
+  68:../GPIO.h     ****     return(PORT0->IN & 0x00000001UL);
+  69:../GPIO.h     **** }
+  70:../GPIO.h     **** 
+  71:../GPIO.h     **** __STATIC_INLINE void P0_0_enable_pps(void){
+  72:../GPIO.h     ****     PORT0->PPS |= 0x00000001UL;
+  73:../GPIO.h     **** }
+  74:../GPIO.h     **** 
+  75:../GPIO.h     **** __STATIC_INLINE void P0_0_disable_pps(void){
+  76:../GPIO.h     ****     PORT0->PPS &= ~0x00000001UL;
+  77:../GPIO.h     **** }
+  78:../GPIO.h     **** 
+  79:../GPIO.h     **** __STATIC_INLINE void P0_1_set_mode(uint8_t mode){
+  80:../GPIO.h     ****     PORT0->IOCR0 &= ~0x0000f800UL;
+  81:../GPIO.h     ****     PORT0->IOCR0 |= mode << 8;
+  82:../GPIO.h     **** }
+  83:../GPIO.h     **** 
+  84:../GPIO.h     **** __STATIC_INLINE void P0_1_set_hwsel(uint32_t config){
+  85:../GPIO.h     ****     PORT0->HWSEL &= ~0x0000000cUL;
+  86:../GPIO.h     ****     PORT0->HWSEL |= config << 2;
+  87:../GPIO.h     **** }
+  88:../GPIO.h     **** 
+  89:../GPIO.h     **** __STATIC_INLINE void P0_1_set_standard_hysteresis(){
+  90:../GPIO.h     ****     PORT0->PHCR0 &= ~0x00000040UL;
+  91:../GPIO.h     **** }
+  92:../GPIO.h     **** 
+  93:../GPIO.h     **** __STATIC_INLINE void P0_1_set_large_hysteresis(){
+  94:../GPIO.h     ****     PORT0->PHCR0 |= 0x00000040UL;
+  95:../GPIO.h     **** }
+  96:../GPIO.h     **** 
+  97:../GPIO.h     **** __STATIC_INLINE void P0_1_set(void){
+  98:../GPIO.h     ****     PORT0->OMR = 0x00000002UL;
+  99:../GPIO.h     **** }
+ 100:../GPIO.h     **** 
+ 101:../GPIO.h     **** __STATIC_INLINE void P0_1_reset(void){
+ 102:../GPIO.h     ****     PORT0->OMR = 0x00020000UL;
+ 103:../GPIO.h     **** }
+ 104:../GPIO.h     **** 
+ 105:../GPIO.h     **** __STATIC_INLINE void P0_1_toggle(void){
+ 106:../GPIO.h     ****     PORT0->OMR = 0x00020002UL;
+ 107:../GPIO.h     **** }
+ 108:../GPIO.h     **** 
+ 109:../GPIO.h     **** __STATIC_INLINE uint32_t P0_1_read(void){
+ 110:../GPIO.h     ****     return(PORT0->IN & 0x00000002UL);
+ 111:../GPIO.h     **** }
+ 112:../GPIO.h     **** 
+ 113:../GPIO.h     **** __STATIC_INLINE void P0_1_enable_pps(void){
+ 114:../GPIO.h     ****     PORT0->PPS |= 0x00000002UL;
+ 115:../GPIO.h     **** }
+ 116:../GPIO.h     **** 
+ 117:../GPIO.h     **** __STATIC_INLINE void P0_1_disable_pps(void){
+ 118:../GPIO.h     ****     PORT0->PPS &= ~0x00000002UL;
+ 119:../GPIO.h     **** }
+ 120:../GPIO.h     **** 
+ 121:../GPIO.h     **** __STATIC_INLINE void P0_2_set_mode(uint8_t mode){
+ 122:../GPIO.h     ****     PORT0->IOCR0 &= ~0x00f80000UL;
+ 123:../GPIO.h     ****     PORT0->IOCR0 |= mode << 16;
+ 124:../GPIO.h     **** }
+ 125:../GPIO.h     **** 
+ 126:../GPIO.h     **** __STATIC_INLINE void P0_2_set_hwsel(uint32_t config){
+ 127:../GPIO.h     ****     PORT0->HWSEL &= ~0x00000030UL;
+ 128:../GPIO.h     ****     PORT0->HWSEL |= config << 4;
+ 129:../GPIO.h     **** }
+ 130:../GPIO.h     **** 
+ 131:../GPIO.h     **** __STATIC_INLINE void P0_2_set_standard_hysteresis(){
+ 132:../GPIO.h     ****     PORT0->PHCR0 &= ~0x00000400UL;
+ 133:../GPIO.h     **** }
+ 134:../GPIO.h     **** 
+ 135:../GPIO.h     **** __STATIC_INLINE void P0_2_set_large_hysteresis(){
+ 136:../GPIO.h     ****     PORT0->PHCR0 |= 0x00000400UL;
+ 137:../GPIO.h     **** }
+ 138:../GPIO.h     **** 
+ 139:../GPIO.h     **** __STATIC_INLINE void P0_2_set(void){
+ 140:../GPIO.h     ****     PORT0->OMR = 0x00000004UL;
+ 141:../GPIO.h     **** }
+ 142:../GPIO.h     **** 
+ 143:../GPIO.h     **** __STATIC_INLINE void P0_2_reset(void){
+ 144:../GPIO.h     ****     PORT0->OMR = 0x00040000UL;
+ 145:../GPIO.h     **** }
+ 146:../GPIO.h     **** 
+ 147:../GPIO.h     **** __STATIC_INLINE void P0_2_toggle(void){
+ 148:../GPIO.h     ****     PORT0->OMR = 0x00040004UL;
+ 149:../GPIO.h     **** }
+ 150:../GPIO.h     **** 
+ 151:../GPIO.h     **** __STATIC_INLINE uint32_t P0_2_read(void){
+ 152:../GPIO.h     ****     return(PORT0->IN & 0x00000004UL);
+ 153:../GPIO.h     **** }
+ 154:../GPIO.h     **** 
+ 155:../GPIO.h     **** __STATIC_INLINE void P0_2_enable_pps(void){
+ 156:../GPIO.h     ****     PORT0->PPS |= 0x00000004UL;
+ 157:../GPIO.h     **** }
+ 158:../GPIO.h     **** 
+ 159:../GPIO.h     **** __STATIC_INLINE void P0_2_disable_pps(void){
+ 160:../GPIO.h     ****     PORT0->PPS &= ~0x00000004UL;
+ 161:../GPIO.h     **** }
+ 162:../GPIO.h     **** 
+ 163:../GPIO.h     **** __STATIC_INLINE void P0_3_set_mode(uint8_t mode){
+ 164:../GPIO.h     ****     PORT0->IOCR0 &= ~0xf8000000UL;
+ 165:../GPIO.h     ****     PORT0->IOCR0 |= mode << 24;
+ 166:../GPIO.h     **** }
+ 167:../GPIO.h     **** 
+ 168:../GPIO.h     **** __STATIC_INLINE void P0_3_set_hwsel(uint32_t config){
+ 169:../GPIO.h     ****     PORT0->HWSEL &= ~0x000000c0UL;
+ 170:../GPIO.h     ****     PORT0->HWSEL |= config << 6;
+ 171:../GPIO.h     **** }
+ 172:../GPIO.h     **** 
+ 173:../GPIO.h     **** __STATIC_INLINE void P0_3_set_standard_hysteresis(){
+ 174:../GPIO.h     ****     PORT0->PHCR0 &= ~0x00004000UL;
+ 175:../GPIO.h     **** }
+ 176:../GPIO.h     **** 
+ 177:../GPIO.h     **** __STATIC_INLINE void P0_3_set_large_hysteresis(){
+ 178:../GPIO.h     ****     PORT0->PHCR0 |= 0x00004000UL;
+ 179:../GPIO.h     **** }
+ 180:../GPIO.h     **** 
+ 181:../GPIO.h     **** __STATIC_INLINE void P0_3_set(void){
+ 182:../GPIO.h     ****     PORT0->OMR = 0x00000008UL;
+ 183:../GPIO.h     **** }
+ 184:../GPIO.h     **** 
+ 185:../GPIO.h     **** __STATIC_INLINE void P0_3_reset(void){
+ 186:../GPIO.h     ****     PORT0->OMR = 0x00080000UL;
+ 187:../GPIO.h     **** }
+ 188:../GPIO.h     **** 
+ 189:../GPIO.h     **** __STATIC_INLINE void P0_3_toggle(void){
+ 190:../GPIO.h     ****     PORT0->OMR = 0x00080008UL;
+ 191:../GPIO.h     **** }
+ 192:../GPIO.h     **** 
+ 193:../GPIO.h     **** __STATIC_INLINE uint32_t P0_3_read(void){
+ 194:../GPIO.h     ****     return(PORT0->IN & 0x00000008UL);
+ 195:../GPIO.h     **** }
+ 196:../GPIO.h     **** 
+ 197:../GPIO.h     **** __STATIC_INLINE void P0_3_enable_pps(void){
+ 198:../GPIO.h     ****     PORT0->PPS |= 0x00000008UL;
+ 199:../GPIO.h     **** }
+ 200:../GPIO.h     **** 
+ 201:../GPIO.h     **** __STATIC_INLINE void P0_3_disable_pps(void){
+ 202:../GPIO.h     ****     PORT0->PPS &= ~0x00000008UL;
+ 203:../GPIO.h     **** }
+ 204:../GPIO.h     **** 
+ 205:../GPIO.h     **** __STATIC_INLINE void P0_4_set_mode(uint8_t mode){
+ 206:../GPIO.h     ****     PORT0->IOCR4 &= ~0x000000f8UL;
+ 207:../GPIO.h     ****     PORT0->IOCR4 |= mode << 0;
+ 208:../GPIO.h     **** }
+ 209:../GPIO.h     **** 
+ 210:../GPIO.h     **** __STATIC_INLINE void P0_4_set_hwsel(uint32_t config){
+ 211:../GPIO.h     ****     PORT0->HWSEL &= ~0x00000300UL;
+ 212:../GPIO.h     ****     PORT0->HWSEL |= config << 8;
+ 213:../GPIO.h     **** }
+ 214:../GPIO.h     **** 
+ 215:../GPIO.h     **** __STATIC_INLINE void P0_4_set_standard_hysteresis(){
+ 216:../GPIO.h     ****     PORT0->PHCR0 &= ~0x00040000UL;
+ 217:../GPIO.h     **** }
+ 218:../GPIO.h     **** 
+ 219:../GPIO.h     **** __STATIC_INLINE void P0_4_set_large_hysteresis(){
+ 220:../GPIO.h     ****     PORT0->PHCR0 |= 0x00040000UL;
+ 221:../GPIO.h     **** }
+ 222:../GPIO.h     **** 
+ 223:../GPIO.h     **** __STATIC_INLINE void P0_4_set(void){
+ 224:../GPIO.h     ****     PORT0->OMR = 0x00000010UL;
+ 225:../GPIO.h     **** }
+ 226:../GPIO.h     **** 
+ 227:../GPIO.h     **** __STATIC_INLINE void P0_4_reset(void){
+ 228:../GPIO.h     ****     PORT0->OMR = 0x00100000UL;
+ 229:../GPIO.h     **** }
+ 230:../GPIO.h     **** 
+ 231:../GPIO.h     **** __STATIC_INLINE void P0_4_toggle(void){
+ 232:../GPIO.h     ****     PORT0->OMR = 0x00100010UL;
+ 233:../GPIO.h     **** }
+ 234:../GPIO.h     **** 
+ 235:../GPIO.h     **** __STATIC_INLINE uint32_t P0_4_read(void){
+ 236:../GPIO.h     ****     return(PORT0->IN & 0x00000010UL);
+ 237:../GPIO.h     **** }
+ 238:../GPIO.h     **** 
+ 239:../GPIO.h     **** __STATIC_INLINE void P0_4_enable_pps(void){
+ 240:../GPIO.h     ****     PORT0->PPS |= 0x00000010UL;
+ 241:../GPIO.h     **** }
+ 242:../GPIO.h     **** 
+ 243:../GPIO.h     **** __STATIC_INLINE void P0_4_disable_pps(void){
+ 244:../GPIO.h     ****     PORT0->PPS &= ~0x00000010UL;
+ 245:../GPIO.h     **** }
+ 246:../GPIO.h     **** 
+ 247:../GPIO.h     **** __STATIC_INLINE void P0_5_set_mode(uint8_t mode){
+ 248:../GPIO.h     ****     PORT0->IOCR4 &= ~0x0000f800UL;
+ 249:../GPIO.h     ****     PORT0->IOCR4 |= mode << 8;
+ 250:../GPIO.h     **** }
+ 251:../GPIO.h     **** 
+ 252:../GPIO.h     **** __STATIC_INLINE void P0_5_set_hwsel(uint32_t config){
+ 253:../GPIO.h     ****     PORT0->HWSEL &= ~0x00000c00UL;
+ 254:../GPIO.h     ****     PORT0->HWSEL |= config << 10;
+ 255:../GPIO.h     **** }
+ 256:../GPIO.h     **** 
+ 257:../GPIO.h     **** __STATIC_INLINE void P0_5_set_standard_hysteresis(){
+ 258:../GPIO.h     ****     PORT0->PHCR0 &= ~0x00400000UL;
+ 259:../GPIO.h     **** }
+ 260:../GPIO.h     **** 
+ 261:../GPIO.h     **** __STATIC_INLINE void P0_5_set_large_hysteresis(){
+ 262:../GPIO.h     ****     PORT0->PHCR0 |= 0x00400000UL;
+ 263:../GPIO.h     **** }
+ 264:../GPIO.h     **** 
+ 265:../GPIO.h     **** __STATIC_INLINE void P0_5_set(void){
+ 266:../GPIO.h     ****     PORT0->OMR = 0x00000020UL;
+ 267:../GPIO.h     **** }
+ 268:../GPIO.h     **** 
+ 269:../GPIO.h     **** __STATIC_INLINE void P0_5_reset(void){
+ 270:../GPIO.h     ****     PORT0->OMR = 0x00200000UL;
+ 271:../GPIO.h     **** }
+ 272:../GPIO.h     **** 
+ 273:../GPIO.h     **** __STATIC_INLINE void P0_5_toggle(void){
+ 274:../GPIO.h     ****     PORT0->OMR = 0x00200020UL;
+ 275:../GPIO.h     **** }
+ 276:../GPIO.h     **** 
+ 277:../GPIO.h     **** __STATIC_INLINE uint32_t P0_5_read(void){
+ 278:../GPIO.h     ****     return(PORT0->IN & 0x00000020UL);
+ 279:../GPIO.h     **** }
+ 280:../GPIO.h     **** 
+ 281:../GPIO.h     **** __STATIC_INLINE void P0_5_enable_pps(void){
+ 282:../GPIO.h     ****     PORT0->PPS |= 0x00000020UL;
+ 283:../GPIO.h     **** }
+ 284:../GPIO.h     **** 
+ 285:../GPIO.h     **** __STATIC_INLINE void P0_5_disable_pps(void){
+ 286:../GPIO.h     ****     PORT0->PPS &= ~0x00000020UL;
+ 287:../GPIO.h     **** }
+ 288:../GPIO.h     **** 
+ 289:../GPIO.h     **** __STATIC_INLINE void P0_6_set_mode(uint8_t mode){
+ 290:../GPIO.h     ****     PORT0->IOCR4 &= ~0x00f80000UL;
+ 291:../GPIO.h     ****     PORT0->IOCR4 |= mode << 16;
+ 292:../GPIO.h     **** }
+ 293:../GPIO.h     **** 
+ 294:../GPIO.h     **** __STATIC_INLINE void P0_6_set_hwsel(uint32_t config){
+ 295:../GPIO.h     ****     PORT0->HWSEL &= ~0x00003000UL;
+ 296:../GPIO.h     ****     PORT0->HWSEL |= config << 12;
+ 297:../GPIO.h     **** }
+ 298:../GPIO.h     **** 
+ 299:../GPIO.h     **** __STATIC_INLINE void P0_6_set_standard_hysteresis(){
+ 300:../GPIO.h     ****     PORT0->PHCR0 &= ~0x04000000UL;
+ 301:../GPIO.h     **** }
+ 302:../GPIO.h     **** 
+ 303:../GPIO.h     **** __STATIC_INLINE void P0_6_set_large_hysteresis(){
+ 304:../GPIO.h     ****     PORT0->PHCR0 |= 0x04000000UL;
+ 305:../GPIO.h     **** }
+ 306:../GPIO.h     **** 
+ 307:../GPIO.h     **** __STATIC_INLINE void P0_6_set(void){
+ 308:../GPIO.h     ****     PORT0->OMR = 0x00000040UL;
+ 309:../GPIO.h     **** }
+ 310:../GPIO.h     **** 
+ 311:../GPIO.h     **** __STATIC_INLINE void P0_6_reset(void){
+ 312:../GPIO.h     ****     PORT0->OMR = 0x00400000UL;
+ 313:../GPIO.h     **** }
+ 314:../GPIO.h     **** 
+ 315:../GPIO.h     **** __STATIC_INLINE void P0_6_toggle(void){
+ 316:../GPIO.h     ****     PORT0->OMR = 0x00400040UL;
+ 317:../GPIO.h     **** }
+ 318:../GPIO.h     **** 
+ 319:../GPIO.h     **** __STATIC_INLINE uint32_t P0_6_read(void){
+ 320:../GPIO.h     ****     return(PORT0->IN & 0x00000040UL);
+ 321:../GPIO.h     **** }
+ 322:../GPIO.h     **** 
+ 323:../GPIO.h     **** __STATIC_INLINE void P0_6_enable_pps(void){
+ 324:../GPIO.h     ****     PORT0->PPS |= 0x00000040UL;
+ 325:../GPIO.h     **** }
+ 326:../GPIO.h     **** 
+ 327:../GPIO.h     **** __STATIC_INLINE void P0_6_disable_pps(void){
+ 328:../GPIO.h     ****     PORT0->PPS &= ~0x00000040UL;
+ 329:../GPIO.h     **** }
+ 330:../GPIO.h     **** 
+ 331:../GPIO.h     **** __STATIC_INLINE void P0_7_set_mode(uint8_t mode){
+ 332:../GPIO.h     ****     PORT0->IOCR4 &= ~0xf8000000UL;
+ 333:../GPIO.h     ****     PORT0->IOCR4 |= mode << 24;
+ 334:../GPIO.h     **** }
+ 335:../GPIO.h     **** 
+ 336:../GPIO.h     **** __STATIC_INLINE void P0_7_set_hwsel(uint32_t config){
+ 337:../GPIO.h     ****     PORT0->HWSEL &= ~0x0000c000UL;
+ 338:../GPIO.h     ****     PORT0->HWSEL |= config << 14;
+ 339:../GPIO.h     **** }
+ 340:../GPIO.h     **** 
+ 341:../GPIO.h     **** __STATIC_INLINE void P0_7_set_standard_hysteresis(){
+ 342:../GPIO.h     ****     PORT0->PHCR0 &= ~0x40000000UL;
+ 343:../GPIO.h     **** }
+ 344:../GPIO.h     **** 
+ 345:../GPIO.h     **** __STATIC_INLINE void P0_7_set_large_hysteresis(){
+ 346:../GPIO.h     ****     PORT0->PHCR0 |= 0x40000000UL;
+ 347:../GPIO.h     **** }
+ 348:../GPIO.h     **** 
+ 349:../GPIO.h     **** __STATIC_INLINE void P0_7_set(void){
+ 350:../GPIO.h     ****     PORT0->OMR = 0x00000080UL;
+ 351:../GPIO.h     **** }
+ 352:../GPIO.h     **** 
+ 353:../GPIO.h     **** __STATIC_INLINE void P0_7_reset(void){
+ 354:../GPIO.h     ****     PORT0->OMR = 0x00800000UL;
+ 355:../GPIO.h     **** }
+ 356:../GPIO.h     **** 
+ 357:../GPIO.h     **** __STATIC_INLINE void P0_7_toggle(void){
+ 358:../GPIO.h     ****     PORT0->OMR = 0x00800080UL;
+ 359:../GPIO.h     **** }
+ 360:../GPIO.h     **** 
+ 361:../GPIO.h     **** __STATIC_INLINE uint32_t P0_7_read(void){
+ 362:../GPIO.h     ****     return(PORT0->IN & 0x00000080UL);
+ 363:../GPIO.h     **** }
+ 364:../GPIO.h     **** 
+ 365:../GPIO.h     **** __STATIC_INLINE void P0_7_enable_pps(void){
+ 366:../GPIO.h     ****     PORT0->PPS |= 0x00000080UL;
+ 367:../GPIO.h     **** }
+ 368:../GPIO.h     **** 
+ 369:../GPIO.h     **** __STATIC_INLINE void P0_7_disable_pps(void){
+ 370:../GPIO.h     ****     PORT0->PPS &= ~0x00000080UL;
+ 371:../GPIO.h     **** }
+ 372:../GPIO.h     **** 
+ 373:../GPIO.h     **** __STATIC_INLINE void P0_8_set_mode(uint8_t mode){
+ 374:../GPIO.h     ****     PORT0->IOCR8 &= ~0x000000f8UL;
+ 375:../GPIO.h     ****     PORT0->IOCR8 |= mode << 0;
+ 376:../GPIO.h     **** }
+ 377:../GPIO.h     **** 
+ 378:../GPIO.h     **** __STATIC_INLINE void P0_8_set_hwsel(uint32_t config){
+ 379:../GPIO.h     ****     PORT0->HWSEL &= ~0x00030000UL;
+ 380:../GPIO.h     ****     PORT0->HWSEL |= config << 16;
+ 381:../GPIO.h     **** }
+ 382:../GPIO.h     **** 
+ 383:../GPIO.h     **** __STATIC_INLINE void P0_8_set_standard_hysteresis(){
+ 384:../GPIO.h     ****     PORT0->PHCR1 &= ~0x00000004UL;
+ 385:../GPIO.h     **** }
+ 386:../GPIO.h     **** 
+ 387:../GPIO.h     **** __STATIC_INLINE void P0_8_set_large_hysteresis(){
+ 388:../GPIO.h     ****     PORT0->PHCR1 |= 0x00000004UL;
+ 389:../GPIO.h     **** }
+ 390:../GPIO.h     **** 
+ 391:../GPIO.h     **** __STATIC_INLINE void P0_8_set(void){
+ 392:../GPIO.h     ****     PORT0->OMR = 0x00000100UL;
+ 393:../GPIO.h     **** }
+ 394:../GPIO.h     **** 
+ 395:../GPIO.h     **** __STATIC_INLINE void P0_8_reset(void){
+ 396:../GPIO.h     ****     PORT0->OMR = 0x01000000UL;
+ 397:../GPIO.h     **** }
+ 398:../GPIO.h     **** 
+ 399:../GPIO.h     **** __STATIC_INLINE void P0_8_toggle(void){
+ 400:../GPIO.h     ****     PORT0->OMR = 0x01000100UL;
+ 401:../GPIO.h     **** }
+ 402:../GPIO.h     **** 
+ 403:../GPIO.h     **** __STATIC_INLINE uint32_t P0_8_read(void){
+ 404:../GPIO.h     ****     return(PORT0->IN & 0x00000100UL);
+ 405:../GPIO.h     **** }
+ 406:../GPIO.h     **** 
+ 407:../GPIO.h     **** __STATIC_INLINE void P0_8_enable_pps(void){
+ 408:../GPIO.h     ****     PORT0->PPS |= 0x00000100UL;
+ 409:../GPIO.h     **** }
+ 410:../GPIO.h     **** 
+ 411:../GPIO.h     **** __STATIC_INLINE void P0_8_disable_pps(void){
+ 412:../GPIO.h     ****     PORT0->PPS &= ~0x00000100UL;
+ 413:../GPIO.h     **** }
+ 414:../GPIO.h     **** 
+ 415:../GPIO.h     **** __STATIC_INLINE void P0_9_set_mode(uint8_t mode){
+ 416:../GPIO.h     ****     PORT0->IOCR8 &= ~0x0000f800UL;
+ 417:../GPIO.h     ****     PORT0->IOCR8 |= mode << 8;
+ 418:../GPIO.h     **** }
+ 419:../GPIO.h     **** 
+ 420:../GPIO.h     **** __STATIC_INLINE void P0_9_set_hwsel(uint32_t config){
+ 421:../GPIO.h     ****     PORT0->HWSEL &= ~0x000c0000UL;
+ 422:../GPIO.h     ****     PORT0->HWSEL |= config << 18;
+ 423:../GPIO.h     **** }
+ 424:../GPIO.h     **** 
+ 425:../GPIO.h     **** __STATIC_INLINE void P0_9_set_standard_hysteresis(){
+ 426:../GPIO.h     ****     PORT0->PHCR1 &= ~0x00000040UL;
+ 427:../GPIO.h     **** }
+ 428:../GPIO.h     **** 
+ 429:../GPIO.h     **** __STATIC_INLINE void P0_9_set_large_hysteresis(){
+ 430:../GPIO.h     ****     PORT0->PHCR1 |= 0x00000040UL;
+ 431:../GPIO.h     **** }
+ 432:../GPIO.h     **** 
+ 433:../GPIO.h     **** __STATIC_INLINE void P0_9_set(void){
+ 434:../GPIO.h     ****     PORT0->OMR = 0x00000200UL;
+ 435:../GPIO.h     **** }
+ 436:../GPIO.h     **** 
+ 437:../GPIO.h     **** __STATIC_INLINE void P0_9_reset(void){
+ 438:../GPIO.h     ****     PORT0->OMR = 0x02000000UL;
+ 439:../GPIO.h     **** }
+ 440:../GPIO.h     **** 
+ 441:../GPIO.h     **** __STATIC_INLINE void P0_9_toggle(void){
+ 442:../GPIO.h     ****     PORT0->OMR = 0x02000200UL;
+ 443:../GPIO.h     **** }
+ 444:../GPIO.h     **** 
+ 445:../GPIO.h     **** __STATIC_INLINE uint32_t P0_9_read(void){
+ 446:../GPIO.h     ****     return(PORT0->IN & 0x00000200UL);
+ 447:../GPIO.h     **** }
+ 448:../GPIO.h     **** 
+ 449:../GPIO.h     **** __STATIC_INLINE void P0_9_enable_pps(void){
+ 450:../GPIO.h     ****     PORT0->PPS |= 0x00000200UL;
+ 451:../GPIO.h     **** }
+ 452:../GPIO.h     **** 
+ 453:../GPIO.h     **** __STATIC_INLINE void P0_9_disable_pps(void){
+ 454:../GPIO.h     ****     PORT0->PPS &= ~0x00000200UL;
+ 455:../GPIO.h     **** }
+ 456:../GPIO.h     **** 
+ 457:../GPIO.h     **** __STATIC_INLINE void P0_10_set_mode(uint8_t mode){
+ 458:../GPIO.h     ****     PORT0->IOCR8 &= ~0x00f80000UL;
+ 459:../GPIO.h     ****     PORT0->IOCR8 |= mode << 16;
+ 460:../GPIO.h     **** }
+ 461:../GPIO.h     **** 
+ 462:../GPIO.h     **** __STATIC_INLINE void P0_10_set_hwsel(uint32_t config){
+ 463:../GPIO.h     ****     PORT0->HWSEL &= ~0x00300000UL;
+ 464:../GPIO.h     ****     PORT0->HWSEL |= config << 20;
+ 465:../GPIO.h     **** }
+ 466:../GPIO.h     **** 
+ 467:../GPIO.h     **** __STATIC_INLINE void P0_10_set_standard_hysteresis(){
+ 468:../GPIO.h     ****     PORT0->PHCR1 &= ~0x00000400UL;
+ 469:../GPIO.h     **** }
+ 470:../GPIO.h     **** 
+ 471:../GPIO.h     **** __STATIC_INLINE void P0_10_set_large_hysteresis(){
+ 472:../GPIO.h     ****     PORT0->PHCR1 |= 0x00000400UL;
+ 473:../GPIO.h     **** }
+ 474:../GPIO.h     **** 
+ 475:../GPIO.h     **** __STATIC_INLINE void P0_10_set(void){
+ 476:../GPIO.h     ****     PORT0->OMR = 0x00000400UL;
+ 477:../GPIO.h     **** }
+ 478:../GPIO.h     **** 
+ 479:../GPIO.h     **** __STATIC_INLINE void P0_10_reset(void){
+ 480:../GPIO.h     ****     PORT0->OMR = 0x04000000UL;
+ 481:../GPIO.h     **** }
+ 482:../GPIO.h     **** 
+ 483:../GPIO.h     **** __STATIC_INLINE void P0_10_toggle(void){
+ 484:../GPIO.h     ****     PORT0->OMR = 0x04000400UL;
+ 485:../GPIO.h     **** }
+ 486:../GPIO.h     **** 
+ 487:../GPIO.h     **** __STATIC_INLINE uint32_t P0_10_read(void){
+ 488:../GPIO.h     ****     return(PORT0->IN & 0x00000400UL);
+ 489:../GPIO.h     **** }
+ 490:../GPIO.h     **** 
+ 491:../GPIO.h     **** __STATIC_INLINE void P0_10_enable_pps(void){
+ 492:../GPIO.h     ****     PORT0->PPS |= 0x00000400UL;
+ 493:../GPIO.h     **** }
+ 494:../GPIO.h     **** 
+ 495:../GPIO.h     **** __STATIC_INLINE void P0_10_disable_pps(void){
+ 496:../GPIO.h     ****     PORT0->PPS &= ~0x00000400UL;
+ 497:../GPIO.h     **** }
+ 498:../GPIO.h     **** 
+ 499:../GPIO.h     **** __STATIC_INLINE void P0_11_set_mode(uint8_t mode){
+ 500:../GPIO.h     ****     PORT0->IOCR8 &= ~0xf8000000UL;
+ 501:../GPIO.h     ****     PORT0->IOCR8 |= mode << 24;
+ 502:../GPIO.h     **** }
+ 503:../GPIO.h     **** 
+ 504:../GPIO.h     **** __STATIC_INLINE void P0_11_set_hwsel(uint32_t config){
+ 505:../GPIO.h     ****     PORT0->HWSEL &= ~0x00c00000UL;
+ 506:../GPIO.h     ****     PORT0->HWSEL |= config << 22;
+ 507:../GPIO.h     **** }
+ 508:../GPIO.h     **** 
+ 509:../GPIO.h     **** __STATIC_INLINE void P0_11_set_standard_hysteresis(){
+ 510:../GPIO.h     ****     PORT0->PHCR1 &= ~0x00004000UL;
+ 511:../GPIO.h     **** }
+ 512:../GPIO.h     **** 
+ 513:../GPIO.h     **** __STATIC_INLINE void P0_11_set_large_hysteresis(){
+ 514:../GPIO.h     ****     PORT0->PHCR1 |= 0x00004000UL;
+ 515:../GPIO.h     **** }
+ 516:../GPIO.h     **** 
+ 517:../GPIO.h     **** __STATIC_INLINE void P0_11_set(void){
+ 518:../GPIO.h     ****     PORT0->OMR = 0x00000800UL;
+ 519:../GPIO.h     **** }
+ 520:../GPIO.h     **** 
+ 521:../GPIO.h     **** __STATIC_INLINE void P0_11_reset(void){
+ 522:../GPIO.h     ****     PORT0->OMR = 0x08000000UL;
+ 523:../GPIO.h     **** }
+ 524:../GPIO.h     **** 
+ 525:../GPIO.h     **** __STATIC_INLINE void P0_11_toggle(void){
+ 526:../GPIO.h     ****     PORT0->OMR = 0x08000800UL;
+ 527:../GPIO.h     **** }
+ 528:../GPIO.h     **** 
+ 529:../GPIO.h     **** __STATIC_INLINE uint32_t P0_11_read(void){
+ 530:../GPIO.h     ****     return(PORT0->IN & 0x00000800UL);
+ 531:../GPIO.h     **** }
+ 532:../GPIO.h     **** 
+ 533:../GPIO.h     **** __STATIC_INLINE void P0_11_enable_pps(void){
+ 534:../GPIO.h     ****     PORT0->PPS |= 0x00000800UL;
+ 535:../GPIO.h     **** }
+ 536:../GPIO.h     **** 
+ 537:../GPIO.h     **** __STATIC_INLINE void P0_11_disable_pps(void){
+ 538:../GPIO.h     ****     PORT0->PPS &= ~0x00000800UL;
+ 539:../GPIO.h     **** }
+ 540:../GPIO.h     **** 
+ 541:../GPIO.h     **** __STATIC_INLINE void P0_12_set_mode(uint8_t mode){
+ 542:../GPIO.h     ****     PORT0->IOCR12 &= ~0x000000f8UL;
+ 543:../GPIO.h     ****     PORT0->IOCR12 |= mode << 0;
+ 544:../GPIO.h     **** }
+ 545:../GPIO.h     **** 
+ 546:../GPIO.h     **** __STATIC_INLINE void P0_12_set_hwsel(uint32_t config){
+ 547:../GPIO.h     ****     PORT0->HWSEL &= ~0x03000000UL;
+ 548:../GPIO.h     ****     PORT0->HWSEL |= config << 24;
+ 549:../GPIO.h     **** }
+ 550:../GPIO.h     **** 
+ 551:../GPIO.h     **** __STATIC_INLINE void P0_12_set_standard_hysteresis(){
+ 552:../GPIO.h     ****     PORT0->PHCR1 &= ~0x00040000UL;
+ 553:../GPIO.h     **** }
+ 554:../GPIO.h     **** 
+ 555:../GPIO.h     **** __STATIC_INLINE void P0_12_set_large_hysteresis(){
+ 556:../GPIO.h     ****     PORT0->PHCR1 |= 0x00040000UL;
+ 557:../GPIO.h     **** }
+ 558:../GPIO.h     **** 
+ 559:../GPIO.h     **** __STATIC_INLINE void P0_12_set(void){
+ 560:../GPIO.h     ****     PORT0->OMR = 0x00001000UL;
+ 561:../GPIO.h     **** }
+ 562:../GPIO.h     **** 
+ 563:../GPIO.h     **** __STATIC_INLINE void P0_12_reset(void){
+ 564:../GPIO.h     ****     PORT0->OMR = 0x10000000UL;
+ 565:../GPIO.h     **** }
+ 566:../GPIO.h     **** 
+ 567:../GPIO.h     **** __STATIC_INLINE void P0_12_toggle(void){
+ 568:../GPIO.h     ****     PORT0->OMR = 0x10001000UL;
+ 569:../GPIO.h     **** }
+ 570:../GPIO.h     **** 
+ 571:../GPIO.h     **** __STATIC_INLINE uint32_t P0_12_read(void){
+ 572:../GPIO.h     ****     return(PORT0->IN & 0x00001000UL);
+ 573:../GPIO.h     **** }
+ 574:../GPIO.h     **** 
+ 575:../GPIO.h     **** __STATIC_INLINE void P0_12_enable_pps(void){
+ 576:../GPIO.h     ****     PORT0->PPS |= 0x00001000UL;
+ 577:../GPIO.h     **** }
+ 578:../GPIO.h     **** 
+ 579:../GPIO.h     **** __STATIC_INLINE void P0_12_disable_pps(void){
+ 580:../GPIO.h     ****     PORT0->PPS &= ~0x00001000UL;
+ 581:../GPIO.h     **** }
+ 582:../GPIO.h     **** 
+ 583:../GPIO.h     **** __STATIC_INLINE void P0_13_set_mode(uint8_t mode){
+ 584:../GPIO.h     ****     PORT0->IOCR12 &= ~0x0000f800UL;
+ 585:../GPIO.h     ****     PORT0->IOCR12 |= mode << 8;
+ 586:../GPIO.h     **** }
+ 587:../GPIO.h     **** 
+ 588:../GPIO.h     **** __STATIC_INLINE void P0_13_set_hwsel(uint32_t config){
+ 589:../GPIO.h     ****     PORT0->HWSEL &= ~0x0c000000UL;
+ 590:../GPIO.h     ****     PORT0->HWSEL |= config << 26;
+ 591:../GPIO.h     **** }
+ 592:../GPIO.h     **** 
+ 593:../GPIO.h     **** __STATIC_INLINE void P0_13_set_standard_hysteresis(){
+ 594:../GPIO.h     ****     PORT0->PHCR1 &= ~0x00400000UL;
+ 595:../GPIO.h     **** }
+ 596:../GPIO.h     **** 
+ 597:../GPIO.h     **** __STATIC_INLINE void P0_13_set_large_hysteresis(){
+ 598:../GPIO.h     ****     PORT0->PHCR1 |= 0x00400000UL;
+ 599:../GPIO.h     **** }
+ 600:../GPIO.h     **** 
+ 601:../GPIO.h     **** __STATIC_INLINE void P0_13_set(void){
+ 602:../GPIO.h     ****     PORT0->OMR = 0x00002000UL;
+ 603:../GPIO.h     **** }
+ 604:../GPIO.h     **** 
+ 605:../GPIO.h     **** __STATIC_INLINE void P0_13_reset(void){
+ 606:../GPIO.h     ****     PORT0->OMR = 0x20000000UL;
+ 592              	 .loc 2 606 0
+ 593 000e 8022     	 mov r2,#128
+ 594 0010 9205     	 lsl r2,r2,#22
+ 595 0012 064B     	 ldr r3,.L54
+ 596 0014 5A60     	 str r2,[r3,#4]
+ 597 0016 08E0     	 b .L49
+ 598              	.L51:
+ 599              	.LBE15:
+ 600              	.LBE14:
+ 601              	.LBB16:
+ 602              	.LBB17:
+ 102:../GPIO.h     **** }
+ 603              	 .loc 2 102 0
+ 604 0018 8022     	 mov r2,#128
+ 605 001a 9202     	 lsl r2,r2,#10
+ 606 001c 034B     	 ldr r3,.L54
+ 607 001e 5A60     	 str r2,[r3,#4]
+ 608 0020 03E0     	 b .L49
+ 609              	.L53:
+ 610              	.LBE17:
+ 611              	.LBE16:
+ 612              	.LBB18:
+ 613              	.LBB19:
+ 144:../GPIO.h     **** }
+ 614              	 .loc 2 144 0
+ 615 0022 8022     	 mov r2,#128
+ 616 0024 D202     	 lsl r2,r2,#11
+ 617 0026 014B     	 ldr r3,.L54
+ 618 0028 5A60     	 str r2,[r3,#4]
+ 619              	.L49:
+ 620              	.LBE19:
+ 621              	.LBE18:
+ 504:../modbus_if.c **** 	case FF_PIN_ADC:{
+ 505:../modbus_if.c **** 		P0_13_reset(); /* !AD    */
+ 506:../modbus_if.c **** 	} break;
+ 507:../modbus_if.c **** 
+ 508:../modbus_if.c **** 	case FF_PIN_LINE:{
+ 509:../modbus_if.c **** 		P0_1_reset(); /* !COL   */
+ 510:../modbus_if.c **** 	}break;
+ 511:../modbus_if.c **** 
+ 512:../modbus_if.c **** 	case FF_PIN_START:{
+ 513:../modbus_if.c **** 		P0_2_reset(); /* !Start */
+ 514:../modbus_if.c **** 	} break;
+ 515:../modbus_if.c **** 
+ 516:../modbus_if.c **** 	default:{
+ 517:../modbus_if.c **** 		/* Unsuppoted pin */
+ 518:../modbus_if.c **** 	} break;
+ 519:../modbus_if.c ****   }
+ 520:../modbus_if.c **** 
+ 521:../modbus_if.c **** }
+ 622              	 .loc 1 521 0
+ 623              	 
+ 624 002a 7047     	 bx lr
+ 625              	.L55:
+ 626              	 .align 2
+ 627              	.L54:
+ 628 002c 00000440 	 .word 1074003968
+ 629              	 .cfi_endproc
+ 630              	.LFE473:
+ 632              	 .section .text.set_pin,"ax",%progbits
+ 633              	 .align 2
+ 634              	 .global set_pin
+ 635              	 .code 16
+ 636              	 .thumb_func
+ 638              	set_pin:
+ 639              	.LFB474:
+ 522:../modbus_if.c **** 
+ 523:../modbus_if.c **** void set_pin(FF_CNTRL_PIN_t pin)
+ 524:../modbus_if.c **** {
+ 640              	 .loc 1 524 0
+ 641              	 .cfi_startproc
+ 642              	.LVL90:
+ 525:../modbus_if.c **** 	switch(pin){
+ 643              	 .loc 1 525 0
+ 644 0000 0128     	 cmp r0,#1
+ 645 0002 09D0     	 beq .L58
+ 646 0004 0028     	 cmp r0,#0
+ 647 0006 02D0     	 beq .L59
+ 648 0008 0228     	 cmp r0,#2
+ 649 000a 09D0     	 beq .L60
+ 650 000c 0BE0     	 b .L56
+ 651              	.L59:
+ 652              	.LBB20:
+ 653              	.LBB21:
+ 602:../GPIO.h     **** }
+ 654              	 .loc 2 602 0
+ 655 000e 8022     	 mov r2,#128
+ 656 0010 9201     	 lsl r2,r2,#6
+ 657 0012 054B     	 ldr r3,.L61
+ 658 0014 5A60     	 str r2,[r3,#4]
+ 659 0016 06E0     	 b .L56
+ 660              	.L58:
+ 661              	.LBE21:
+ 662              	.LBE20:
+ 663              	.LBB22:
+ 664              	.LBB23:
+  98:../GPIO.h     **** }
+ 665              	 .loc 2 98 0
+ 666 0018 0222     	 mov r2,#2
+ 667 001a 034B     	 ldr r3,.L61
+ 668 001c 5A60     	 str r2,[r3,#4]
+ 669 001e 02E0     	 b .L56
+ 670              	.L60:
+ 671              	.LBE23:
+ 672              	.LBE22:
+ 673              	.LBB24:
+ 674              	.LBB25:
+ 140:../GPIO.h     **** }
+ 675              	 .loc 2 140 0
+ 676 0020 0422     	 mov r2,#4
+ 677 0022 014B     	 ldr r3,.L61
+ 678 0024 5A60     	 str r2,[r3,#4]
+ 679              	.L56:
+ 680              	.LBE25:
+ 681              	.LBE24:
+ 526:../modbus_if.c **** 		case FF_PIN_ADC:{
+ 527:../modbus_if.c **** 			P0_13_set(); /* !AD    */
+ 528:../modbus_if.c **** 		} break;
+ 529:../modbus_if.c **** 
+ 530:../modbus_if.c **** 		case FF_PIN_LINE:{
+ 531:../modbus_if.c **** 			P0_1_set(); /* !COL   */
+ 532:../modbus_if.c **** 		}break;
+ 533:../modbus_if.c **** 
+ 534:../modbus_if.c **** 		case FF_PIN_START:{
+ 535:../modbus_if.c **** 			P0_2_set(); /* !Start */
+ 536:../modbus_if.c **** 		} break;
+ 537:../modbus_if.c **** 
+ 538:../modbus_if.c **** 		default:{
+ 539:../modbus_if.c **** 			/* Unsuppoted pin */
+ 540:../modbus_if.c **** 		} break;
+ 541:../modbus_if.c **** 	}
+ 542:../modbus_if.c **** }
+ 682              	 .loc 1 542 0
+ 683              	 
+ 684 0026 7047     	 bx lr
+ 685              	.L62:
+ 686              	 .align 2
+ 687              	.L61:
+ 688 0028 00000440 	 .word 1074003968
+ 689              	 .cfi_endproc
+ 690              	.LFE474:
+ 692              	 .section .text.ff_setup,"ax",%progbits
+ 693              	 .align 2
+ 694              	 .global ff_setup
+ 695              	 .code 16
+ 696              	 .thumb_func
+ 698              	ff_setup:
+ 699              	.LFB471:
+ 384:../modbus_if.c **** 
+ 700              	 .loc 1 384 0
+ 701              	 .cfi_startproc
+ 702 0000 08B5     	 push {r3,lr}
+ 703              	.LCFI6:
+ 704              	 .cfi_def_cfa_offset 8
+ 705              	 .cfi_offset 3,-8
+ 706              	 .cfi_offset 14,-4
+ 387:../modbus_if.c ****   set_pin(FF_PIN_LINE);
+ 707              	 .loc 1 387 0
+ 708 0002 0220     	 mov r0,#2
+ 709 0004 FFF7FEFF 	 bl set_pin
+ 710              	.LVL91:
+ 388:../modbus_if.c ****   set_pin(FF_PIN_ADC);
+ 711              	 .loc 1 388 0
+ 712 0008 0120     	 mov r0,#1
+ 713 000a FFF7FEFF 	 bl set_pin
+ 714              	.LVL92:
+ 389:../modbus_if.c **** 
+ 715              	 .loc 1 389 0
+ 716 000e 0020     	 mov r0,#0
+ 717 0010 FFF7FEFF 	 bl set_pin
+ 718              	.LVL93:
+ 391:../modbus_if.c **** 
+ 719              	 .loc 1 391 0
+ 720              	 
+ 721 0014 08BD     	 pop {r3,pc}
+ 722              	 .cfi_endproc
+ 723              	.LFE471:
+ 725 0016 C046     	 .section .text.ff_check_position,"ax",%progbits
+ 726              	 .align 2
+ 727              	 .global ff_check_position
+ 728              	 .code 16
+ 729              	 .thumb_func
+ 731              	ff_check_position:
+ 732              	.LFB472:
+ 393:../modbus_if.c **** 
+ 733              	 .loc 1 393 0
+ 734              	 .cfi_startproc
+ 735 0000 08B5     	 push {r3,lr}
+ 736              	.LCFI7:
+ 737              	 .cfi_def_cfa_offset 8
+ 738              	 .cfi_offset 3,-8
+ 739              	 .cfi_offset 14,-4
+ 740              	.LVL94:
+ 402:../modbus_if.c **** 
+ 741              	 .loc 1 402 0
+ 742 0002 4C4B     	 ldr r3,.L83
+ 743 0004 1A78     	 ldrb r2,[r3]
+ 744 0006 062A     	 cmp r2,#6
+ 745 0008 00D9     	 bls .LCB801
+ 746 000a 8FE0     	 b .L65
+ 747              	.LCB801:
+ 748 000c 9300     	 lsl r3,r2,#2
+ 749 000e 4A4A     	 ldr r2,.L83+4
+ 750 0010 D358     	 ldr r3,[r2,r3]
+ 751 0012 9F46     	 mov pc,r3
+ 752              	 .section .rodata.ff_check_position,"a",%progbits
+ 753              	 .align 2
+ 754              	.L67:
+ 755 0000 14000000 	 .word .L66
+ 756 0004 22000000 	 .word .L68
+ 757 0008 46000000 	 .word .L69
+ 758 000c 80000000 	 .word .L70
+ 759 0010 A0000000 	 .word .L71
+ 760 0014 D0000000 	 .word .L72
+ 761 0018 FA000000 	 .word .L73
+ 762              	 .section .text.ff_check_position
+ 763              	.L66:
+ 405:../modbus_if.c **** 	  u32Delay=0;
+ 764              	 .loc 1 405 0
+ 765 0014 0122     	 mov r2,#1
+ 766 0016 474B     	 ldr r3,.L83
+ 767 0018 1A70     	 strb r2,[r3]
+ 406:../modbus_if.c ****   }break;
+ 768              	 .loc 1 406 0
+ 769 001a 0022     	 mov r2,#0
+ 770 001c 474B     	 ldr r3,.L83+8
+ 771 001e 1A60     	 str r2,[r3]
+ 407:../modbus_if.c **** 
+ 772              	 .loc 1 407 0
+ 773 0020 87E0     	 b .L64
+ 774              	.L68:
+ 410:../modbus_if.c ****    clr_pin(FF_PIN_LINE);
+ 775              	 .loc 1 410 0
+ 776 0022 0020     	 mov r0,#0
+ 777 0024 FFF7FEFF 	 bl clr_pin
+ 778              	.LVL95:
+ 411:../modbus_if.c ****    if(u32Delay>0){
+ 779              	 .loc 1 411 0
+ 780 0028 0120     	 mov r0,#1
+ 781 002a FFF7FEFF 	 bl clr_pin
+ 782              	.LVL96:
+ 412:../modbus_if.c **** 	   u32Delay--;
+ 783              	 .loc 1 412 0
+ 784 002e 434B     	 ldr r3,.L83+8
+ 785 0030 1B68     	 ldr r3,[r3]
+ 786 0032 002B     	 cmp r3,#0
+ 787 0034 03D0     	 beq .L75
+ 413:../modbus_if.c ****    } else {
+ 788              	 .loc 1 413 0
+ 789 0036 013B     	 sub r3,r3,#1
+ 790 0038 404A     	 ldr r2,.L83+8
+ 791 003a 1360     	 str r3,[r2]
+ 792 003c 79E0     	 b .L64
+ 793              	.L75:
+ 415:../modbus_if.c ****    }
+ 794              	 .loc 1 415 0
+ 795 003e 0222     	 mov r2,#2
+ 796 0040 3C4B     	 ldr r3,.L83
+ 797 0042 1A70     	 strb r2,[r3]
+ 798 0044 75E0     	 b .L64
+ 799              	.L69:
+ 421:../modbus_if.c ****    position =reg_holding_buffer[3]- 1;
+ 800              	 .loc 1 421 0
+ 801 0046 3E4B     	 ldr r3,.L83+12
+ 802 0048 5A6A     	 ldr r2,[r3,#36]
+ 803 004a 3F21     	 mov r1,#63
+ 804 004c 0A40     	 and r2,r1
+ 805 004e 3D4B     	 ldr r3,.L83+16
+ 806 0050 DA80     	 strh r2,[r3,#6]
+ 422:../modbus_if.c ****    reg_holding_buffer[1]=position & 0x0000003F;
+ 807              	 .loc 1 422 0
+ 808 0052 DA88     	 ldrh r2,[r3,#6]
+ 809 0054 013A     	 sub r2,r2,#1
+ 810              	.LVL97:
+ 423:../modbus_if.c ****   	   if((reg_holding_buffer[1] & 0x003F) != (reg_holding_buffer[0]&0x0003F) ){
+ 811              	 .loc 1 423 0
+ 812 0056 0A40     	 and r2,r1
+ 813              	.LVL98:
+ 814 0058 5A80     	 strh r2,[r3,#2]
+ 424:../modbus_if.c **** 		   /* We need to move on step and check again */
+ 815              	 .loc 1 424 0
+ 816 005a 5A88     	 ldrh r2,[r3,#2]
+ 817 005c 1B88     	 ldrh r3,[r3]
+ 818 005e 5340     	 eor r3,r2
+ 819 0060 1942     	 tst r1,r3
+ 820 0062 03D0     	 beq .L76
+ 426:../modbus_if.c **** 	   } else {
+ 821              	 .loc 1 426 0
+ 822 0064 0322     	 mov r2,#3
+ 823 0066 334B     	 ldr r3,.L83
+ 824 0068 1A70     	 strb r2,[r3]
+ 825 006a 02E0     	 b .L77
+ 826              	.L76:
+ 428:../modbus_if.c **** 	   }
+ 827              	 .loc 1 428 0
+ 828 006c 0022     	 mov r2,#0
+ 829 006e 314B     	 ldr r3,.L83
+ 830 0070 1A70     	 strb r2,[r3]
+ 831              	.L77:
+ 430:../modbus_if.c ****     set_pin(FF_PIN_LINE);
+ 832              	 .loc 1 430 0
+ 833 0072 0020     	 mov r0,#0
+ 834 0074 FFF7FEFF 	 bl set_pin
+ 835              	.LVL99:
+ 431:../modbus_if.c ****   }break;
+ 836              	 .loc 1 431 0
+ 837 0078 0120     	 mov r0,#1
+ 838 007a FFF7FEFF 	 bl set_pin
+ 839              	.LVL100:
+ 432:../modbus_if.c **** 
+ 840              	 .loc 1 432 0
+ 841 007e 58E0     	 b .L64
+ 842              	.LVL101:
+ 843              	.L70:
+ 437:../modbus_if.c **** 	  clr_pin(FF_PIN_LINE);
+ 844              	 .loc 1 437 0
+ 845 0080 0220     	 mov r0,#2
+ 846 0082 FFF7FEFF 	 bl clr_pin
+ 847              	.LVL102:
+ 438:../modbus_if.c **** 	  clr_pin(FF_PIN_ADC);
+ 848              	 .loc 1 438 0
+ 849 0086 0120     	 mov r0,#1
+ 850 0088 FFF7FEFF 	 bl clr_pin
+ 851              	.LVL103:
+ 439:../modbus_if.c **** 	  u32Delay=100;
+ 852              	 .loc 1 439 0
+ 853 008c 0020     	 mov r0,#0
+ 854 008e FFF7FEFF 	 bl clr_pin
+ 855              	.LVL104:
+ 440:../modbus_if.c **** 	  FSM_STATE = FF_FSM_START_MOVE_WAIT_START;
+ 856              	 .loc 1 440 0
+ 857 0092 6422     	 mov r2,#100
+ 858 0094 294B     	 ldr r3,.L83+8
+ 859 0096 1A60     	 str r2,[r3]
+ 441:../modbus_if.c ****   } break;
+ 860              	 .loc 1 441 0
+ 861 0098 603A     	 sub r2,r2,#96
+ 862 009a 264B     	 ldr r3,.L83
+ 863 009c 1A70     	 strb r2,[r3]
+ 442:../modbus_if.c **** 
+ 864              	 .loc 1 442 0
+ 865 009e 48E0     	 b .L64
+ 866              	.L71:
+ 445:../modbus_if.c **** 		  set_pin(FF_PIN_LINE);
+ 867              	 .loc 1 445 0
+ 868 00a0 264B     	 ldr r3,.L83+8
+ 869 00a2 1B68     	 ldr r3,[r3]
+ 870 00a4 002B     	 cmp r3,#0
+ 871 00a6 0CD1     	 bne .L78
+ 446:../modbus_if.c **** 		  set_pin(FF_PIN_ADC);
+ 872              	 .loc 1 446 0
+ 873 00a8 0120     	 mov r0,#1
+ 874 00aa FFF7FEFF 	 bl set_pin
+ 875              	.LVL105:
+ 447:../modbus_if.c **** 		  u32Delay=30;
+ 876              	 .loc 1 447 0
+ 877 00ae 0020     	 mov r0,#0
+ 878 00b0 FFF7FEFF 	 bl set_pin
+ 879              	.LVL106:
+ 448:../modbus_if.c **** 		  /* Next State */
+ 880              	 .loc 1 448 0
+ 881 00b4 1E22     	 mov r2,#30
+ 882 00b6 214B     	 ldr r3,.L83+8
+ 883 00b8 1A60     	 str r2,[r3]
+ 450:../modbus_if.c **** 	  } else {
+ 884              	 .loc 1 450 0
+ 885 00ba 193A     	 sub r2,r2,#25
+ 886 00bc 1D4B     	 ldr r3,.L83
+ 887 00be 1A70     	 strb r2,[r3]
+ 888 00c0 37E0     	 b .L64
+ 889              	.L78:
+ 452:../modbus_if.c **** 		  FSM_STATE = FF_FSM_START_MOVE_WAIT_START;
+ 890              	 .loc 1 452 0
+ 891 00c2 013B     	 sub r3,r3,#1
+ 892 00c4 1D4A     	 ldr r2,.L83+8
+ 893 00c6 1360     	 str r3,[r2]
+ 453:../modbus_if.c **** 	  }
+ 894              	 .loc 1 453 0
+ 895 00c8 0422     	 mov r2,#4
+ 896 00ca 1A4B     	 ldr r3,.L83
+ 897 00cc 1A70     	 strb r2,[r3]
+ 898 00ce 30E0     	 b .L64
+ 899              	.L72:
+ 459:../modbus_if.c **** 		  set_pin(FF_PIN_START);
+ 900              	 .loc 1 459 0
+ 901 00d0 1A4B     	 ldr r3,.L83+8
+ 902 00d2 1B68     	 ldr r3,[r3]
+ 903 00d4 002B     	 cmp r3,#0
+ 904 00d6 09D1     	 bne .L79
+ 460:../modbus_if.c **** 		  u32Delay=125;
+ 905              	 .loc 1 460 0
+ 906 00d8 0220     	 mov r0,#2
+ 907 00da FFF7FEFF 	 bl set_pin
+ 908              	.LVL107:
+ 461:../modbus_if.c **** 		  /* Next State */
+ 909              	 .loc 1 461 0
+ 910 00de 7D22     	 mov r2,#125
+ 911 00e0 164B     	 ldr r3,.L83+8
+ 912 00e2 1A60     	 str r2,[r3]
+ 463:../modbus_if.c **** 	  } else {
+ 913              	 .loc 1 463 0
+ 914 00e4 773A     	 sub r2,r2,#119
+ 915 00e6 134B     	 ldr r3,.L83
+ 916 00e8 1A70     	 strb r2,[r3]
+ 917 00ea 22E0     	 b .L64
+ 918              	.L79:
+ 465:../modbus_if.c **** 		  FSM_STATE = FF_FSM_START_STOP;
+ 919              	 .loc 1 465 0
+ 920 00ec 013B     	 sub r3,r3,#1
+ 921 00ee 134A     	 ldr r2,.L83+8
+ 922 00f0 1360     	 str r3,[r2]
+ 466:../modbus_if.c **** 
+ 923              	 .loc 1 466 0
+ 924 00f2 0522     	 mov r2,#5
+ 925 00f4 0F4B     	 ldr r3,.L83
+ 926 00f6 1A70     	 strb r2,[r3]
+ 927 00f8 1BE0     	 b .L64
+ 928              	.L73:
+ 475:../modbus_if.c **** 		  if(u32Delay%2==0){
+ 929              	 .loc 1 475 0
+ 930 00fa 104B     	 ldr r3,.L83+8
+ 931 00fc 1B68     	 ldr r3,[r3]
+ 932 00fe 002B     	 cmp r3,#0
+ 933 0100 10D0     	 beq .L80
+ 476:../modbus_if.c **** 			  clr_pin(FF_PIN_ADC);
+ 934              	 .loc 1 476 0
+ 935 0102 DB07     	 lsl r3,r3,#31
+ 936 0104 03D4     	 bmi .L81
+ 477:../modbus_if.c **** 		  } else {
+ 937              	 .loc 1 477 0
+ 938 0106 0020     	 mov r0,#0
+ 939 0108 FFF7FEFF 	 bl clr_pin
+ 940              	.LVL108:
+ 941 010c 02E0     	 b .L82
+ 942              	.L81:
+ 479:../modbus_if.c **** 		  }
+ 943              	 .loc 1 479 0
+ 944 010e 0020     	 mov r0,#0
+ 945 0110 FFF7FEFF 	 bl set_pin
+ 946              	.LVL109:
+ 947              	.L82:
+ 481:../modbus_if.c **** 		  FSM_STATE = FF_FSM_TOGGLE_START;
+ 948              	 .loc 1 481 0
+ 949 0114 094A     	 ldr r2,.L83+8
+ 950 0116 1368     	 ldr r3,[r2]
+ 951 0118 013B     	 sub r3,r3,#1
+ 952 011a 1360     	 str r3,[r2]
+ 482:../modbus_if.c **** 	  }else{
+ 953              	 .loc 1 482 0
+ 954 011c 0622     	 mov r2,#6
+ 955 011e 054B     	 ldr r3,.L83
+ 956 0120 1A70     	 strb r2,[r3]
+ 957 0122 06E0     	 b .L64
+ 958              	.L80:
+ 485:../modbus_if.c **** 	  /* Move to idle */
+ 959              	 .loc 1 485 0
+ 960 0124 0022     	 mov r2,#0
+ 961 0126 034B     	 ldr r3,.L83
+ 962 0128 1A70     	 strb r2,[r3]
+ 963 012a 02E0     	 b .L64
+ 964              	.L65:
+ 492:../modbus_if.c ****   }
+ 965              	 .loc 1 492 0
+ 966 012c 0022     	 mov r2,#0
+ 967 012e 014B     	 ldr r3,.L83
+ 968 0130 1A70     	 strb r2,[r3]
+ 969              	.LVL110:
+ 970              	.L64:
+ 496:../modbus_if.c **** 
+ 971              	 .loc 1 496 0
+ 972              	 
+ 973 0132 08BD     	 pop {r3,pc}
+ 974              	.L84:
+ 975              	 .align 2
+ 976              	.L83:
+ 977 0134 00000000 	 .word .LANCHOR3
+ 978 0138 00000000 	 .word .L67
+ 979 013c 00000000 	 .word .LANCHOR4
+ 980 0140 00010440 	 .word 1074004224
+ 981 0144 00000000 	 .word .LANCHOR0
+ 982              	 .cfi_endproc
+ 983              	.LFE472:
+ 985              	 .section .text.voManualSetPosition,"ax",%progbits
+ 986              	 .align 2
+ 987              	 .global voManualSetPosition
+ 988              	 .code 16
+ 989              	 .thumb_func
+ 991              	voManualSetPosition:
+ 992              	.LFB475:
+ 543:../modbus_if.c **** 
+ 544:../modbus_if.c **** void voManualSetPosition(uint8_t Position){
+ 993              	 .loc 1 544 0
+ 994              	 .cfi_startproc
+ 995              	.LVL111:
+ 545:../modbus_if.c **** 	reg_holding_buffer[0] = Position & 0x003F;
+ 996              	 .loc 1 545 0
+ 997 0000 3F23     	 mov r3,#63
+ 998 0002 1840     	 and r0,r3
+ 999              	.LVL112:
+ 1000 0004 014B     	 ldr r3,.L86
+ 1001 0006 1880     	 strh r0,[r3]
+ 546:../modbus_if.c **** }
+ 1002              	 .loc 1 546 0
+ 1003              	 
+ 1004 0008 7047     	 bx lr
+ 1005              	.L87:
+ 1006 000a C046     	 .align 2
+ 1007              	.L86:
+ 1008 000c 00000000 	 .word .LANCHOR0
+ 1009              	 .cfi_endproc
+ 1010              	.LFE475:
+ 1012              	 .section .text.voService,"ax",%progbits
+ 1013              	 .align 2
+ 1014              	 .global voService
+ 1015              	 .code 16
+ 1016              	 .thumb_func
+ 1018              	voService:
+ 1019              	.LFB476:
+ 547:../modbus_if.c **** void voService(void){
+ 1020              	 .loc 1 547 0
+ 1021              	 .cfi_startproc
+ 1022 0000 08B5     	 push {r3,lr}
+ 1023              	.LCFI8:
+ 1024              	 .cfi_def_cfa_offset 8
+ 1025              	 .cfi_offset 3,-8
+ 1026              	 .cfi_offset 14,-4
+ 548:../modbus_if.c **** 	clr_pin(FF_PIN_ADC);
+ 1027              	 .loc 1 548 0
+ 1028 0002 0020     	 mov r0,#0
+ 1029 0004 FFF7FEFF 	 bl clr_pin
+ 1030              	.LVL113:
+ 549:../modbus_if.c **** 	clr_pin(FF_PIN_LINE);
+ 1031              	 .loc 1 549 0
+ 1032 0008 0120     	 mov r0,#1
+ 1033 000a FFF7FEFF 	 bl clr_pin
+ 1034              	.LVL114:
+ 550:../modbus_if.c **** 	clr_pin(FF_PIN_START);
+ 1035              	 .loc 1 550 0
+ 1036 000e 0220     	 mov r0,#2
+ 1037 0010 FFF7FEFF 	 bl clr_pin
+ 1038              	.LVL115:
+ 551:../modbus_if.c **** }
+ 1039              	 .loc 1 551 0
+ 1040              	 
+ 1041 0014 08BD     	 pop {r3,pc}
+ 1042              	 .cfi_endproc
+ 1043              	.LFE476:
+ 1045 0016 C046     	 .section .bss.FSM_STATE.6836,"aw",%nobits
+ 1046              	 .set .LANCHOR3,.+0
+ 1049              	FSM_STATE.6836:
+ 1050 0000 00       	 .space 1
+ 1051              	 .section .bss.reg_coils_buffers,"aw",%nobits
+ 1052              	 .align 2
+ 1053              	 .set .LANCHOR1,.+0
+ 1056              	reg_coils_buffers:
+ 1057 0000 00       	 .space 1
+ 1058 0001 000000   	 .section .bss.u32Delay.6837,"aw",%nobits
+ 1059              	 .align 2
+ 1060              	 .set .LANCHOR4,.+0
+ 1063              	u32Delay.6837:
+ 1064 0000 00000000 	 .space 4
+ 1065              	 .section .bss.reg_discrete_input_buffer,"aw",%nobits
+ 1066              	 .align 2
+ 1067              	 .set .LANCHOR2,.+0
+ 1070              	reg_discrete_input_buffer:
+ 1071 0000 00       	 .space 1
+ 1072 0001 000000   	 .section .bss.reg_holding_buffer,"aw",%nobits
+ 1073              	 .align 2
+ 1074              	 .set .LANCHOR0,.+0
+ 1077              	reg_holding_buffer:
+ 1078 0000 00000000 	 .space 8
+ 1078      00000000 
+ 1079              	 .text
+ 1080              	.Letext0:
+ 1081              	 .file 3 "c:\\davev4-64bit\\dave-4.3.2\\eclipse\\arm-gcc-49\\arm-none-eabi\\include\\machine\\_default_types.h"
+ 1082              	 .file 4 "c:\\davev4-64bit\\dave-4.3.2\\eclipse\\arm-gcc-49\\arm-none-eabi\\include\\stdint.h"
+ 1083              	 .file 5 "C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Infineon/XMC1100_series/Include/XMC1100.h"
+ 1084              	 .file 6 "C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/freemodbus-v1.5.0/port/port.h"
+ 1085              	 .file 7 "C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/freemodbus-v1.5.0/modbus/include/mb.h"
+ 1086              	 .file 8 "C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/freemodbus-v1.5.0/modbus/include/mbutils.h"
+DEFINED SYMBOLS
+                            *ABS*:00000000 modbus_if.c
+    {standard input}:18     .text.eMBRegInputCB:00000000 $t
+    {standard input}:23     .text.eMBRegInputCB:00000000 eMBRegInputCB
+    {standard input}:79     .text.eMBRegHoldingCB:00000000 $t
+    {standard input}:84     .text.eMBRegHoldingCB:00000000 eMBRegHoldingCB
+    {standard input}:215    .text.eMBRegHoldingCB:00000074 $d
+    {standard input}:220    .text.eMBRegCoilsCB:00000000 $t
+    {standard input}:225    .text.eMBRegCoilsCB:00000000 eMBRegCoilsCB
+    {standard input}:378    .text.eMBRegCoilsCB:0000009c $d
+    {standard input}:385    .text.eMBRegDiscreteCB:00000000 $t
+    {standard input}:390    .text.eMBRegDiscreteCB:00000000 eMBRegDiscreteCB
+    {standard input}:491    .text.eMBRegDiscreteCB:0000005c $d
+    {standard input}:498    .text.mb_stack_task:00000000 $t
+    {standard input}:503    .text.mb_stack_task:00000000 mb_stack_task
+    {standard input}:522    .text.Rx_Cb:00000000 $t
+    {standard input}:527    .text.Rx_Cb:00000000 Rx_Cb
+    {standard input}:546    .text.Tx_Cb:00000000 $t
+    {standard input}:551    .text.Tx_Cb:00000000 Tx_Cb
+    {standard input}:570    .text.clr_pin:00000000 $t
+    {standard input}:575    .text.clr_pin:00000000 clr_pin
+    {standard input}:628    .text.clr_pin:0000002c $d
+    {standard input}:633    .text.set_pin:00000000 $t
+    {standard input}:638    .text.set_pin:00000000 set_pin
+    {standard input}:688    .text.set_pin:00000028 $d
+    {standard input}:693    .text.ff_setup:00000000 $t
+    {standard input}:698    .text.ff_setup:00000000 ff_setup
+    {standard input}:726    .text.ff_check_position:00000000 $t
+    {standard input}:731    .text.ff_check_position:00000000 ff_check_position
+    {standard input}:753    .rodata.ff_check_position:00000000 $d
+    {standard input}:977    .text.ff_check_position:00000134 $d
+    {standard input}:986    .text.voManualSetPosition:00000000 $t
+    {standard input}:991    .text.voManualSetPosition:00000000 voManualSetPosition
+    {standard input}:1008   .text.voManualSetPosition:0000000c $d
+    {standard input}:1013   .text.voService:00000000 $t
+    {standard input}:1018   .text.voService:00000000 voService
+    {standard input}:1049   .bss.FSM_STATE.6836:00000000 FSM_STATE.6836
+    {standard input}:1050   .bss.FSM_STATE.6836:00000000 $d
+    {standard input}:1052   .bss.reg_coils_buffers:00000000 $d
+    {standard input}:1056   .bss.reg_coils_buffers:00000000 reg_coils_buffers
+    {standard input}:1059   .bss.u32Delay.6837:00000000 $d
+    {standard input}:1063   .bss.u32Delay.6837:00000000 u32Delay.6837
+    {standard input}:1066   .bss.reg_discrete_input_buffer:00000000 $d
+    {standard input}:1070   .bss.reg_discrete_input_buffer:00000000 reg_discrete_input_buffer
+    {standard input}:1073   .bss.reg_holding_buffer:00000000 $d
+    {standard input}:1077   .bss.reg_holding_buffer:00000000 reg_holding_buffer
+                     .debug_frame:00000010 $d
+
+UNDEFINED SYMBOLS
+xMBUtilGetBits
+xMBUtilSetBits
+eMBPoll
+MB_RxHandler
+MB_TxHandler

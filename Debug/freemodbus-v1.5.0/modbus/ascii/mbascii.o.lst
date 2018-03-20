@@ -1,0 +1,1802 @@
+   1              	 .cpu cortex-m0
+   2              	 .fpu softvfp
+   3              	 .eabi_attribute 20,1
+   4              	 .eabi_attribute 21,1
+   5              	 .eabi_attribute 23,3
+   6              	 .eabi_attribute 24,1
+   7              	 .eabi_attribute 25,1
+   8              	 .eabi_attribute 26,1
+   9              	 .eabi_attribute 30,1
+  10              	 .eabi_attribute 34,0
+  11              	 .eabi_attribute 18,4
+  12              	 .code 16
+  13              	 .file "mbascii.c"
+  14              	 .text
+  15              	.Ltext0:
+  16              	 .cfi_sections .debug_frame
+  17              	 .section .text.prvucMBCHAR2BIN,"ax",%progbits
+  18              	 .align 2
+  19              	 .code 16
+  20              	 .thumb_func
+  22              	prvucMBCHAR2BIN:
+  23              	.LFB108:
+  24              	 .file 1 "../freemodbus-v1.5.0/modbus/ascii/mbascii.c"
+   1:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** /* 
+   2:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****  * FreeModbus Libary: A portable Modbus implementation for Modbus ASCII/RTU.
+   3:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****  * Copyright (c) 2006 Christian Walter <wolti@sil.at>
+   4:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****  * All rights reserved.
+   5:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****  *
+   6:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****  * Redistribution and use in source and binary forms, with or without
+   7:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****  * modification, are permitted provided that the following conditions
+   8:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****  * are met:
+   9:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****  * 1. Redistributions of source code must retain the above copyright
+  10:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****  *    notice, this list of conditions and the following disclaimer.
+  11:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****  * 2. Redistributions in binary form must reproduce the above copyright
+  12:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****  *    notice, this list of conditions and the following disclaimer in the
+  13:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****  *    documentation and/or other materials provided with the distribution.
+  14:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****  * 3. The name of the author may not be used to endorse or promote products
+  15:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****  *    derived from this software without specific prior written permission.
+  16:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****  *
+  17:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
+  18:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****  * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+  19:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+  20:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****  * IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
+  21:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****  * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  22:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****  * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+  23:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****  * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+  24:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****  * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+  25:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+  26:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  27:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****  *
+  28:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****  * File: $Id: mbascii.c,v 1.17 2010/06/06 13:47:07 wolti Exp $
+  29:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****  */
+  30:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+  31:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** /* ----------------------- System includes ----------------------------------*/
+  32:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** #include "stdlib.h"
+  33:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** #include "string.h"
+  34:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+  35:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** /* ----------------------- Platform includes --------------------------------*/
+  36:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** #include "port.h"
+  37:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+  38:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** /* ----------------------- Modbus includes ----------------------------------*/
+  39:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** #include "mb.h"
+  40:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** #include "mbconfig.h"
+  41:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** #include "mbascii.h"
+  42:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** #include "mbframe.h"
+  43:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+  44:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** #include "mbcrc.h"
+  45:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** #include "mbport.h"
+  46:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+  47:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** #if MB_ASCII_ENABLED > 0
+  48:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+  49:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** /* ----------------------- Defines ------------------------------------------*/
+  50:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** #define MB_ASCII_DEFAULT_CR     '\r'    /*!< Default CR character for Modbus ASCII. */
+  51:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** #define MB_ASCII_DEFAULT_LF     '\n'    /*!< Default LF character for Modbus ASCII. */
+  52:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** #define MB_SER_PDU_SIZE_MIN     3       /*!< Minimum size of a Modbus ASCII frame. */
+  53:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** #define MB_SER_PDU_SIZE_MAX     256     /*!< Maximum size of a Modbus ASCII frame. */
+  54:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** #define MB_SER_PDU_SIZE_LRC     1       /*!< Size of LRC field in PDU. */
+  55:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** #define MB_SER_PDU_ADDR_OFF     0       /*!< Offset of slave address in Ser-PDU. */
+  56:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** #define MB_SER_PDU_PDU_OFF      1       /*!< Offset of Modbus-PDU in Ser-PDU. */
+  57:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+  58:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** /* ----------------------- Type definitions ---------------------------------*/
+  59:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** typedef enum
+  60:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** {
+  61:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     STATE_RX_IDLE,              /*!< Receiver is in idle state. */
+  62:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     STATE_RX_RCV,               /*!< Frame is beeing received. */
+  63:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     STATE_RX_WAIT_EOF           /*!< Wait for End of Frame. */
+  64:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** } eMBRcvState;
+  65:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+  66:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** typedef enum
+  67:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** {
+  68:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     STATE_TX_IDLE,              /*!< Transmitter is in idle state. */
+  69:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     STATE_TX_START,             /*!< Starting transmission (':' sent). */
+  70:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     STATE_TX_DATA,              /*!< Sending of data (Address, Data, LRC). */
+  71:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     STATE_TX_END,               /*!< End of transmission. */
+  72:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     STATE_TX_NOTIFY             /*!< Notify sender that the frame has been sent. */
+  73:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** } eMBSndState;
+  74:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+  75:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** typedef enum
+  76:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** {
+  77:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     BYTE_HIGH_NIBBLE,           /*!< Character for high nibble of byte. */
+  78:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     BYTE_LOW_NIBBLE             /*!< Character for low nibble of byte. */
+  79:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** } eMBBytePos;
+  80:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+  81:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** /* ----------------------- Static functions ---------------------------------*/
+  82:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** static UCHAR    prvucMBCHAR2BIN( UCHAR ucCharacter );
+  83:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+  84:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** static UCHAR    prvucMBBIN2CHAR( UCHAR ucByte );
+  85:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+  86:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** static UCHAR    prvucMBLRC( UCHAR * pucFrame, USHORT usLen );
+  87:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+  88:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** /* ----------------------- Static variables ---------------------------------*/
+  89:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** static volatile eMBSndState eSndState;
+  90:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** static volatile eMBRcvState eRcvState;
+  91:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+  92:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** /* We reuse the Modbus RTU buffer because only one buffer is needed and the
+  93:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****  * RTU buffer is bigger. */
+  94:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** extern volatile UCHAR ucRTUBuf[];
+  95:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** static volatile UCHAR *ucASCIIBuf = ucRTUBuf;
+  96:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+  97:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** static volatile USHORT usRcvBufferPos;
+  98:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** static volatile eMBBytePos eBytePos;
+  99:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 100:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** static volatile UCHAR *pucSndBufferCur;
+ 101:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** static volatile USHORT usSndBufferCount;
+ 102:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 103:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** static volatile UCHAR ucLRC;
+ 104:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** static volatile UCHAR ucMBLFCharacter;
+ 105:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 106:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** /* ----------------------- Start implementation -----------------------------*/
+ 107:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** eMBErrorCode
+ 108:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** eMBASCIIInit( UCHAR ucSlaveAddress, UCHAR ucPort, ULONG ulBaudRate, eMBParity eParity )
+ 109:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** {
+ 110:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     eMBErrorCode    eStatus = MB_ENOERR;
+ 111:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     ( void )ucSlaveAddress;
+ 112:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     
+ 113:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     ENTER_CRITICAL_SECTION(  );
+ 114:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     ucMBLFCharacter = MB_ASCII_DEFAULT_LF;
+ 115:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 116:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     if( xMBPortSerialInit( ucPort, ulBaudRate, 7, eParity ) != TRUE )
+ 117:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     {
+ 118:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         eStatus = MB_EPORTERR;
+ 119:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     }
+ 120:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     else if( xMBPortTimersInit( MB_ASCII_TIMEOUT_SEC * 20000UL ) != TRUE )
+ 121:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     {
+ 122:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         eStatus = MB_EPORTERR;
+ 123:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     }
+ 124:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 125:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     EXIT_CRITICAL_SECTION(  );
+ 126:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 127:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     return eStatus;
+ 128:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** }
+ 129:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 130:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** void
+ 131:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** eMBASCIIStart( void )
+ 132:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** {
+ 133:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     ENTER_CRITICAL_SECTION(  );
+ 134:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     vMBPortSerialEnable( TRUE, FALSE );
+ 135:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     eRcvState = STATE_RX_IDLE;
+ 136:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     EXIT_CRITICAL_SECTION(  );
+ 137:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 138:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     /* No special startup required for ASCII. */
+ 139:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     ( void )xMBPortEventPost( EV_READY );
+ 140:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** }
+ 141:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 142:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** void
+ 143:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** eMBASCIIStop( void )
+ 144:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** {
+ 145:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     ENTER_CRITICAL_SECTION(  );
+ 146:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     vMBPortSerialEnable( FALSE, FALSE );
+ 147:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     vMBPortTimersDisable(  );
+ 148:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     EXIT_CRITICAL_SECTION(  );
+ 149:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** }
+ 150:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 151:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** eMBErrorCode
+ 152:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** eMBASCIIReceive( UCHAR * pucRcvAddress, UCHAR ** pucFrame, USHORT * pusLength )
+ 153:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** {
+ 154:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     eMBErrorCode    eStatus = MB_ENOERR;
+ 155:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 156:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     ENTER_CRITICAL_SECTION(  );
+ 157:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     assert( usRcvBufferPos < MB_SER_PDU_SIZE_MAX );
+ 158:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 159:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     /* Length and CRC check */
+ 160:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     if( ( usRcvBufferPos >= MB_SER_PDU_SIZE_MIN )
+ 161:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         && ( prvucMBLRC( ( UCHAR * ) ucASCIIBuf, usRcvBufferPos ) == 0 ) )
+ 162:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     {
+ 163:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         /* Save the address field. All frames are passed to the upper layed
+ 164:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****          * and the decision if a frame is used is done there.
+ 165:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****          */
+ 166:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         *pucRcvAddress = ucASCIIBuf[MB_SER_PDU_ADDR_OFF];
+ 167:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 168:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         /* Total length of Modbus-PDU is Modbus-Serial-Line-PDU minus
+ 169:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****          * size of address field and CRC checksum.
+ 170:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****          */
+ 171:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         *pusLength = ( USHORT )( usRcvBufferPos - MB_SER_PDU_PDU_OFF - MB_SER_PDU_SIZE_LRC );
+ 172:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 173:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         /* Return the start of the Modbus PDU to the caller. */
+ 174:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         *pucFrame = ( UCHAR * ) & ucASCIIBuf[MB_SER_PDU_PDU_OFF];
+ 175:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     }
+ 176:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     else
+ 177:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     {
+ 178:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         eStatus = MB_EIO;
+ 179:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     }
+ 180:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     EXIT_CRITICAL_SECTION(  );
+ 181:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     return eStatus;
+ 182:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** }
+ 183:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 184:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** eMBErrorCode
+ 185:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** eMBASCIISend( UCHAR ucSlaveAddress, const UCHAR * pucFrame, USHORT usLength )
+ 186:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** {
+ 187:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     eMBErrorCode    eStatus = MB_ENOERR;
+ 188:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     UCHAR           usLRC;
+ 189:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 190:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     ENTER_CRITICAL_SECTION(  );
+ 191:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     /* Check if the receiver is still in idle state. If not we where too
+ 192:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****      * slow with processing the received frame and the master sent another
+ 193:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****      * frame on the network. We have to abort sending the frame.
+ 194:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****      */
+ 195:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     if( eRcvState == STATE_RX_IDLE )
+ 196:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     {
+ 197:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         /* First byte before the Modbus-PDU is the slave address. */
+ 198:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         pucSndBufferCur = ( UCHAR * ) pucFrame - 1;
+ 199:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         usSndBufferCount = 1;
+ 200:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 201:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         /* Now copy the Modbus-PDU into the Modbus-Serial-Line-PDU. */
+ 202:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         pucSndBufferCur[MB_SER_PDU_ADDR_OFF] = ucSlaveAddress;
+ 203:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         usSndBufferCount += usLength;
+ 204:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 205:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         /* Calculate LRC checksum for Modbus-Serial-Line-PDU. */
+ 206:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         usLRC = prvucMBLRC( ( UCHAR * ) pucSndBufferCur, usSndBufferCount );
+ 207:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         ucASCIIBuf[usSndBufferCount++] = usLRC;
+ 208:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 209:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         /* Activate the transmitter. */
+ 210:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         eSndState = STATE_TX_START;
+ 211:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         vMBPortSerialEnable( FALSE, TRUE );
+ 212:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     }
+ 213:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     else
+ 214:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     {
+ 215:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         eStatus = MB_EIO;
+ 216:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     }
+ 217:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     EXIT_CRITICAL_SECTION(  );
+ 218:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     return eStatus;
+ 219:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** }
+ 220:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 221:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** BOOL
+ 222:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** xMBASCIIReceiveFSM( void )
+ 223:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** {
+ 224:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     BOOL            xNeedPoll = FALSE;
+ 225:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     UCHAR           ucByte;
+ 226:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     UCHAR           ucResult;
+ 227:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 228:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     assert( eSndState == STATE_TX_IDLE );
+ 229:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 230:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     ( void )xMBPortSerialGetByte( ( CHAR * ) & ucByte );
+ 231:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     switch ( eRcvState )
+ 232:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     {
+ 233:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         /* A new character is received. If the character is a ':' the input
+ 234:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****          * buffer is cleared. A CR-character signals the end of the data
+ 235:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****          * block. Other characters are part of the data block and their
+ 236:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****          * ASCII value is converted back to a binary representation.
+ 237:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****          */
+ 238:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     case STATE_RX_RCV:
+ 239:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         /* Enable timer for character timeout. */
+ 240:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         vMBPortTimersEnable(  );
+ 241:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         if( ucByte == ':' )
+ 242:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         {
+ 243:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****             /* Empty receive buffer. */
+ 244:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****             eBytePos = BYTE_HIGH_NIBBLE;
+ 245:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****             usRcvBufferPos = 0;
+ 246:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         }
+ 247:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         else if( ucByte == MB_ASCII_DEFAULT_CR )
+ 248:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         {
+ 249:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****             eRcvState = STATE_RX_WAIT_EOF;
+ 250:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         }
+ 251:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         else
+ 252:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         {
+ 253:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****             ucResult = prvucMBCHAR2BIN( ucByte );
+ 254:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****             switch ( eBytePos )
+ 255:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****             {
+ 256:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****                 /* High nibble of the byte comes first. We check for
+ 257:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****                  * a buffer overflow here. */
+ 258:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****             case BYTE_HIGH_NIBBLE:
+ 259:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****                 if( usRcvBufferPos < MB_SER_PDU_SIZE_MAX )
+ 260:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****                 {
+ 261:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****                     ucASCIIBuf[usRcvBufferPos] = ( UCHAR )( ucResult << 4 );
+ 262:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****                     eBytePos = BYTE_LOW_NIBBLE;
+ 263:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****                     break;
+ 264:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****                 }
+ 265:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****                 else
+ 266:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****                 {
+ 267:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****                     /* not handled in Modbus specification but seems
+ 268:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****                      * a resonable implementation. */
+ 269:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****                     eRcvState = STATE_RX_IDLE;
+ 270:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****                     /* Disable previously activated timer because of error state. */
+ 271:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****                     vMBPortTimersDisable(  );
+ 272:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****                 }
+ 273:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****                 break;
+ 274:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 275:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****             case BYTE_LOW_NIBBLE:
+ 276:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****                 ucASCIIBuf[usRcvBufferPos] |= ucResult;
+ 277:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****                 usRcvBufferPos++;
+ 278:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****                 eBytePos = BYTE_HIGH_NIBBLE;
+ 279:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****                 break;
+ 280:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****             }
+ 281:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         }
+ 282:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         break;
+ 283:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 284:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     case STATE_RX_WAIT_EOF:
+ 285:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         if( ucByte == ucMBLFCharacter )
+ 286:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         {
+ 287:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****             /* Disable character timeout timer because all characters are
+ 288:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****              * received. */
+ 289:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****             vMBPortTimersDisable(  );
+ 290:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****             /* Receiver is again in idle state. */
+ 291:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****             eRcvState = STATE_RX_IDLE;
+ 292:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 293:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****             /* Notify the caller of eMBASCIIReceive that a new frame
+ 294:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****              * was received. */
+ 295:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****             xNeedPoll = xMBPortEventPost( EV_FRAME_RECEIVED );
+ 296:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         }
+ 297:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         else if( ucByte == ':' )
+ 298:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         {
+ 299:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****             /* Empty receive buffer and back to receive state. */
+ 300:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****             eBytePos = BYTE_HIGH_NIBBLE;
+ 301:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****             usRcvBufferPos = 0;
+ 302:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****             eRcvState = STATE_RX_RCV;
+ 303:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 304:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****             /* Enable timer for character timeout. */
+ 305:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****             vMBPortTimersEnable(  );
+ 306:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         }
+ 307:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         else
+ 308:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         {
+ 309:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****             /* Frame is not okay. Delete entire frame. */
+ 310:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****             eRcvState = STATE_RX_IDLE;
+ 311:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         }
+ 312:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         break;
+ 313:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 314:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     case STATE_RX_IDLE:
+ 315:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         if( ucByte == ':' )
+ 316:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         {
+ 317:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****             /* Enable timer for character timeout. */
+ 318:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****             vMBPortTimersEnable(  );
+ 319:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****             /* Reset the input buffers to store the frame. */
+ 320:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****             usRcvBufferPos = 0;;
+ 321:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****             eBytePos = BYTE_HIGH_NIBBLE;
+ 322:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****             eRcvState = STATE_RX_RCV;
+ 323:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         }
+ 324:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         break;
+ 325:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     }
+ 326:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 327:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     return xNeedPoll;
+ 328:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** }
+ 329:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 330:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** BOOL
+ 331:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** xMBASCIITransmitFSM( void )
+ 332:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** {
+ 333:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     BOOL            xNeedPoll = FALSE;
+ 334:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     UCHAR           ucByte;
+ 335:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 336:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     assert( eRcvState == STATE_RX_IDLE );
+ 337:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     switch ( eSndState )
+ 338:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     {
+ 339:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         /* Start of transmission. The start of a frame is defined by sending
+ 340:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****          * the character ':'. */
+ 341:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     case STATE_TX_START:
+ 342:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         ucByte = ':';
+ 343:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         xMBPortSerialPutByte( ( CHAR )ucByte );
+ 344:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         eSndState = STATE_TX_DATA;
+ 345:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         eBytePos = BYTE_HIGH_NIBBLE;
+ 346:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         break;
+ 347:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 348:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         /* Send the data block. Each data byte is encoded as a character hex
+ 349:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****          * stream with the high nibble sent first and the low nibble sent
+ 350:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****          * last. If all data bytes are exhausted we send a '\r' character
+ 351:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****          * to end the transmission. */
+ 352:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     case STATE_TX_DATA:
+ 353:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         if( usSndBufferCount > 0 )
+ 354:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         {
+ 355:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****             switch ( eBytePos )
+ 356:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****             {
+ 357:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****             case BYTE_HIGH_NIBBLE:
+ 358:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****                 ucByte = prvucMBBIN2CHAR( ( UCHAR )( *pucSndBufferCur >> 4 ) );
+ 359:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****                 xMBPortSerialPutByte( ( CHAR ) ucByte );
+ 360:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****                 eBytePos = BYTE_LOW_NIBBLE;
+ 361:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****                 break;
+ 362:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 363:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****             case BYTE_LOW_NIBBLE:
+ 364:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****                 ucByte = prvucMBBIN2CHAR( ( UCHAR )( *pucSndBufferCur & 0x0F ) );
+ 365:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****                 xMBPortSerialPutByte( ( CHAR )ucByte );
+ 366:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****                 pucSndBufferCur++;
+ 367:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****                 eBytePos = BYTE_HIGH_NIBBLE;
+ 368:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****                 usSndBufferCount--;
+ 369:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****                 break;
+ 370:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****             }
+ 371:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         }
+ 372:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         else
+ 373:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         {
+ 374:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****             xMBPortSerialPutByte( MB_ASCII_DEFAULT_CR );
+ 375:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****             eSndState = STATE_TX_END;
+ 376:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         }
+ 377:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         break;
+ 378:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 379:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         /* Finish the frame by sending a LF character. */
+ 380:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     case STATE_TX_END:
+ 381:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         xMBPortSerialPutByte( ( CHAR )ucMBLFCharacter );
+ 382:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         /* We need another state to make sure that the CR character has
+ 383:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****          * been sent. */
+ 384:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         eSndState = STATE_TX_NOTIFY;
+ 385:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         break;
+ 386:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 387:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         /* Notify the task which called eMBASCIISend that the frame has
+ 388:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****          * been sent. */
+ 389:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     case STATE_TX_NOTIFY:
+ 390:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         eSndState = STATE_TX_IDLE;
+ 391:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         xNeedPoll = xMBPortEventPost( EV_FRAME_SENT );
+ 392:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 393:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         /* Disable transmitter. This prevents another transmit buffer
+ 394:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****          * empty interrupt. */
+ 395:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         vMBPortSerialEnable( TRUE, FALSE );
+ 396:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         eSndState = STATE_TX_IDLE;
+ 397:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         break;
+ 398:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 399:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         /* We should not get a transmitter event if the transmitter is in
+ 400:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****          * idle state.  */
+ 401:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     case STATE_TX_IDLE:
+ 402:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         /* enable receiver/disable transmitter. */
+ 403:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         vMBPortSerialEnable( TRUE, FALSE );
+ 404:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         break;
+ 405:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     }
+ 406:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 407:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     return xNeedPoll;
+ 408:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** }
+ 409:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 410:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** BOOL
+ 411:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** xMBASCIITimerT1SExpired( void )
+ 412:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** {
+ 413:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     switch ( eRcvState )
+ 414:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     {
+ 415:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         /* If we have a timeout we go back to the idle state and wait for
+ 416:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****          * the next frame.
+ 417:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****          */
+ 418:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     case STATE_RX_RCV:
+ 419:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     case STATE_RX_WAIT_EOF:
+ 420:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         eRcvState = STATE_RX_IDLE;
+ 421:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         break;
+ 422:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 423:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     default:
+ 424:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         assert( ( eRcvState == STATE_RX_RCV ) || ( eRcvState == STATE_RX_WAIT_EOF ) );
+ 425:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         break;
+ 426:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     }
+ 427:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     vMBPortTimersDisable(  );
+ 428:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 429:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     /* no context switch required. */
+ 430:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     return FALSE;
+ 431:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** }
+ 432:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 433:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 434:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** static          UCHAR
+ 435:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** prvucMBCHAR2BIN( UCHAR ucCharacter )
+ 436:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** {
+  25              	 .loc 1 436 0
+  26              	 .cfi_startproc
+  27              	.LVL0:
+  28 0000 021C     	 mov r2,r0
+ 437:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     if( ( ucCharacter >= '0' ) && ( ucCharacter <= '9' ) )
+  29              	 .loc 1 437 0
+  30 0002 031C     	 mov r3,r0
+  31 0004 303B     	 sub r3,r3,#48
+  32 0006 D8B2     	 uxtb r0,r3
+  33              	.LVL1:
+  34 0008 0928     	 cmp r0,#9
+  35 000a 06D9     	 bls .L2
+ 438:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     {
+ 439:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         return ( UCHAR )( ucCharacter - '0' );
+ 440:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     }
+ 441:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     else if( ( ucCharacter >= 'A' ) && ( ucCharacter <= 'F' ) )
+  36              	 .loc 1 441 0
+  37 000c 113B     	 sub r3,r3,#17
+  38 000e 052B     	 cmp r3,#5
+  39 0010 02D8     	 bhi .L3
+ 442:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     {
+ 443:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         return ( UCHAR )( ucCharacter - 'A' + 0x0A );
+  40              	 .loc 1 443 0
+  41 0012 373A     	 sub r2,r2,#55
+  42 0014 D0B2     	 uxtb r0,r2
+  43 0016 00E0     	 b .L2
+  44              	.L3:
+ 444:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     }
+ 445:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     else
+ 446:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     {
+ 447:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         return 0xFF;
+  45              	 .loc 1 447 0
+  46 0018 FF20     	 mov r0,#255
+  47              	.L2:
+ 448:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     }
+ 449:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** }
+  48              	 .loc 1 449 0
+  49              	 
+  50 001a 7047     	 bx lr
+  51              	 .cfi_endproc
+  52              	.LFE108:
+  54              	 .section .text.prvucMBBIN2CHAR,"ax",%progbits
+  55              	 .align 2
+  56              	 .code 16
+  57              	 .thumb_func
+  59              	prvucMBBIN2CHAR:
+  60              	.LFB109:
+ 450:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 451:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** static          UCHAR
+ 452:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** prvucMBBIN2CHAR( UCHAR ucByte )
+ 453:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** {
+  61              	 .loc 1 453 0
+  62              	 .cfi_startproc
+  63              	.LVL2:
+ 454:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     if( ucByte <= 0x09 )
+  64              	 .loc 1 454 0
+  65 0000 0928     	 cmp r0,#9
+  66 0002 02D8     	 bhi .L5
+ 455:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     {
+ 456:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         return ( UCHAR )( '0' + ucByte );
+  67              	 .loc 1 456 0
+  68 0004 3030     	 add r0,r0,#48
+  69              	.LVL3:
+  70 0006 C0B2     	 uxtb r0,r0
+  71 0008 07E0     	 b .L6
+  72              	.LVL4:
+  73              	.L5:
+ 457:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     }
+ 458:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     else if( ( ucByte >= 0x0A ) && ( ucByte <= 0x0F ) )
+  74              	 .loc 1 458 0
+  75 000a 031C     	 mov r3,r0
+  76 000c 0A3B     	 sub r3,r3,#10
+  77 000e 052B     	 cmp r3,#5
+  78 0010 02D8     	 bhi .L7
+ 459:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     {
+ 460:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         return ( UCHAR )( ucByte - 0x0A + 'A' );
+  79              	 .loc 1 460 0
+  80 0012 3730     	 add r0,r0,#55
+  81              	.LVL5:
+  82 0014 C0B2     	 uxtb r0,r0
+  83 0016 00E0     	 b .L6
+  84              	.LVL6:
+  85              	.L7:
+ 461:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     }
+ 462:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     else
+ 463:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     {
+ 464:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         /* Programming error. */
+ 465:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         assert( 0 );
+ 466:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     }
+ 467:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     return '0';
+  86              	 .loc 1 467 0
+  87 0018 3020     	 mov r0,#48
+  88              	.LVL7:
+  89              	.L6:
+ 468:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** }
+  90              	 .loc 1 468 0
+  91              	 
+  92 001a 7047     	 bx lr
+  93              	 .cfi_endproc
+  94              	.LFE109:
+  96              	 .section .text.prvucMBLRC,"ax",%progbits
+  97              	 .align 2
+  98              	 .code 16
+  99              	 .thumb_func
+ 101              	prvucMBLRC:
+ 102              	.LFB110:
+ 469:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 470:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 471:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** static          UCHAR
+ 472:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** prvucMBLRC( UCHAR * pucFrame, USHORT usLen )
+ 473:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** {
+ 103              	 .loc 1 473 0
+ 104              	 .cfi_startproc
+ 105              	.LVL8:
+ 474:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     UCHAR           ucLRC = 0;  /* LRC char initialized */
+ 106              	 .loc 1 474 0
+ 107 0000 0023     	 mov r3,#0
+ 475:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 476:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     while( usLen-- )
+ 108              	 .loc 1 476 0
+ 109 0002 04E0     	 b .L9
+ 110              	.LVL9:
+ 111              	.L10:
+ 477:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     {
+ 478:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         ucLRC += *pucFrame++;   /* Add buffer byte without carry */
+ 112              	 .loc 1 478 0
+ 113 0004 0178     	 ldrb r1,[r0]
+ 114 0006 CB18     	 add r3,r1,r3
+ 115              	.LVL10:
+ 116 0008 DBB2     	 uxtb r3,r3
+ 117              	.LVL11:
+ 476:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     {
+ 118              	 .loc 1 476 0
+ 119 000a 111C     	 mov r1,r2
+ 120              	 .loc 1 478 0
+ 121 000c 0130     	 add r0,r0,#1
+ 122              	.LVL12:
+ 123              	.L9:
+ 476:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     {
+ 124              	 .loc 1 476 0
+ 125 000e 4A1E     	 sub r2,r1,#1
+ 126 0010 92B2     	 uxth r2,r2
+ 127              	.LVL13:
+ 128 0012 0029     	 cmp r1,#0
+ 129 0014 F6D1     	 bne .L10
+ 479:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     }
+ 480:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 481:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     /* Return twos complement */
+ 482:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     ucLRC = ( UCHAR ) ( -( ( CHAR ) ucLRC ) );
+ 130              	 .loc 1 482 0
+ 131 0016 5842     	 neg r0,r3
+ 132              	.LVL14:
+ 133 0018 C0B2     	 uxtb r0,r0
+ 134              	.LVL15:
+ 483:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     return ucLRC;
+ 484:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** }
+ 135              	 .loc 1 484 0
+ 136              	 
+ 137 001a 7047     	 bx lr
+ 138              	 .cfi_endproc
+ 139              	.LFE110:
+ 141              	 .section .text.eMBASCIIInit,"ax",%progbits
+ 142              	 .align 2
+ 143              	 .global eMBASCIIInit
+ 144              	 .code 16
+ 145              	 .thumb_func
+ 147              	eMBASCIIInit:
+ 148              	.LFB100:
+ 109:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     eMBErrorCode    eStatus = MB_ENOERR;
+ 149              	 .loc 1 109 0
+ 150              	 .cfi_startproc
+ 151              	.LVL16:
+ 152 0000 10B5     	 push {r4,lr}
+ 153              	.LCFI0:
+ 154              	 .cfi_def_cfa_offset 8
+ 155              	 .cfi_offset 4,-8
+ 156              	 .cfi_offset 14,-4
+ 157              	.LVL17:
+ 158              	.LBB22:
+ 159              	.LBB23:
+ 160              	 .file 2 "C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include/cmsis_gcc.h"
+   1:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** /**************************************************************************//**
+   2:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****  * @file     cmsis_gcc.h
+   3:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****  * @brief    CMSIS compiler GCC header file
+   4:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****  * @version  V5.0.1
+   5:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****  * @date     02. February 2017
+   6:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****  ******************************************************************************/
+   7:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** /*
+   8:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****  * Copyright (c) 2009-2017 ARM Limited. All rights reserved.
+   9:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****  *
+  10:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****  * SPDX-License-Identifier: Apache-2.0
+  11:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****  *
+  12:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****  * Licensed under the Apache License, Version 2.0 (the License); you may
+  13:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****  * not use this file except in compliance with the License.
+  14:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****  * You may obtain a copy of the License at
+  15:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****  *
+  16:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****  * www.apache.org/licenses/LICENSE-2.0
+  17:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****  *
+  18:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****  * Unless required by applicable law or agreed to in writing, software
+  19:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****  * distributed under the License is distributed on an AS IS BASIS, WITHOUT
+  20:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  21:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****  * See the License for the specific language governing permissions and
+  22:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****  * limitations under the License.
+  23:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****  */
+  24:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** 
+  25:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** #ifndef __CMSIS_GCC_H
+  26:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** #define __CMSIS_GCC_H
+  27:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** 
+  28:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** /* ignore some GCC warnings */
+  29:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** #pragma GCC diagnostic push
+  30:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** #pragma GCC diagnostic ignored "-Wsign-conversion"
+  31:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** #pragma GCC diagnostic ignored "-Wconversion"
+  32:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** #pragma GCC diagnostic ignored "-Wunused-parameter"
+  33:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** 
+  34:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** /* CMSIS compiler specific defines */
+  35:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** #ifndef   __ASM
+  36:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****   #define __ASM                     __asm
+  37:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** #endif
+  38:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** #ifndef   __INLINE
+  39:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****   #define __INLINE                  inline
+  40:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** #endif
+  41:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** #ifndef   __STATIC_INLINE
+  42:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****   #define __STATIC_INLINE           static inline
+  43:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** #endif
+  44:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** #ifndef   __NO_RETURN
+  45:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****   #define __NO_RETURN               __attribute__((noreturn))
+  46:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** #endif
+  47:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** #ifndef   __USED
+  48:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****   #define __USED                    __attribute__((used))
+  49:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** #endif
+  50:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** #ifndef   __WEAK
+  51:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****   #define __WEAK                    __attribute__((weak))
+  52:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** #endif
+  53:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** #ifndef   __UNALIGNED_UINT32
+  54:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** #pragma GCC diagnostic push
+  55:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** #pragma GCC diagnostic ignored "-Wpacked"
+  56:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** #pragma GCC diagnostic ignored "-Wattributes"
+  57:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****   struct __attribute__((packed)) T_UINT32 { uint32_t v; };
+  58:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** #pragma GCC diagnostic pop
+  59:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****   #define __UNALIGNED_UINT32(x)     (((struct T_UINT32 *)(x))->v)
+  60:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** #endif
+  61:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** #ifndef   __ALIGNED
+  62:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****   #define __ALIGNED(x)              __attribute__((aligned(x)))
+  63:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** #endif
+  64:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** #ifndef   __PACKED
+  65:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****   #define __PACKED                  __attribute__((packed, aligned(1)))
+  66:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** #endif
+  67:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** #ifndef   __PACKED_STRUCT
+  68:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****   #define __PACKED_STRUCT           struct __attribute__((packed, aligned(1)))
+  69:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** #endif
+  70:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** 
+  71:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** 
+  72:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** /* ###########################  Core Function Access  ########################### */
+  73:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** /** \ingroup  CMSIS_Core_FunctionInterface
+  74:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****     \defgroup CMSIS_Core_RegAccFunctions CMSIS Core Register Access Functions
+  75:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****   @{
+  76:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****  */
+  77:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** 
+  78:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** /**
+  79:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****   \brief   Enable IRQ Interrupts
+  80:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****   \details Enables IRQ interrupts by clearing the I-bit in the CPSR.
+  81:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****            Can only be executed in Privileged modes.
+  82:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****  */
+  83:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** __attribute__((always_inline)) __STATIC_INLINE void __enable_irq(void)
+  84:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** {
+  85:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****   __ASM volatile ("cpsie i" : : : "memory");
+  86:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** }
+  87:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** 
+  88:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** 
+  89:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** /**
+  90:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****   \brief   Disable IRQ Interrupts
+  91:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****   \details Disables IRQ interrupts by setting the I-bit in the CPSR.
+  92:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****            Can only be executed in Privileged modes.
+  93:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****  */
+  94:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** __attribute__((always_inline)) __STATIC_INLINE void __disable_irq(void)
+  95:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** {
+  96:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****   __ASM volatile ("cpsid i" : : : "memory");
+ 161              	 .loc 2 96 0
+ 162              	
+ 163 0002 72B6     	 cpsid i
+ 164              	
+ 165              	 .code 16
+ 166              	.LBE23:
+ 167              	.LBE22:
+ 114:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 168              	 .loc 1 114 0
+ 169 0004 0A24     	 mov r4,#10
+ 170 0006 0A48     	 ldr r0,.L15
+ 171              	.LVL18:
+ 172 0008 0470     	 strb r4,[r0]
+ 116:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     {
+ 173              	 .loc 1 116 0
+ 174 000a 081C     	 mov r0,r1
+ 175 000c 111C     	 mov r1,r2
+ 176              	.LVL19:
+ 177 000e 0722     	 mov r2,#7
+ 178              	.LVL20:
+ 179 0010 FFF7FEFF 	 bl xMBPortSerialInit
+ 180              	.LVL21:
+ 181 0014 0128     	 cmp r0,#1
+ 182 0016 06D1     	 bne .L13
+ 120:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     {
+ 183              	 .loc 1 120 0
+ 184 0018 0648     	 ldr r0,.L15+4
+ 185 001a FFF7FEFF 	 bl xMBPortTimersInit
+ 186              	.LVL22:
+ 187 001e 0128     	 cmp r0,#1
+ 188 0020 03D1     	 bne .L14
+ 110:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     ( void )ucSlaveAddress;
+ 189              	 .loc 1 110 0
+ 190 0022 0020     	 mov r0,#0
+ 191 0024 02E0     	 b .L12
+ 192              	.L13:
+ 118:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     }
+ 193              	 .loc 1 118 0
+ 194 0026 0320     	 mov r0,#3
+ 195 0028 00E0     	 b .L12
+ 196              	.L14:
+ 122:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     }
+ 197              	 .loc 1 122 0
+ 198 002a 0320     	 mov r0,#3
+ 199              	.L12:
+ 200              	.LVL23:
+ 201              	.LBB24:
+ 202              	.LBB25:
+  85:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** }
+ 203              	 .loc 2 85 0
+ 204              	
+ 205 002c 62B6     	 cpsie i
+ 206              	
+ 207              	 .code 16
+ 208              	.LBE25:
+ 209              	.LBE24:
+ 128:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 210              	 .loc 1 128 0
+ 211              	 
+ 212 002e 10BD     	 pop {r4,pc}
+ 213              	.L16:
+ 214              	 .align 2
+ 215              	.L15:
+ 216 0030 00000000 	 .word .LANCHOR0
+ 217 0034 204E0000 	 .word 20000
+ 218              	 .cfi_endproc
+ 219              	.LFE100:
+ 221              	 .section .text.eMBASCIIStart,"ax",%progbits
+ 222              	 .align 2
+ 223              	 .global eMBASCIIStart
+ 224              	 .code 16
+ 225              	 .thumb_func
+ 227              	eMBASCIIStart:
+ 228              	.LFB101:
+ 132:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     ENTER_CRITICAL_SECTION(  );
+ 229              	 .loc 1 132 0
+ 230              	 .cfi_startproc
+ 231 0000 08B5     	 push {r3,lr}
+ 232              	.LCFI1:
+ 233              	 .cfi_def_cfa_offset 8
+ 234              	 .cfi_offset 3,-8
+ 235              	 .cfi_offset 14,-4
+ 236              	.LBB26:
+ 237              	.LBB27:
+ 238              	 .loc 2 96 0
+ 239              	
+ 240 0002 72B6     	 cpsid i
+ 241              	
+ 242              	 .code 16
+ 243              	.LBE27:
+ 244              	.LBE26:
+ 134:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     eRcvState = STATE_RX_IDLE;
+ 245              	 .loc 1 134 0
+ 246 0004 0120     	 mov r0,#1
+ 247 0006 0021     	 mov r1,#0
+ 248 0008 FFF7FEFF 	 bl vMBPortSerialEnable
+ 249              	.LVL24:
+ 135:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     EXIT_CRITICAL_SECTION(  );
+ 250              	 .loc 1 135 0
+ 251 000c 0022     	 mov r2,#0
+ 252 000e 034B     	 ldr r3,.L18
+ 253 0010 1A70     	 strb r2,[r3]
+ 254              	.LBB28:
+ 255              	.LBB29:
+  85:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** }
+ 256              	 .loc 2 85 0
+ 257              	
+ 258 0012 62B6     	 cpsie i
+ 259              	
+ 260              	 .code 16
+ 261              	.LBE29:
+ 262              	.LBE28:
+ 139:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** }
+ 263              	 .loc 1 139 0
+ 264 0014 0020     	 mov r0,#0
+ 265 0016 FFF7FEFF 	 bl xMBPortEventPost
+ 266              	.LVL25:
+ 140:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 267              	 .loc 1 140 0
+ 268              	 
+ 269 001a 08BD     	 pop {r3,pc}
+ 270              	.L19:
+ 271              	 .align 2
+ 272              	.L18:
+ 273 001c 00000000 	 .word .LANCHOR1
+ 274              	 .cfi_endproc
+ 275              	.LFE101:
+ 277              	 .section .text.eMBASCIIStop,"ax",%progbits
+ 278              	 .align 2
+ 279              	 .global eMBASCIIStop
+ 280              	 .code 16
+ 281              	 .thumb_func
+ 283              	eMBASCIIStop:
+ 284              	.LFB102:
+ 144:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     ENTER_CRITICAL_SECTION(  );
+ 285              	 .loc 1 144 0
+ 286              	 .cfi_startproc
+ 287 0000 08B5     	 push {r3,lr}
+ 288              	.LCFI2:
+ 289              	 .cfi_def_cfa_offset 8
+ 290              	 .cfi_offset 3,-8
+ 291              	 .cfi_offset 14,-4
+ 292              	.LBB30:
+ 293              	.LBB31:
+ 294              	 .loc 2 96 0
+ 295              	
+ 296 0002 72B6     	 cpsid i
+ 297              	
+ 298              	 .code 16
+ 299              	.LBE31:
+ 300              	.LBE30:
+ 146:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     vMBPortTimersDisable(  );
+ 301              	 .loc 1 146 0
+ 302 0004 0020     	 mov r0,#0
+ 303 0006 0021     	 mov r1,#0
+ 304 0008 FFF7FEFF 	 bl vMBPortSerialEnable
+ 305              	.LVL26:
+ 147:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     EXIT_CRITICAL_SECTION(  );
+ 306              	 .loc 1 147 0
+ 307 000c FFF7FEFF 	 bl vMBPortTimersDisable
+ 308              	.LVL27:
+ 309              	.LBB32:
+ 310              	.LBB33:
+  85:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** }
+ 311              	 .loc 2 85 0
+ 312              	
+ 313 0010 62B6     	 cpsie i
+ 314              	
+ 315              	 .code 16
+ 316              	.LBE33:
+ 317              	.LBE32:
+ 149:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 318              	 .loc 1 149 0
+ 319              	 
+ 320 0012 08BD     	 pop {r3,pc}
+ 321              	 .cfi_endproc
+ 322              	.LFE102:
+ 324              	 .section .text.eMBASCIIReceive,"ax",%progbits
+ 325              	 .align 2
+ 326              	 .global eMBASCIIReceive
+ 327              	 .code 16
+ 328              	 .thumb_func
+ 330              	eMBASCIIReceive:
+ 331              	.LFB103:
+ 153:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     eMBErrorCode    eStatus = MB_ENOERR;
+ 332              	 .loc 1 153 0
+ 333              	 .cfi_startproc
+ 334              	.LVL28:
+ 335 0000 70B5     	 push {r4,r5,r6,lr}
+ 336              	.LCFI3:
+ 337              	 .cfi_def_cfa_offset 16
+ 338              	 .cfi_offset 4,-16
+ 339              	 .cfi_offset 5,-12
+ 340              	 .cfi_offset 6,-8
+ 341              	 .cfi_offset 14,-4
+ 342              	.LVL29:
+ 343              	.LBB34:
+ 344              	.LBB35:
+ 345              	 .loc 2 96 0
+ 346              	
+ 347 0002 72B6     	 cpsid i
+ 348              	
+ 349              	 .code 16
+ 350              	.LBE35:
+ 351              	.LBE34:
+ 160:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         && ( prvucMBLRC( ( UCHAR * ) ucASCIIBuf, usRcvBufferPos ) == 0 ) )
+ 352              	 .loc 1 160 0
+ 353 0004 0F4B     	 ldr r3,.L25
+ 354 0006 1B88     	 ldrh r3,[r3]
+ 355 0008 9BB2     	 uxth r3,r3
+ 356 000a 022B     	 cmp r3,#2
+ 357 000c 14D9     	 bls .L23
+ 358 000e 151C     	 mov r5,r2
+ 359 0010 0C1C     	 mov r4,r1
+ 360 0012 061C     	 mov r6,r0
+ 161:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     {
+ 361              	 .loc 1 161 0
+ 362 0014 0B4B     	 ldr r3,.L25
+ 363 0016 1988     	 ldrh r1,[r3]
+ 364              	.LVL30:
+ 365 0018 89B2     	 uxth r1,r1
+ 366 001a 0B48     	 ldr r0,.L25+4
+ 367              	.LVL31:
+ 368 001c FFF7FEFF 	 bl prvucMBLRC
+ 369              	.LVL32:
+ 370 0020 0028     	 cmp r0,#0
+ 371 0022 0BD1     	 bne .L24
+ 166:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 372              	 .loc 1 166 0
+ 373 0024 084B     	 ldr r3,.L25+4
+ 374 0026 1A78     	 ldrb r2,[r3]
+ 375 0028 3270     	 strb r2,[r6]
+ 171:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 376              	 .loc 1 171 0
+ 377 002a 064A     	 ldr r2,.L25
+ 378 002c 1288     	 ldrh r2,[r2]
+ 379 002e 023A     	 sub r2,r2,#2
+ 380 0030 2A80     	 strh r2,[r5]
+ 174:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     }
+ 381              	 .loc 1 174 0
+ 382 0032 0133     	 add r3,r3,#1
+ 383 0034 2360     	 str r3,[r4]
+ 384 0036 02E0     	 b .L22
+ 385              	.LVL33:
+ 386              	.L23:
+ 178:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     }
+ 387              	 .loc 1 178 0
+ 388 0038 0520     	 mov r0,#5
+ 389              	.LVL34:
+ 390 003a 00E0     	 b .L22
+ 391              	.LVL35:
+ 392              	.L24:
+ 393 003c 0520     	 mov r0,#5
+ 394              	.LVL36:
+ 395              	.L22:
+ 396              	.LBB36:
+ 397              	.LBB37:
+  85:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** }
+ 398              	 .loc 2 85 0
+ 399              	
+ 400 003e 62B6     	 cpsie i
+ 401              	
+ 402              	 .code 16
+ 403              	.LBE37:
+ 404              	.LBE36:
+ 182:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 405              	 .loc 1 182 0
+ 406              	 
+ 407 0040 70BD     	 pop {r4,r5,r6,pc}
+ 408              	.L26:
+ 409 0042 C046     	 .align 2
+ 410              	.L25:
+ 411 0044 00000000 	 .word .LANCHOR2
+ 412 0048 00000000 	 .word ucRTUBuf
+ 413              	 .cfi_endproc
+ 414              	.LFE103:
+ 416              	 .section .text.eMBASCIISend,"ax",%progbits
+ 417              	 .align 2
+ 418              	 .global eMBASCIISend
+ 419              	 .code 16
+ 420              	 .thumb_func
+ 422              	eMBASCIISend:
+ 423              	.LFB104:
+ 186:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     eMBErrorCode    eStatus = MB_ENOERR;
+ 424              	 .loc 1 186 0
+ 425              	 .cfi_startproc
+ 426              	.LVL37:
+ 427 0000 10B5     	 push {r4,lr}
+ 428              	.LCFI4:
+ 429              	 .cfi_def_cfa_offset 8
+ 430              	 .cfi_offset 4,-8
+ 431              	 .cfi_offset 14,-4
+ 432              	.LVL38:
+ 433              	.LBB38:
+ 434              	.LBB39:
+ 435              	 .loc 2 96 0
+ 436              	
+ 437 0002 72B6     	 cpsid i
+ 438              	
+ 439              	 .code 16
+ 440              	.LBE39:
+ 441              	.LBE38:
+ 195:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     {
+ 442              	 .loc 1 195 0
+ 443 0004 134B     	 ldr r3,.L30
+ 444 0006 1B78     	 ldrb r3,[r3]
+ 445 0008 002B     	 cmp r3,#0
+ 446 000a 20D1     	 bne .L29
+ 198:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         usSndBufferCount = 1;
+ 447              	 .loc 1 198 0
+ 448 000c 4B1E     	 sub r3,r1,#1
+ 449 000e 1249     	 ldr r1,.L30+4
+ 450              	.LVL39:
+ 451 0010 0B60     	 str r3,[r1]
+ 199:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 452              	 .loc 1 199 0
+ 453 0012 124C     	 ldr r4,.L30+8
+ 454 0014 0121     	 mov r1,#1
+ 455 0016 2180     	 strh r1,[r4]
+ 202:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         usSndBufferCount += usLength;
+ 456              	 .loc 1 202 0
+ 457 0018 1870     	 strb r0,[r3]
+ 203:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 458              	 .loc 1 203 0
+ 459 001a 2188     	 ldrh r1,[r4]
+ 460 001c 8A18     	 add r2,r1,r2
+ 461              	.LVL40:
+ 462 001e 92B2     	 uxth r2,r2
+ 463 0020 2280     	 strh r2,[r4]
+ 206:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         ucASCIIBuf[usSndBufferCount++] = usLRC;
+ 464              	 .loc 1 206 0
+ 465 0022 2188     	 ldrh r1,[r4]
+ 466 0024 89B2     	 uxth r1,r1
+ 467 0026 181C     	 mov r0,r3
+ 468              	.LVL41:
+ 469 0028 FFF7FEFF 	 bl prvucMBLRC
+ 470              	.LVL42:
+ 207:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 471              	 .loc 1 207 0
+ 472 002c 2388     	 ldrh r3,[r4]
+ 473 002e 9BB2     	 uxth r3,r3
+ 474 0030 5A1C     	 add r2,r3,#1
+ 475 0032 92B2     	 uxth r2,r2
+ 476 0034 2280     	 strh r2,[r4]
+ 477 0036 0A4A     	 ldr r2,.L30+12
+ 478 0038 9B18     	 add r3,r3,r2
+ 479 003a 1870     	 strb r0,[r3]
+ 210:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         vMBPortSerialEnable( FALSE, TRUE );
+ 480              	 .loc 1 210 0
+ 481 003c 094B     	 ldr r3,.L30+16
+ 482 003e 0122     	 mov r2,#1
+ 483 0040 1A70     	 strb r2,[r3]
+ 211:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     }
+ 484              	 .loc 1 211 0
+ 485 0042 0020     	 mov r0,#0
+ 486              	.LVL43:
+ 487 0044 0121     	 mov r1,#1
+ 488 0046 FFF7FEFF 	 bl vMBPortSerialEnable
+ 489              	.LVL44:
+ 187:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     UCHAR           usLRC;
+ 490              	 .loc 1 187 0
+ 491 004a 0020     	 mov r0,#0
+ 492 004c 00E0     	 b .L28
+ 493              	.LVL45:
+ 494              	.L29:
+ 215:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     }
+ 495              	 .loc 1 215 0
+ 496 004e 0520     	 mov r0,#5
+ 497              	.LVL46:
+ 498              	.L28:
+ 499              	.LBB40:
+ 500              	.LBB41:
+  85:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** }
+ 501              	 .loc 2 85 0
+ 502              	
+ 503 0050 62B6     	 cpsie i
+ 504              	
+ 505              	 .code 16
+ 506              	.LBE41:
+ 507              	.LBE40:
+ 219:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 508              	 .loc 1 219 0
+ 509              	 
+ 510 0052 10BD     	 pop {r4,pc}
+ 511              	.L31:
+ 512              	 .align 2
+ 513              	.L30:
+ 514 0054 00000000 	 .word .LANCHOR1
+ 515 0058 00000000 	 .word .LANCHOR3
+ 516 005c 00000000 	 .word .LANCHOR4
+ 517 0060 00000000 	 .word ucRTUBuf
+ 518 0064 00000000 	 .word .LANCHOR5
+ 519              	 .cfi_endproc
+ 520              	.LFE104:
+ 522              	 .section .text.xMBASCIIReceiveFSM,"ax",%progbits
+ 523              	 .align 2
+ 524              	 .global xMBASCIIReceiveFSM
+ 525              	 .code 16
+ 526              	 .thumb_func
+ 528              	xMBASCIIReceiveFSM:
+ 529              	.LFB105:
+ 223:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     BOOL            xNeedPoll = FALSE;
+ 530              	 .loc 1 223 0
+ 531              	 .cfi_startproc
+ 532 0000 00B5     	 push {lr}
+ 533              	.LCFI5:
+ 534              	 .cfi_def_cfa_offset 4
+ 535              	 .cfi_offset 14,-4
+ 536 0002 83B0     	 sub sp,sp,#12
+ 537              	.LCFI6:
+ 538              	 .cfi_def_cfa_offset 16
+ 539              	.LVL47:
+ 230:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     switch ( eRcvState )
+ 540              	 .loc 1 230 0
+ 541 0004 6B46     	 mov r3,sp
+ 542 0006 D81D     	 add r0,r3,#7
+ 543 0008 FFF7FEFF 	 bl xMBPortSerialGetByte
+ 544              	.LVL48:
+ 231:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     {
+ 545              	 .loc 1 231 0
+ 546 000c 454B     	 ldr r3,.L49
+ 547 000e 1B78     	 ldrb r3,[r3]
+ 548 0010 DBB2     	 uxtb r3,r3
+ 549 0012 012B     	 cmp r3,#1
+ 550 0014 04D0     	 beq .L34
+ 551 0016 002B     	 cmp r3,#0
+ 552 0018 6CD0     	 beq .L35
+ 553 001a 022B     	 cmp r3,#2
+ 554 001c 47D0     	 beq .L36
+ 555 001e 7AE0     	 b .L47
+ 556              	.L34:
+ 240:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         if( ucByte == ':' )
+ 557              	 .loc 1 240 0
+ 558 0020 FFF7FEFF 	 bl vMBPortTimersEnable
+ 559              	.LVL49:
+ 241:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         {
+ 560              	 .loc 1 241 0
+ 561 0024 6B46     	 mov r3,sp
+ 562 0026 D879     	 ldrb r0,[r3,#7]
+ 563 0028 3A28     	 cmp r0,#58
+ 564 002a 06D1     	 bne .L37
+ 244:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****             usRcvBufferPos = 0;
+ 565              	 .loc 1 244 0
+ 566 002c 0023     	 mov r3,#0
+ 567 002e 3E4A     	 ldr r2,.L49+4
+ 568 0030 1370     	 strb r3,[r2]
+ 245:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         }
+ 569              	 .loc 1 245 0
+ 570 0032 3E4A     	 ldr r2,.L49+8
+ 571 0034 1380     	 strh r3,[r2]
+ 224:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     UCHAR           ucByte;
+ 572              	 .loc 1 224 0
+ 573 0036 0020     	 mov r0,#0
+ 574 0038 72E0     	 b .L33
+ 575              	.L37:
+ 247:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         {
+ 576              	 .loc 1 247 0
+ 577 003a 0D28     	 cmp r0,#13
+ 578 003c 04D1     	 bne .L38
+ 249:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         }
+ 579              	 .loc 1 249 0
+ 580 003e 0222     	 mov r2,#2
+ 581 0040 384B     	 ldr r3,.L49
+ 582 0042 1A70     	 strb r2,[r3]
+ 224:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     UCHAR           ucByte;
+ 583              	 .loc 1 224 0
+ 584 0044 0020     	 mov r0,#0
+ 585 0046 6BE0     	 b .L33
+ 586              	.L38:
+ 253:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****             switch ( eBytePos )
+ 587              	 .loc 1 253 0
+ 588 0048 FFF7FEFF 	 bl prvucMBCHAR2BIN
+ 589              	.LVL50:
+ 254:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****             {
+ 590              	 .loc 1 254 0
+ 591 004c 364B     	 ldr r3,.L49+4
+ 592 004e 1B78     	 ldrb r3,[r3]
+ 593 0050 DBB2     	 uxtb r3,r3
+ 594 0052 002B     	 cmp r3,#0
+ 595 0054 02D0     	 beq .L39
+ 596 0056 012B     	 cmp r3,#1
+ 597 0058 18D0     	 beq .L40
+ 598 005a 5EE0     	 b .L48
+ 599              	.L39:
+ 259:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****                 {
+ 600              	 .loc 1 259 0
+ 601 005c 334B     	 ldr r3,.L49+8
+ 602 005e 1B88     	 ldrh r3,[r3]
+ 603 0060 9BB2     	 uxth r3,r3
+ 604 0062 FF2B     	 cmp r3,#255
+ 605 0064 0BD8     	 bhi .L41
+ 261:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****                     eBytePos = BYTE_LOW_NIBBLE;
+ 606              	 .loc 1 261 0
+ 607 0066 314B     	 ldr r3,.L49+8
+ 608 0068 1B88     	 ldrh r3,[r3]
+ 609 006a 314A     	 ldr r2,.L49+12
+ 610 006c D318     	 add r3,r2,r3
+ 611 006e 0001     	 lsl r0,r0,#4
+ 612              	.LVL51:
+ 613 0070 C0B2     	 uxtb r0,r0
+ 614 0072 1870     	 strb r0,[r3]
+ 262:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****                     break;
+ 615              	 .loc 1 262 0
+ 616 0074 0122     	 mov r2,#1
+ 617 0076 2C4B     	 ldr r3,.L49+4
+ 618 0078 1A70     	 strb r2,[r3]
+ 224:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     UCHAR           ucByte;
+ 619              	 .loc 1 224 0
+ 620 007a 0020     	 mov r0,#0
+ 263:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****                 }
+ 621              	 .loc 1 263 0
+ 622 007c 50E0     	 b .L33
+ 623              	.LVL52:
+ 624              	.L41:
+ 269:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****                     /* Disable previously activated timer because of error state. */
+ 625              	 .loc 1 269 0
+ 626 007e 0022     	 mov r2,#0
+ 627 0080 284B     	 ldr r3,.L49
+ 628 0082 1A70     	 strb r2,[r3]
+ 271:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****                 }
+ 629              	 .loc 1 271 0
+ 630 0084 FFF7FEFF 	 bl vMBPortTimersDisable
+ 631              	.LVL53:
+ 224:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     UCHAR           ucByte;
+ 632              	 .loc 1 224 0
+ 633 0088 0020     	 mov r0,#0
+ 273:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 634              	 .loc 1 273 0
+ 635 008a 49E0     	 b .L33
+ 636              	.LVL54:
+ 637              	.L40:
+ 276:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****                 usRcvBufferPos++;
+ 638              	 .loc 1 276 0
+ 639 008c 274A     	 ldr r2,.L49+8
+ 640 008e 1388     	 ldrh r3,[r2]
+ 641 0090 2749     	 ldr r1,.L49+12
+ 642 0092 CB18     	 add r3,r1,r3
+ 643 0094 1978     	 ldrb r1,[r3]
+ 644 0096 0843     	 orr r0,r1
+ 645              	.LVL55:
+ 646 0098 C0B2     	 uxtb r0,r0
+ 647 009a 1870     	 strb r0,[r3]
+ 277:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****                 eBytePos = BYTE_HIGH_NIBBLE;
+ 648              	 .loc 1 277 0
+ 649 009c 1388     	 ldrh r3,[r2]
+ 650 009e 0133     	 add r3,r3,#1
+ 651 00a0 9BB2     	 uxth r3,r3
+ 652 00a2 1380     	 strh r3,[r2]
+ 278:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****                 break;
+ 653              	 .loc 1 278 0
+ 654 00a4 0022     	 mov r2,#0
+ 655 00a6 204B     	 ldr r3,.L49+4
+ 656 00a8 1A70     	 strb r2,[r3]
+ 224:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     UCHAR           ucByte;
+ 657              	 .loc 1 224 0
+ 658 00aa 0020     	 mov r0,#0
+ 279:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****             }
+ 659              	 .loc 1 279 0
+ 660 00ac 38E0     	 b .L33
+ 661              	.L36:
+ 285:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         {
+ 662              	 .loc 1 285 0
+ 663 00ae 6B46     	 mov r3,sp
+ 664 00b0 DA79     	 ldrb r2,[r3,#7]
+ 665 00b2 204B     	 ldr r3,.L49+16
+ 666 00b4 1B78     	 ldrb r3,[r3]
+ 667 00b6 DBB2     	 uxtb r3,r3
+ 668 00b8 9A42     	 cmp r2,r3
+ 669 00ba 08D1     	 bne .L42
+ 289:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****             /* Receiver is again in idle state. */
+ 670              	 .loc 1 289 0
+ 671 00bc FFF7FEFF 	 bl vMBPortTimersDisable
+ 672              	.LVL56:
+ 291:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 673              	 .loc 1 291 0
+ 674 00c0 0022     	 mov r2,#0
+ 675 00c2 184B     	 ldr r3,.L49
+ 676 00c4 1A70     	 strb r2,[r3]
+ 295:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         }
+ 677              	 .loc 1 295 0
+ 678 00c6 0120     	 mov r0,#1
+ 679 00c8 FFF7FEFF 	 bl xMBPortEventPost
+ 680              	.LVL57:
+ 681 00cc 28E0     	 b .L33
+ 682              	.LVL58:
+ 683              	.L42:
+ 297:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         {
+ 684              	 .loc 1 297 0
+ 685 00ce 3A2A     	 cmp r2,#58
+ 686 00d0 0BD1     	 bne .L43
+ 300:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****             usRcvBufferPos = 0;
+ 687              	 .loc 1 300 0
+ 688 00d2 0023     	 mov r3,#0
+ 689 00d4 144A     	 ldr r2,.L49+4
+ 690 00d6 1370     	 strb r3,[r2]
+ 301:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****             eRcvState = STATE_RX_RCV;
+ 691              	 .loc 1 301 0
+ 692 00d8 144A     	 ldr r2,.L49+8
+ 693 00da 1380     	 strh r3,[r2]
+ 302:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 694              	 .loc 1 302 0
+ 695 00dc 0122     	 mov r2,#1
+ 696 00de 114B     	 ldr r3,.L49
+ 697 00e0 1A70     	 strb r2,[r3]
+ 305:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         }
+ 698              	 .loc 1 305 0
+ 699 00e2 FFF7FEFF 	 bl vMBPortTimersEnable
+ 700              	.LVL59:
+ 224:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     UCHAR           ucByte;
+ 701              	 .loc 1 224 0
+ 702 00e6 0020     	 mov r0,#0
+ 703 00e8 1AE0     	 b .L33
+ 704              	.L43:
+ 310:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         }
+ 705              	 .loc 1 310 0
+ 706 00ea 0022     	 mov r2,#0
+ 707 00ec 0D4B     	 ldr r3,.L49
+ 708 00ee 1A70     	 strb r2,[r3]
+ 224:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     UCHAR           ucByte;
+ 709              	 .loc 1 224 0
+ 710 00f0 0020     	 mov r0,#0
+ 711 00f2 15E0     	 b .L33
+ 712              	.L35:
+ 315:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         {
+ 713              	 .loc 1 315 0
+ 714 00f4 6B46     	 mov r3,sp
+ 715 00f6 0733     	 add r3,r3,#7
+ 716 00f8 1B78     	 ldrb r3,[r3]
+ 717 00fa 3A2B     	 cmp r3,#58
+ 718 00fc 0FD1     	 bne .L46
+ 318:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****             /* Reset the input buffers to store the frame. */
+ 719              	 .loc 1 318 0
+ 720 00fe FFF7FEFF 	 bl vMBPortTimersEnable
+ 721              	.LVL60:
+ 320:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****             eBytePos = BYTE_HIGH_NIBBLE;
+ 722              	 .loc 1 320 0
+ 723 0102 0022     	 mov r2,#0
+ 724 0104 094B     	 ldr r3,.L49+8
+ 725 0106 1A80     	 strh r2,[r3]
+ 321:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****             eRcvState = STATE_RX_RCV;
+ 726              	 .loc 1 321 0
+ 727 0108 074B     	 ldr r3,.L49+4
+ 728 010a 1A70     	 strb r2,[r3]
+ 322:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         }
+ 729              	 .loc 1 322 0
+ 730 010c 0122     	 mov r2,#1
+ 731 010e 054B     	 ldr r3,.L49
+ 732 0110 1A70     	 strb r2,[r3]
+ 224:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     UCHAR           ucByte;
+ 733              	 .loc 1 224 0
+ 734 0112 0020     	 mov r0,#0
+ 735 0114 04E0     	 b .L33
+ 736              	.L47:
+ 737 0116 0020     	 mov r0,#0
+ 738 0118 02E0     	 b .L33
+ 739              	.LVL61:
+ 740              	.L48:
+ 741 011a 0020     	 mov r0,#0
+ 742              	.LVL62:
+ 743 011c 00E0     	 b .L33
+ 744              	.L46:
+ 745 011e 0020     	 mov r0,#0
+ 746              	.LVL63:
+ 747              	.L33:
+ 328:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 748              	 .loc 1 328 0
+ 749 0120 03B0     	 add sp,sp,#12
+ 750              	 
+ 751 0122 00BD     	 pop {pc}
+ 752              	.L50:
+ 753              	 .align 2
+ 754              	.L49:
+ 755 0124 00000000 	 .word .LANCHOR1
+ 756 0128 00000000 	 .word .LANCHOR6
+ 757 012c 00000000 	 .word .LANCHOR2
+ 758 0130 00000000 	 .word ucRTUBuf
+ 759 0134 00000000 	 .word .LANCHOR0
+ 760              	 .cfi_endproc
+ 761              	.LFE105:
+ 763              	 .section .text.xMBASCIITransmitFSM,"ax",%progbits
+ 764              	 .align 2
+ 765              	 .global xMBASCIITransmitFSM
+ 766              	 .code 16
+ 767              	 .thumb_func
+ 769              	xMBASCIITransmitFSM:
+ 770              	.LFB106:
+ 332:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     BOOL            xNeedPoll = FALSE;
+ 771              	 .loc 1 332 0
+ 772              	 .cfi_startproc
+ 773 0000 70B5     	 push {r4,r5,r6,lr}
+ 774              	.LCFI7:
+ 775              	 .cfi_def_cfa_offset 16
+ 776              	 .cfi_offset 4,-16
+ 777              	 .cfi_offset 5,-12
+ 778              	 .cfi_offset 6,-8
+ 779              	 .cfi_offset 14,-4
+ 780              	.LVL64:
+ 337:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     {
+ 781              	 .loc 1 337 0
+ 782 0002 384B     	 ldr r3,.L65
+ 783 0004 1B78     	 ldrb r3,[r3]
+ 784 0006 DBB2     	 uxtb r3,r3
+ 785 0008 042B     	 cmp r3,#4
+ 786 000a 65D8     	 bhi .L62
+ 787 000c 9B00     	 lsl r3,r3,#2
+ 788 000e 364A     	 ldr r2,.L65+4
+ 789 0010 D358     	 ldr r3,[r2,r3]
+ 790 0012 9F46     	 mov pc,r3
+ 791              	 .section .rodata.xMBASCIITransmitFSM,"a",%progbits
+ 792              	 .align 2
+ 793              	.L54:
+ 794 0000 CC000000 	 .word .L53
+ 795 0004 14000000 	 .word .L55
+ 796 0008 2A000000 	 .word .L56
+ 797 000c 9E000000 	 .word .L57
+ 798 0010 B2000000 	 .word .L58
+ 799              	 .section .text.xMBASCIITransmitFSM
+ 800              	.L55:
+ 801              	.LVL65:
+ 343:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         eSndState = STATE_TX_DATA;
+ 802              	 .loc 1 343 0
+ 803 0014 3A20     	 mov r0,#58
+ 804 0016 FFF7FEFF 	 bl xMBPortSerialPutByte
+ 805              	.LVL66:
+ 344:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         eBytePos = BYTE_HIGH_NIBBLE;
+ 806              	 .loc 1 344 0
+ 807 001a 0222     	 mov r2,#2
+ 808 001c 314B     	 ldr r3,.L65
+ 809 001e 1A70     	 strb r2,[r3]
+ 345:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         break;
+ 810              	 .loc 1 345 0
+ 811 0020 0022     	 mov r2,#0
+ 812 0022 324B     	 ldr r3,.L65+8
+ 813 0024 1A70     	 strb r2,[r3]
+ 333:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     UCHAR           ucByte;
+ 814              	 .loc 1 333 0
+ 815 0026 0024     	 mov r4,#0
+ 346:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 816              	 .loc 1 346 0
+ 817 0028 59E0     	 b .L52
+ 818              	.LVL67:
+ 819              	.L56:
+ 353:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         {
+ 820              	 .loc 1 353 0
+ 821 002a 314B     	 ldr r3,.L65+12
+ 822 002c 1B88     	 ldrh r3,[r3]
+ 823 002e 9BB2     	 uxth r3,r3
+ 824 0030 002B     	 cmp r3,#0
+ 825 0032 2CD0     	 beq .L59
+ 355:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****             {
+ 826              	 .loc 1 355 0
+ 827 0034 2D4B     	 ldr r3,.L65+8
+ 828 0036 1B78     	 ldrb r3,[r3]
+ 829 0038 DBB2     	 uxtb r3,r3
+ 830 003a 002B     	 cmp r3,#0
+ 831 003c 02D0     	 beq .L60
+ 832 003e 012B     	 cmp r3,#1
+ 833 0040 0ED0     	 beq .L61
+ 834 0042 4BE0     	 b .L64
+ 835              	.L60:
+ 358:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****                 xMBPortSerialPutByte( ( CHAR ) ucByte );
+ 836              	 .loc 1 358 0
+ 837 0044 2B4B     	 ldr r3,.L65+16
+ 838 0046 1B68     	 ldr r3,[r3]
+ 839 0048 1878     	 ldrb r0,[r3]
+ 840 004a 0009     	 lsr r0,r0,#4
+ 841 004c FFF7FEFF 	 bl prvucMBBIN2CHAR
+ 842              	.LVL68:
+ 359:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****                 eBytePos = BYTE_LOW_NIBBLE;
+ 843              	 .loc 1 359 0
+ 844 0050 40B2     	 sxtb r0,r0
+ 845 0052 FFF7FEFF 	 bl xMBPortSerialPutByte
+ 846              	.LVL69:
+ 360:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****                 break;
+ 847              	 .loc 1 360 0
+ 848 0056 0122     	 mov r2,#1
+ 849 0058 244B     	 ldr r3,.L65+8
+ 850 005a 1A70     	 strb r2,[r3]
+ 333:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     UCHAR           ucByte;
+ 851              	 .loc 1 333 0
+ 852 005c 0024     	 mov r4,#0
+ 361:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 853              	 .loc 1 361 0
+ 854 005e 3EE0     	 b .L52
+ 855              	.L61:
+ 364:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****                 xMBPortSerialPutByte( ( CHAR )ucByte );
+ 856              	 .loc 1 364 0
+ 857 0060 244C     	 ldr r4,.L65+16
+ 858 0062 2368     	 ldr r3,[r4]
+ 859 0064 1878     	 ldrb r0,[r3]
+ 860 0066 0F23     	 mov r3,#15
+ 861 0068 1840     	 and r0,r3
+ 862 006a FFF7FEFF 	 bl prvucMBBIN2CHAR
+ 863              	.LVL70:
+ 365:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****                 pucSndBufferCur++;
+ 864              	 .loc 1 365 0
+ 865 006e 40B2     	 sxtb r0,r0
+ 866 0070 FFF7FEFF 	 bl xMBPortSerialPutByte
+ 867              	.LVL71:
+ 366:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****                 eBytePos = BYTE_HIGH_NIBBLE;
+ 868              	 .loc 1 366 0
+ 869 0074 2368     	 ldr r3,[r4]
+ 870 0076 0133     	 add r3,r3,#1
+ 871 0078 2360     	 str r3,[r4]
+ 367:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****                 usSndBufferCount--;
+ 872              	 .loc 1 367 0
+ 873 007a 0022     	 mov r2,#0
+ 874 007c 1B4B     	 ldr r3,.L65+8
+ 875 007e 1A70     	 strb r2,[r3]
+ 368:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****                 break;
+ 876              	 .loc 1 368 0
+ 877 0080 1B4A     	 ldr r2,.L65+12
+ 878 0082 1388     	 ldrh r3,[r2]
+ 879 0084 013B     	 sub r3,r3,#1
+ 880 0086 9BB2     	 uxth r3,r3
+ 881 0088 1380     	 strh r3,[r2]
+ 333:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     UCHAR           ucByte;
+ 882              	 .loc 1 333 0
+ 883 008a 0024     	 mov r4,#0
+ 369:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****             }
+ 884              	 .loc 1 369 0
+ 885 008c 27E0     	 b .L52
+ 886              	.L59:
+ 374:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****             eSndState = STATE_TX_END;
+ 887              	 .loc 1 374 0
+ 888 008e 0D20     	 mov r0,#13
+ 889 0090 FFF7FEFF 	 bl xMBPortSerialPutByte
+ 890              	.LVL72:
+ 375:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         }
+ 891              	 .loc 1 375 0
+ 892 0094 0322     	 mov r2,#3
+ 893 0096 134B     	 ldr r3,.L65
+ 894 0098 1A70     	 strb r2,[r3]
+ 333:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     UCHAR           ucByte;
+ 895              	 .loc 1 333 0
+ 896 009a 0024     	 mov r4,#0
+ 897 009c 1FE0     	 b .L52
+ 898              	.L57:
+ 381:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         /* We need another state to make sure that the CR character has
+ 899              	 .loc 1 381 0
+ 900 009e 164B     	 ldr r3,.L65+20
+ 901 00a0 1878     	 ldrb r0,[r3]
+ 902 00a2 40B2     	 sxtb r0,r0
+ 903 00a4 FFF7FEFF 	 bl xMBPortSerialPutByte
+ 904              	.LVL73:
+ 384:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         break;
+ 905              	 .loc 1 384 0
+ 906 00a8 0422     	 mov r2,#4
+ 907 00aa 0E4B     	 ldr r3,.L65
+ 908 00ac 1A70     	 strb r2,[r3]
+ 333:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     UCHAR           ucByte;
+ 909              	 .loc 1 333 0
+ 910 00ae 0024     	 mov r4,#0
+ 385:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 911              	 .loc 1 385 0
+ 912 00b0 15E0     	 b .L52
+ 913              	.L58:
+ 390:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         xNeedPoll = xMBPortEventPost( EV_FRAME_SENT );
+ 914              	 .loc 1 390 0
+ 915 00b2 0C4D     	 ldr r5,.L65
+ 916 00b4 0026     	 mov r6,#0
+ 917 00b6 2E70     	 strb r6,[r5]
+ 391:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 918              	 .loc 1 391 0
+ 919 00b8 0320     	 mov r0,#3
+ 920 00ba FFF7FEFF 	 bl xMBPortEventPost
+ 921              	.LVL74:
+ 922 00be 041C     	 mov r4,r0
+ 923              	.LVL75:
+ 395:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         eSndState = STATE_TX_IDLE;
+ 924              	 .loc 1 395 0
+ 925 00c0 0120     	 mov r0,#1
+ 926              	.LVL76:
+ 927 00c2 0021     	 mov r1,#0
+ 928 00c4 FFF7FEFF 	 bl vMBPortSerialEnable
+ 929              	.LVL77:
+ 396:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         break;
+ 930              	 .loc 1 396 0
+ 931 00c8 2E70     	 strb r6,[r5]
+ 397:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 932              	 .loc 1 397 0
+ 933 00ca 08E0     	 b .L52
+ 934              	.LVL78:
+ 935              	.L53:
+ 403:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         break;
+ 936              	 .loc 1 403 0
+ 937 00cc 0120     	 mov r0,#1
+ 938 00ce 0021     	 mov r1,#0
+ 939 00d0 FFF7FEFF 	 bl vMBPortSerialEnable
+ 940              	.LVL79:
+ 333:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     UCHAR           ucByte;
+ 941              	 .loc 1 333 0
+ 942 00d4 0024     	 mov r4,#0
+ 404:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     }
+ 943              	 .loc 1 404 0
+ 944 00d6 02E0     	 b .L52
+ 945              	.L62:
+ 333:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     UCHAR           ucByte;
+ 946              	 .loc 1 333 0
+ 947 00d8 0024     	 mov r4,#0
+ 948 00da 00E0     	 b .L52
+ 949              	.L64:
+ 950 00dc 0024     	 mov r4,#0
+ 951              	.LVL80:
+ 952              	.L52:
+ 408:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 953              	 .loc 1 408 0
+ 954 00de 201C     	 mov r0,r4
+ 955              	 
+ 956              	.LVL81:
+ 957 00e0 70BD     	 pop {r4,r5,r6,pc}
+ 958              	.L66:
+ 959 00e2 C046     	 .align 2
+ 960              	.L65:
+ 961 00e4 00000000 	 .word .LANCHOR5
+ 962 00e8 00000000 	 .word .L54
+ 963 00ec 00000000 	 .word .LANCHOR6
+ 964 00f0 00000000 	 .word .LANCHOR4
+ 965 00f4 00000000 	 .word .LANCHOR3
+ 966 00f8 00000000 	 .word .LANCHOR0
+ 967              	 .cfi_endproc
+ 968              	.LFE106:
+ 970              	 .section .text.xMBASCIITimerT1SExpired,"ax",%progbits
+ 971              	 .align 2
+ 972              	 .global xMBASCIITimerT1SExpired
+ 973              	 .code 16
+ 974              	 .thumb_func
+ 976              	xMBASCIITimerT1SExpired:
+ 977              	.LFB107:
+ 412:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     switch ( eRcvState )
+ 978              	 .loc 1 412 0
+ 979              	 .cfi_startproc
+ 980 0000 08B5     	 push {r3,lr}
+ 981              	.LCFI8:
+ 982              	 .cfi_def_cfa_offset 8
+ 983              	 .cfi_offset 3,-8
+ 984              	 .cfi_offset 14,-4
+ 413:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****     {
+ 985              	 .loc 1 413 0
+ 986 0002 064B     	 ldr r3,.L70
+ 987 0004 1B78     	 ldrb r3,[r3]
+ 988 0006 013B     	 sub r3,r3,#1
+ 989 0008 012B     	 cmp r3,#1
+ 990 000a 02D8     	 bhi .L68
+ 420:../freemodbus-v1.5.0/modbus/ascii/mbascii.c ****         break;
+ 991              	 .loc 1 420 0
+ 992 000c 0022     	 mov r2,#0
+ 993 000e 034B     	 ldr r3,.L70
+ 994 0010 1A70     	 strb r2,[r3]
+ 995              	.L68:
+ 427:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 996              	 .loc 1 427 0
+ 997 0012 FFF7FEFF 	 bl vMBPortTimersDisable
+ 998              	.LVL82:
+ 431:../freemodbus-v1.5.0/modbus/ascii/mbascii.c **** 
+ 999              	 .loc 1 431 0
+ 1000 0016 0020     	 mov r0,#0
+ 1001              	 
+ 1002 0018 08BD     	 pop {r3,pc}
+ 1003              	.L71:
+ 1004 001a C046     	 .align 2
+ 1005              	.L70:
+ 1006 001c 00000000 	 .word .LANCHOR1
+ 1007              	 .cfi_endproc
+ 1008              	.LFE107:
+ 1010              	 .section .bss.pucSndBufferCur,"aw",%nobits
+ 1011              	 .align 2
+ 1012              	 .set .LANCHOR3,.+0
+ 1015              	pucSndBufferCur:
+ 1016 0000 00000000 	 .space 4
+ 1017              	 .section .bss.ucMBLFCharacter,"aw",%nobits
+ 1018              	 .set .LANCHOR0,.+0
+ 1021              	ucMBLFCharacter:
+ 1022 0000 00       	 .space 1
+ 1023              	 .section .bss.eBytePos,"aw",%nobits
+ 1024              	 .set .LANCHOR6,.+0
+ 1027              	eBytePos:
+ 1028 0000 00       	 .space 1
+ 1029              	 .section .bss.usSndBufferCount,"aw",%nobits
+ 1030              	 .align 1
+ 1031              	 .set .LANCHOR4,.+0
+ 1034              	usSndBufferCount:
+ 1035 0000 0000     	 .space 2
+ 1036              	 .section .bss.usRcvBufferPos,"aw",%nobits
+ 1037              	 .align 1
+ 1038              	 .set .LANCHOR2,.+0
+ 1041              	usRcvBufferPos:
+ 1042 0000 0000     	 .space 2
+ 1043              	 .section .bss.ucLRC,"aw",%nobits
+ 1046              	ucLRC:
+ 1047 0000 00       	 .space 1
+ 1048              	 .section .bss.eSndState,"aw",%nobits
+ 1049              	 .set .LANCHOR5,.+0
+ 1052              	eSndState:
+ 1053 0000 00       	 .space 1
+ 1054              	 .section .bss.eRcvState,"aw",%nobits
+ 1055              	 .set .LANCHOR1,.+0
+ 1058              	eRcvState:
+ 1059 0000 00       	 .space 1
+ 1060              	 .text
+ 1061              	.Letext0:
+ 1062              	 .file 3 "c:\\davev4-64bit\\dave-4.3.2\\eclipse\\arm-gcc-49\\arm-none-eabi\\include\\machine\\_default_types.h"
+ 1063              	 .file 4 "c:\\davev4-64bit\\dave-4.3.2\\eclipse\\arm-gcc-49\\arm-none-eabi\\include\\stdint.h"
+ 1064              	 .file 5 "C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/freemodbus-v1.5.0/port/port.h"
+ 1065              	 .file 6 "C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/freemodbus-v1.5.0/modbus/include/mbport.h"
+ 1066              	 .file 7 "C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/freemodbus-v1.5.0/modbus/include/mb.h"
+DEFINED SYMBOLS
+                            *ABS*:00000000 mbascii.c
+    {standard input}:18     .text.prvucMBCHAR2BIN:00000000 $t
+    {standard input}:22     .text.prvucMBCHAR2BIN:00000000 prvucMBCHAR2BIN
+    {standard input}:55     .text.prvucMBBIN2CHAR:00000000 $t
+    {standard input}:59     .text.prvucMBBIN2CHAR:00000000 prvucMBBIN2CHAR
+    {standard input}:97     .text.prvucMBLRC:00000000 $t
+    {standard input}:101    .text.prvucMBLRC:00000000 prvucMBLRC
+    {standard input}:142    .text.eMBASCIIInit:00000000 $t
+    {standard input}:147    .text.eMBASCIIInit:00000000 eMBASCIIInit
+    {standard input}:216    .text.eMBASCIIInit:00000030 $d
+    {standard input}:222    .text.eMBASCIIStart:00000000 $t
+    {standard input}:227    .text.eMBASCIIStart:00000000 eMBASCIIStart
+    {standard input}:273    .text.eMBASCIIStart:0000001c $d
+    {standard input}:278    .text.eMBASCIIStop:00000000 $t
+    {standard input}:283    .text.eMBASCIIStop:00000000 eMBASCIIStop
+    {standard input}:325    .text.eMBASCIIReceive:00000000 $t
+    {standard input}:330    .text.eMBASCIIReceive:00000000 eMBASCIIReceive
+    {standard input}:411    .text.eMBASCIIReceive:00000044 $d
+    {standard input}:417    .text.eMBASCIISend:00000000 $t
+    {standard input}:422    .text.eMBASCIISend:00000000 eMBASCIISend
+    {standard input}:514    .text.eMBASCIISend:00000054 $d
+    {standard input}:523    .text.xMBASCIIReceiveFSM:00000000 $t
+    {standard input}:528    .text.xMBASCIIReceiveFSM:00000000 xMBASCIIReceiveFSM
+    {standard input}:755    .text.xMBASCIIReceiveFSM:00000124 $d
+    {standard input}:764    .text.xMBASCIITransmitFSM:00000000 $t
+    {standard input}:769    .text.xMBASCIITransmitFSM:00000000 xMBASCIITransmitFSM
+    {standard input}:792    .rodata.xMBASCIITransmitFSM:00000000 $d
+    {standard input}:961    .text.xMBASCIITransmitFSM:000000e4 $d
+    {standard input}:971    .text.xMBASCIITimerT1SExpired:00000000 $t
+    {standard input}:976    .text.xMBASCIITimerT1SExpired:00000000 xMBASCIITimerT1SExpired
+    {standard input}:1006   .text.xMBASCIITimerT1SExpired:0000001c $d
+    {standard input}:1011   .bss.pucSndBufferCur:00000000 $d
+    {standard input}:1015   .bss.pucSndBufferCur:00000000 pucSndBufferCur
+    {standard input}:1021   .bss.ucMBLFCharacter:00000000 ucMBLFCharacter
+    {standard input}:1022   .bss.ucMBLFCharacter:00000000 $d
+    {standard input}:1027   .bss.eBytePos:00000000 eBytePos
+    {standard input}:1028   .bss.eBytePos:00000000 $d
+    {standard input}:1030   .bss.usSndBufferCount:00000000 $d
+    {standard input}:1034   .bss.usSndBufferCount:00000000 usSndBufferCount
+    {standard input}:1037   .bss.usRcvBufferPos:00000000 $d
+    {standard input}:1041   .bss.usRcvBufferPos:00000000 usRcvBufferPos
+    {standard input}:1046   .bss.ucLRC:00000000 ucLRC
+    {standard input}:1047   .bss.ucLRC:00000000 $d
+    {standard input}:1052   .bss.eSndState:00000000 eSndState
+    {standard input}:1053   .bss.eSndState:00000000 $d
+    {standard input}:1058   .bss.eRcvState:00000000 eRcvState
+    {standard input}:1059   .bss.eRcvState:00000000 $d
+                     .debug_frame:00000010 $d
+
+UNDEFINED SYMBOLS
+xMBPortSerialInit
+xMBPortTimersInit
+vMBPortSerialEnable
+xMBPortEventPost
+vMBPortTimersDisable
+ucRTUBuf
+xMBPortSerialGetByte
+vMBPortTimersEnable
+xMBPortSerialPutByte

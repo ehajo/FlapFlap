@@ -1,0 +1,228 @@
+   1              	 .cpu cortex-m0
+   2              	 .fpu softvfp
+   3              	 .eabi_attribute 20,1
+   4              	 .eabi_attribute 21,1
+   5              	 .eabi_attribute 23,3
+   6              	 .eabi_attribute 24,1
+   7              	 .eabi_attribute 25,1
+   8              	 .eabi_attribute 26,1
+   9              	 .eabi_attribute 30,1
+  10              	 .eabi_attribute 34,0
+  11              	 .eabi_attribute 18,4
+  12              	 .code 16
+  13              	 .file "portevent.c"
+  14              	 .text
+  15              	.Ltext0:
+  16              	 .cfi_sections .debug_frame
+  17              	 .section .text.xMBPortEventInit,"ax",%progbits
+  18              	 .align 2
+  19              	 .global xMBPortEventInit
+  20              	 .code 16
+  21              	 .thumb_func
+  23              	xMBPortEventInit:
+  24              	.LFB100:
+  25              	 .file 1 "../freemodbus-v1.5.0/port/portevent.c"
+   1:../freemodbus-v1.5.0/port/portevent.c **** /******************************************************************************
+   2:../freemodbus-v1.5.0/port/portevent.c **** * Software License Agreement
+   3:../freemodbus-v1.5.0/port/portevent.c **** *
+   4:../freemodbus-v1.5.0/port/portevent.c **** * Copyright (c) 2016, Infineon Technologies AG
+   5:../freemodbus-v1.5.0/port/portevent.c **** * All rights reserved.
+   6:../freemodbus-v1.5.0/port/portevent.c **** *
+   7:../freemodbus-v1.5.0/port/portevent.c **** * Redistribution and use in source and binary forms, with or without
+   8:../freemodbus-v1.5.0/port/portevent.c **** * modification, are permitted provided that the following conditions are met:
+   9:../freemodbus-v1.5.0/port/portevent.c **** *
+  10:../freemodbus-v1.5.0/port/portevent.c **** * Redistributions of source code must retain the above copyright notice,
+  11:../freemodbus-v1.5.0/port/portevent.c **** * this list of conditions and the following disclaimer.
+  12:../freemodbus-v1.5.0/port/portevent.c **** *
+  13:../freemodbus-v1.5.0/port/portevent.c **** * Redistributions in binary form must reproduce the above copyright notice,
+  14:../freemodbus-v1.5.0/port/portevent.c **** * this list of conditions and the following disclaimer in the documentation
+  15:../freemodbus-v1.5.0/port/portevent.c **** * and/or other materials provided with the distribution.
+  16:../freemodbus-v1.5.0/port/portevent.c **** *
+  17:../freemodbus-v1.5.0/port/portevent.c **** * Neither the name of the copyright holders nor the names of its contributors
+  18:../freemodbus-v1.5.0/port/portevent.c **** * may be used to endorse or promote products derived from this software
+  19:../freemodbus-v1.5.0/port/portevent.c **** * without specific prior written permission
+  20:../freemodbus-v1.5.0/port/portevent.c **** 
+  21:../freemodbus-v1.5.0/port/portevent.c **** * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  22:../freemodbus-v1.5.0/port/portevent.c **** * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  23:../freemodbus-v1.5.0/port/portevent.c **** * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  24:../freemodbus-v1.5.0/port/portevent.c **** * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+  25:../freemodbus-v1.5.0/port/portevent.c **** * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+  26:../freemodbus-v1.5.0/port/portevent.c **** * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+  27:../freemodbus-v1.5.0/port/portevent.c **** * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+  28:../freemodbus-v1.5.0/port/portevent.c **** * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+  29:../freemodbus-v1.5.0/port/portevent.c **** * CONTRACT, STRICT LIABILITY,OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  30:../freemodbus-v1.5.0/port/portevent.c **** * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  31:../freemodbus-v1.5.0/port/portevent.c **** * POSSIBILITY OF SUCH DAMAGE.
+  32:../freemodbus-v1.5.0/port/portevent.c **** *
+  33:../freemodbus-v1.5.0/port/portevent.c **** * To improve the quality of the software, users are encouraged to share
+  34:../freemodbus-v1.5.0/port/portevent.c **** * modifications, enhancements or bug fixes with Infineon Technologies AG
+  35:../freemodbus-v1.5.0/port/portevent.c **** * (dave@infineon.com).
+  36:../freemodbus-v1.5.0/port/portevent.c **** *
+  37:../freemodbus-v1.5.0/port/portevent.c **** *****************************************************************************/
+  38:../freemodbus-v1.5.0/port/portevent.c **** 
+  39:../freemodbus-v1.5.0/port/portevent.c **** /****************************************************************
+  40:../freemodbus-v1.5.0/port/portevent.c **** * HEADER FILES
+  41:../freemodbus-v1.5.0/port/portevent.c **** ***************************************************************/
+  42:../freemodbus-v1.5.0/port/portevent.c **** #include "xmc_common.h"
+  43:../freemodbus-v1.5.0/port/portevent.c **** #include "mb.h"
+  44:../freemodbus-v1.5.0/port/portevent.c **** #include "mbport.h"
+  45:../freemodbus-v1.5.0/port/portevent.c **** 
+  46:../freemodbus-v1.5.0/port/portevent.c **** /****************************************************************
+  47:../freemodbus-v1.5.0/port/portevent.c **** * LOCAL DATA
+  48:../freemodbus-v1.5.0/port/portevent.c **** ***************************************************************/
+  49:../freemodbus-v1.5.0/port/portevent.c **** static eMBEventType eQueuedEvent;
+  50:../freemodbus-v1.5.0/port/portevent.c **** static BOOL     xEventInQueue;
+  51:../freemodbus-v1.5.0/port/portevent.c **** 
+  52:../freemodbus-v1.5.0/port/portevent.c **** /****************************************************************
+  53:../freemodbus-v1.5.0/port/portevent.c **** * API IMPLEMENTATION
+  54:../freemodbus-v1.5.0/port/portevent.c **** ***************************************************************/
+  55:../freemodbus-v1.5.0/port/portevent.c **** BOOL
+  56:../freemodbus-v1.5.0/port/portevent.c **** xMBPortEventInit( void )
+  57:../freemodbus-v1.5.0/port/portevent.c **** {
+  26              	 .loc 1 57 0
+  27              	 .cfi_startproc
+  58:../freemodbus-v1.5.0/port/portevent.c ****     xEventInQueue = false;
+  28              	 .loc 1 58 0
+  29 0000 0022     	 mov r2,#0
+  30 0002 024B     	 ldr r3,.L2
+  31 0004 1A70     	 strb r2,[r3]
+  59:../freemodbus-v1.5.0/port/portevent.c ****     return true;
+  60:../freemodbus-v1.5.0/port/portevent.c **** }
+  32              	 .loc 1 60 0
+  33 0006 0120     	 mov r0,#1
+  34              	 
+  35 0008 7047     	 bx lr
+  36              	.L3:
+  37 000a C046     	 .align 2
+  38              	.L2:
+  39 000c 00000000 	 .word .LANCHOR0
+  40              	 .cfi_endproc
+  41              	.LFE100:
+  43              	 .section .text.xMBPortEventPost,"ax",%progbits
+  44              	 .align 2
+  45              	 .global xMBPortEventPost
+  46              	 .code 16
+  47              	 .thumb_func
+  49              	xMBPortEventPost:
+  50              	.LFB101:
+  61:../freemodbus-v1.5.0/port/portevent.c **** 
+  62:../freemodbus-v1.5.0/port/portevent.c **** BOOL
+  63:../freemodbus-v1.5.0/port/portevent.c **** xMBPortEventPost( eMBEventType eEvent )
+  64:../freemodbus-v1.5.0/port/portevent.c **** {
+  51              	 .loc 1 64 0
+  52              	 .cfi_startproc
+  53              	.LVL0:
+  65:../freemodbus-v1.5.0/port/portevent.c ****     xEventInQueue = true;
+  54              	 .loc 1 65 0
+  55 0000 0122     	 mov r2,#1
+  56 0002 034B     	 ldr r3,.L5
+  57 0004 1A70     	 strb r2,[r3]
+  66:../freemodbus-v1.5.0/port/portevent.c ****     eQueuedEvent = eEvent;
+  58              	 .loc 1 66 0
+  59 0006 034B     	 ldr r3,.L5+4
+  60 0008 1870     	 strb r0,[r3]
+  67:../freemodbus-v1.5.0/port/portevent.c ****     return true;
+  68:../freemodbus-v1.5.0/port/portevent.c **** }
+  61              	 .loc 1 68 0
+  62 000a 0120     	 mov r0,#1
+  63              	.LVL1:
+  64              	 
+  65 000c 7047     	 bx lr
+  66              	.L6:
+  67 000e C046     	 .align 2
+  68              	.L5:
+  69 0010 00000000 	 .word .LANCHOR0
+  70 0014 00000000 	 .word .LANCHOR1
+  71              	 .cfi_endproc
+  72              	.LFE101:
+  74              	 .section .text.xMBPortEventGet,"ax",%progbits
+  75              	 .align 2
+  76              	 .global xMBPortEventGet
+  77              	 .code 16
+  78              	 .thumb_func
+  80              	xMBPortEventGet:
+  81              	.LFB102:
+  69:../freemodbus-v1.5.0/port/portevent.c **** 
+  70:../freemodbus-v1.5.0/port/portevent.c **** BOOL
+  71:../freemodbus-v1.5.0/port/portevent.c **** xMBPortEventGet( eMBEventType * eEvent )
+  72:../freemodbus-v1.5.0/port/portevent.c **** {
+  82              	 .loc 1 72 0
+  83              	 .cfi_startproc
+  84              	.LVL2:
+  73:../freemodbus-v1.5.0/port/portevent.c ****     BOOL            xEventHappened = false;
+  74:../freemodbus-v1.5.0/port/portevent.c **** 
+  75:../freemodbus-v1.5.0/port/portevent.c ****     if( xEventInQueue )
+  85              	 .loc 1 75 0
+  86 0000 064B     	 ldr r3,.L10
+  87 0002 1B78     	 ldrb r3,[r3]
+  88 0004 002B     	 cmp r3,#0
+  89 0006 07D0     	 beq .L9
+  76:../freemodbus-v1.5.0/port/portevent.c ****     {
+  77:../freemodbus-v1.5.0/port/portevent.c ****         *eEvent = eQueuedEvent;
+  90              	 .loc 1 77 0
+  91 0008 054B     	 ldr r3,.L10+4
+  92 000a 1B78     	 ldrb r3,[r3]
+  93 000c 0370     	 strb r3,[r0]
+  78:../freemodbus-v1.5.0/port/portevent.c ****         xEventInQueue = false;
+  94              	 .loc 1 78 0
+  95 000e 0022     	 mov r2,#0
+  96 0010 024B     	 ldr r3,.L10
+  97 0012 1A70     	 strb r2,[r3]
+  98              	.LVL3:
+  79:../freemodbus-v1.5.0/port/portevent.c ****         xEventHappened = true;
+  99              	 .loc 1 79 0
+ 100 0014 0120     	 mov r0,#1
+ 101              	.LVL4:
+ 102 0016 00E0     	 b .L8
+ 103              	.LVL5:
+ 104              	.L9:
+  73:../freemodbus-v1.5.0/port/portevent.c **** 
+ 105              	 .loc 1 73 0
+ 106 0018 0020     	 mov r0,#0
+ 107              	.LVL6:
+ 108              	.L8:
+  80:../freemodbus-v1.5.0/port/portevent.c ****     }
+  81:../freemodbus-v1.5.0/port/portevent.c ****     return xEventHappened;
+  82:../freemodbus-v1.5.0/port/portevent.c **** }
+ 109              	 .loc 1 82 0
+ 110              	 
+ 111 001a 7047     	 bx lr
+ 112              	.L11:
+ 113              	 .align 2
+ 114              	.L10:
+ 115 001c 00000000 	 .word .LANCHOR0
+ 116 0020 00000000 	 .word .LANCHOR1
+ 117              	 .cfi_endproc
+ 118              	.LFE102:
+ 120              	 .section .bss.xEventInQueue,"aw",%nobits
+ 121              	 .set .LANCHOR0,.+0
+ 124              	xEventInQueue:
+ 125 0000 00       	 .space 1
+ 126              	 .section .bss.eQueuedEvent,"aw",%nobits
+ 127              	 .set .LANCHOR1,.+0
+ 130              	eQueuedEvent:
+ 131 0000 00       	 .space 1
+ 132              	 .text
+ 133              	.Letext0:
+ 134              	 .file 2 "c:\\davev4-64bit\\dave-4.3.2\\eclipse\\arm-gcc-49\\arm-none-eabi\\include\\machine\\_default_types.h"
+ 135              	 .file 3 "c:\\davev4-64bit\\dave-4.3.2\\eclipse\\arm-gcc-49\\arm-none-eabi\\include\\stdint.h"
+ 136              	 .file 4 "C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/freemodbus-v1.5.0/port/port.h"
+ 137              	 .file 5 "C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/freemodbus-v1.5.0/modbus/include/mbport.h"
+DEFINED SYMBOLS
+                            *ABS*:00000000 portevent.c
+    {standard input}:18     .text.xMBPortEventInit:00000000 $t
+    {standard input}:23     .text.xMBPortEventInit:00000000 xMBPortEventInit
+    {standard input}:39     .text.xMBPortEventInit:0000000c $d
+    {standard input}:44     .text.xMBPortEventPost:00000000 $t
+    {standard input}:49     .text.xMBPortEventPost:00000000 xMBPortEventPost
+    {standard input}:69     .text.xMBPortEventPost:00000010 $d
+    {standard input}:75     .text.xMBPortEventGet:00000000 $t
+    {standard input}:80     .text.xMBPortEventGet:00000000 xMBPortEventGet
+    {standard input}:115    .text.xMBPortEventGet:0000001c $d
+    {standard input}:124    .bss.xEventInQueue:00000000 xEventInQueue
+    {standard input}:125    .bss.xEventInQueue:00000000 $d
+    {standard input}:130    .bss.eQueuedEvent:00000000 eQueuedEvent
+    {standard input}:131    .bss.eQueuedEvent:00000000 $d
+                     .debug_frame:00000010 $d
+
+NO UNDEFINED SYMBOLS

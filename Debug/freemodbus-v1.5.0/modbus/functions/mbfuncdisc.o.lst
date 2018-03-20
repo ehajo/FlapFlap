@@ -1,0 +1,291 @@
+   1              	 .cpu cortex-m0
+   2              	 .fpu softvfp
+   3              	 .eabi_attribute 20,1
+   4              	 .eabi_attribute 21,1
+   5              	 .eabi_attribute 23,3
+   6              	 .eabi_attribute 24,1
+   7              	 .eabi_attribute 25,1
+   8              	 .eabi_attribute 26,1
+   9              	 .eabi_attribute 30,1
+  10              	 .eabi_attribute 34,0
+  11              	 .eabi_attribute 18,4
+  12              	 .code 16
+  13              	 .file "mbfuncdisc.c"
+  14              	 .text
+  15              	.Ltext0:
+  16              	 .cfi_sections .debug_frame
+  17              	 .section .text.eMBFuncReadDiscreteInputs,"ax",%progbits
+  18              	 .align 2
+  19              	 .global eMBFuncReadDiscreteInputs
+  20              	 .code 16
+  21              	 .thumb_func
+  23              	eMBFuncReadDiscreteInputs:
+  24              	.LFB100:
+  25              	 .file 1 "../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c"
+   1:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****  /*
+   2:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****   * FreeRTOS Modbus Libary: A Modbus serial implementation for FreeRTOS
+   3:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****   * Copyright (C) 2006 Christian Walter <wolti@sil.at>
+   4:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****   *
+   5:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****   * This library is free software; you can redistribute it and/or
+   6:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****   * modify it under the terms of the GNU Lesser General Public
+   7:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****   * License as published by the Free Software Foundation; either
+   8:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****   * version 2.1 of the License, or (at your option) any later version.
+   9:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****   *
+  10:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****   * This library is distributed in the hope that it will be useful,
+  11:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****   * but WITHOUT ANY WARRANTY; without even the implied warranty of
+  12:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****   * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  13:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****   * Lesser General Public License for more details.
+  14:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****   *
+  15:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****   * You should have received a copy of the GNU Lesser General Public
+  16:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****   * License along with this library; if not, write to the Free Software
+  17:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****   * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+  18:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****   */
+  19:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c **** 
+  20:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c **** 
+  21:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c **** 
+  22:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c **** /* ----------------------- System includes ----------------------------------*/
+  23:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c **** #include "stdlib.h"
+  24:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c **** #include "string.h"
+  25:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c **** 
+  26:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c **** /* ----------------------- Platform includes --------------------------------*/
+  27:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c **** #include "port.h"
+  28:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c **** 
+  29:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c **** /* ----------------------- Modbus includes ----------------------------------*/
+  30:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c **** #include "mb.h"
+  31:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c **** #include "mbframe.h"
+  32:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c **** #include "mbproto.h"
+  33:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c **** #include "mbconfig.h"
+  34:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c **** 
+  35:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c **** /* ----------------------- Defines ------------------------------------------*/
+  36:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c **** #define MB_PDU_FUNC_READ_ADDR_OFF           ( MB_PDU_DATA_OFF )
+  37:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c **** #define MB_PDU_FUNC_READ_DISCCNT_OFF        ( MB_PDU_DATA_OFF + 2 )
+  38:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c **** #define MB_PDU_FUNC_READ_SIZE               ( 4 )
+  39:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c **** #define MB_PDU_FUNC_READ_DISCCNT_MAX        ( 0x07D0 )
+  40:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c **** 
+  41:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c **** /* ----------------------- Static functions ---------------------------------*/
+  42:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c **** eMBException    prveMBError2Exception( eMBErrorCode eErrorCode );
+  43:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c **** 
+  44:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c **** /* ----------------------- Start implementation -----------------------------*/
+  45:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c **** 
+  46:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c **** #if MB_FUNC_READ_COILS_ENABLED > 0
+  47:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c **** 
+  48:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c **** eMBException
+  49:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c **** eMBFuncReadDiscreteInputs( UCHAR * pucFrame, USHORT * usLen )
+  50:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c **** {
+  26              	 .loc 1 50 0
+  27              	 .cfi_startproc
+  28              	.LVL0:
+  29 0000 70B5     	 push {r4,r5,r6,lr}
+  30              	.LCFI0:
+  31              	 .cfi_def_cfa_offset 16
+  32              	 .cfi_offset 4,-16
+  33              	 .cfi_offset 5,-12
+  34              	 .cfi_offset 6,-8
+  35              	 .cfi_offset 14,-4
+  36              	.LVL1:
+  51:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****     USHORT          usRegAddress;
+  52:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****     USHORT          usDiscreteCnt;
+  53:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****     UCHAR           ucNBytes;
+  54:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****     UCHAR          *pucFrameCur;
+  55:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c **** 
+  56:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****     eMBException    eStatus = MB_EX_NONE;
+  57:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****     eMBErrorCode    eRegStatus;
+  58:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c **** 
+  59:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****     if( *usLen == ( MB_PDU_FUNC_READ_SIZE + MB_PDU_SIZE_MIN ) )
+  37              	 .loc 1 59 0
+  38 0002 0B88     	 ldrh r3,[r1]
+  39 0004 052B     	 cmp r3,#5
+  40 0006 31D1     	 bne .L6
+  60:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****     {
+  61:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****         usRegAddress = ( USHORT )( pucFrame[MB_PDU_FUNC_READ_ADDR_OFF] << 8 );
+  41              	 .loc 1 61 0
+  42 0008 4378     	 ldrb r3,[r0,#1]
+  43 000a 1B02     	 lsl r3,r3,#8
+  44              	.LVL2:
+  62:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****         usRegAddress |= ( USHORT )( pucFrame[MB_PDU_FUNC_READ_ADDR_OFF + 1] );
+  45              	 .loc 1 62 0
+  46 000c 8278     	 ldrb r2,[r0,#2]
+  47 000e 1343     	 orr r3,r2
+  48              	.LVL3:
+  63:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****         usRegAddress++;
+  49              	 .loc 1 63 0
+  50 0010 0133     	 add r3,r3,#1
+  51              	.LVL4:
+  52 0012 9CB2     	 uxth r4,r3
+  53              	.LVL5:
+  64:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c **** 
+  65:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****         usDiscreteCnt = ( USHORT )( pucFrame[MB_PDU_FUNC_READ_DISCCNT_OFF] << 8 );
+  54              	 .loc 1 65 0
+  55 0014 C278     	 ldrb r2,[r0,#3]
+  56 0016 1202     	 lsl r2,r2,#8
+  57              	.LVL6:
+  66:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****         usDiscreteCnt |= ( USHORT )( pucFrame[MB_PDU_FUNC_READ_DISCCNT_OFF + 1] );
+  58              	 .loc 1 66 0
+  59 0018 0379     	 ldrb r3,[r0,#4]
+  60 001a 1A43     	 orr r2,r3
+  61              	.LVL7:
+  67:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c **** 
+  68:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****         /* Check if the number of registers to read is valid. If not
+  69:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****          * return Modbus illegal data value exception. 
+  70:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****          */
+  71:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****         if( ( usDiscreteCnt >= 1 ) &&
+  62              	 .loc 1 71 0
+  63 001c 531E     	 sub r3,r2,#1
+  64 001e 9BB2     	 uxth r3,r3
+  65 0020 144D     	 ldr r5,.L8
+  66 0022 AB42     	 cmp r3,r5
+  67 0024 24D8     	 bhi .L7
+  68              	.LVL8:
+  72:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****             ( usDiscreteCnt < MB_PDU_FUNC_READ_DISCCNT_MAX ) )
+  73:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****         {
+  74:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****             /* Set the current PDU data pointer to the beginning. */
+  75:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****             pucFrameCur = &pucFrame[MB_PDU_FUNC_OFF];
+  76:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****             *usLen = MB_PDU_FUNC_OFF;
+  69              	 .loc 1 76 0
+  70 0026 0023     	 mov r3,#0
+  71 0028 0B80     	 strh r3,[r1]
+  72              	.LVL9:
+  77:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c **** 
+  78:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****             /* First byte contains the function code. */
+  79:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****             *pucFrameCur++ = MB_FUNC_READ_DISCRETE_INPUTS;
+  73              	 .loc 1 79 0
+  74 002a 0233     	 add r3,r3,#2
+  75 002c 0370     	 strb r3,[r0]
+  80:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****             *usLen += 1;
+  76              	 .loc 1 80 0
+  77 002e 0B88     	 ldrh r3,[r1]
+  78 0030 0133     	 add r3,r3,#1
+  79 0032 0B80     	 strh r3,[r1]
+  81:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c **** 
+  82:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****             /* Test if the quantity of coils is a multiple of 8. If not last
+  83:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****              * byte is only partially field with unused coils set to zero. */
+  84:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****             if( ( usDiscreteCnt & 0x0007 ) != 0 )
+  80              	 .loc 1 84 0
+  81 0034 5307     	 lsl r3,r2,#29
+  82 0036 03D0     	 beq .L3
+  85:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****             {
+  86:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****                 ucNBytes = ( UCHAR ) ( usDiscreteCnt / 8 + 1 );
+  83              	 .loc 1 86 0
+  84 0038 D508     	 lsr r5,r2,#3
+  85 003a 0135     	 add r5,r5,#1
+  86 003c EDB2     	 uxtb r5,r5
+  87              	.LVL10:
+  88 003e 01E0     	 b .L4
+  89              	.LVL11:
+  90              	.L3:
+  87:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****             }
+  88:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****             else
+  89:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****             {
+  90:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****                 ucNBytes = ( UCHAR ) ( usDiscreteCnt / 8 );
+  91              	 .loc 1 90 0
+  92 0040 D508     	 lsr r5,r2,#3
+  93 0042 EDB2     	 uxtb r5,r5
+  94              	.LVL12:
+  95              	.L4:
+  96 0044 0E1C     	 mov r6,r1
+  97 0046 031C     	 mov r3,r0
+  91:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****             }
+  92:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****             *pucFrameCur++ = ucNBytes;
+  98              	 .loc 1 92 0
+  99 0048 0230     	 add r0,r0,#2
+ 100              	.LVL13:
+ 101 004a 5D70     	 strb r5,[r3,#1]
+  93:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****             *usLen += 1;
+ 102              	 .loc 1 93 0
+ 103 004c 0B88     	 ldrh r3,[r1]
+ 104              	.LVL14:
+ 105 004e 0133     	 add r3,r3,#1
+ 106 0050 0B80     	 strh r3,[r1]
+  94:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c **** 
+  95:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****             eRegStatus =
+ 107              	 .loc 1 95 0
+ 108 0052 211C     	 mov r1,r4
+ 109              	.LVL15:
+ 110 0054 FFF7FEFF 	 bl eMBRegDiscreteCB
+ 111              	.LVL16:
+  96:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****                 eMBRegDiscreteCB( pucFrameCur, usRegAddress, usDiscreteCnt );
+  97:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c **** 
+  98:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****             /* If an error occured convert it into a Modbus exception. */
+  99:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****             if( eRegStatus != MB_ENOERR )
+ 112              	 .loc 1 99 0
+ 113 0058 0028     	 cmp r0,#0
+ 114 005a 02D0     	 beq .L5
+ 100:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****             {
+ 101:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****                 eStatus = prveMBError2Exception( eRegStatus );
+ 115              	 .loc 1 101 0
+ 116 005c FFF7FEFF 	 bl prveMBError2Exception
+ 117              	.LVL17:
+ 118 0060 07E0     	 b .L2
+ 119              	.LVL18:
+ 120              	.L5:
+ 102:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****             }
+ 103:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****             else
+ 104:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****             {
+ 105:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****                 /* The response contains the function code, the starting address
+ 106:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****                  * and the quantity of registers. We reuse the old values in the 
+ 107:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****                  * buffer because they are still valid. */
+ 108:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****                 *usLen += ucNBytes;;
+ 121              	 .loc 1 108 0
+ 122 0062 3388     	 ldrh r3,[r6]
+ 123 0064 5D19     	 add r5,r3,r5
+ 124              	.LVL19:
+ 125 0066 3580     	 strh r5,[r6]
+  56:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****     eMBErrorCode    eRegStatus;
+ 126              	 .loc 1 56 0
+ 127 0068 0020     	 mov r0,#0
+ 128              	.LVL20:
+ 129 006a 02E0     	 b .L2
+ 130              	.LVL21:
+ 131              	.L6:
+ 109:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****             }
+ 110:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****         }
+ 111:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****         else
+ 112:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****         {
+ 113:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****             eStatus = MB_EX_ILLEGAL_DATA_VALUE;
+ 114:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****         }
+ 115:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****     }
+ 116:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****     else
+ 117:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****     {
+ 118:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****         /* Can't be a valid read coil register request because the length
+ 119:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****          * is incorrect. */
+ 120:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****         eStatus = MB_EX_ILLEGAL_DATA_VALUE;
+ 132              	 .loc 1 120 0
+ 133 006c 0320     	 mov r0,#3
+ 134              	.LVL22:
+ 135 006e 00E0     	 b .L2
+ 136              	.LVL23:
+ 137              	.L7:
+ 113:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****         }
+ 138              	 .loc 1 113 0
+ 139 0070 0320     	 mov r0,#3
+ 140              	.LVL24:
+ 141              	.L2:
+ 121:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****     }
+ 122:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c ****     return eStatus;
+ 123:../freemodbus-v1.5.0/modbus/functions/mbfuncdisc.c **** }
+ 142              	 .loc 1 123 0
+ 143              	 
+ 144 0072 70BD     	 pop {r4,r5,r6,pc}
+ 145              	.L9:
+ 146              	 .align 2
+ 147              	.L8:
+ 148 0074 CE070000 	 .word 1998
+ 149              	 .cfi_endproc
+ 150              	.LFE100:
+ 152              	 .text
+ 153              	.Letext0:
+ 154              	 .file 2 "c:\\davev4-64bit\\dave-4.3.2\\eclipse\\arm-gcc-49\\arm-none-eabi\\include\\machine\\_default_types.h"
+ 155              	 .file 3 "c:\\davev4-64bit\\dave-4.3.2\\eclipse\\arm-gcc-49\\arm-none-eabi\\include\\stdint.h"
+ 156              	 .file 4 "C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/freemodbus-v1.5.0/port/port.h"
+ 157              	 .file 5 "C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/freemodbus-v1.5.0/modbus/include/mbproto.h"
+ 158              	 .file 6 "C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/freemodbus-v1.5.0/modbus/include/mb.h"
+DEFINED SYMBOLS
+                            *ABS*:00000000 mbfuncdisc.c
+    {standard input}:18     .text.eMBFuncReadDiscreteInputs:00000000 $t
+    {standard input}:23     .text.eMBFuncReadDiscreteInputs:00000000 eMBFuncReadDiscreteInputs
+    {standard input}:148    .text.eMBFuncReadDiscreteInputs:00000074 $d
+                     .debug_frame:00000010 $d
+
+UNDEFINED SYMBOLS
+eMBRegDiscreteCB
+prveMBError2Exception

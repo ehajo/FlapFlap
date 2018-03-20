@@ -1,0 +1,12 @@
+52,08uS pro Bit @ 19k2
+
+T3.5 = 156,25 uS @ 19K2
+
+@8MHz 156,2uS ist x Clk
+
+156,2 uS / 125ns = 156,2 / 125 * 1000
+
+= 1249,6 Clocks
+
+-> 16 Bit Timer mit F_CPU nötig, oder 8 Bit Timer mit F_CPU /4 bis F_CPU / 8
+

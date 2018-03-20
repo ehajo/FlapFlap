@@ -1,0 +1,1456 @@
+   1              	 .cpu cortex-m0
+   2              	 .fpu softvfp
+   3              	 .eabi_attribute 20,1
+   4              	 .eabi_attribute 21,1
+   5              	 .eabi_attribute 23,3
+   6              	 .eabi_attribute 24,1
+   7              	 .eabi_attribute 25,1
+   8              	 .eabi_attribute 26,1
+   9              	 .eabi_attribute 30,1
+  10              	 .eabi_attribute 34,0
+  11              	 .eabi_attribute 18,4
+  12              	 .code 16
+  13              	 .file "mb.c"
+  14              	 .text
+  15              	.Ltext0:
+  16              	 .cfi_sections .debug_frame
+  17              	 .section .text.eMBInit,"ax",%progbits
+  18              	 .align 2
+  19              	 .global eMBInit
+  20              	 .code 16
+  21              	 .thumb_func
+  23              	eMBInit:
+  24              	.LFB100:
+  25              	 .file 1 "../freemodbus-v1.5.0/modbus/mb.c"
+   1:../freemodbus-v1.5.0/modbus/mb.c **** /* 
+   2:../freemodbus-v1.5.0/modbus/mb.c ****  * FreeModbus Libary: A portable Modbus implementation for Modbus ASCII/RTU.
+   3:../freemodbus-v1.5.0/modbus/mb.c ****  * Copyright (c) 2006 Christian Walter <wolti@sil.at>
+   4:../freemodbus-v1.5.0/modbus/mb.c ****  * All rights reserved.
+   5:../freemodbus-v1.5.0/modbus/mb.c ****  *
+   6:../freemodbus-v1.5.0/modbus/mb.c ****  * Redistribution and use in source and binary forms, with or without
+   7:../freemodbus-v1.5.0/modbus/mb.c ****  * modification, are permitted provided that the following conditions
+   8:../freemodbus-v1.5.0/modbus/mb.c ****  * are met:
+   9:../freemodbus-v1.5.0/modbus/mb.c ****  * 1. Redistributions of source code must retain the above copyright
+  10:../freemodbus-v1.5.0/modbus/mb.c ****  *    notice, this list of conditions and the following disclaimer.
+  11:../freemodbus-v1.5.0/modbus/mb.c ****  * 2. Redistributions in binary form must reproduce the above copyright
+  12:../freemodbus-v1.5.0/modbus/mb.c ****  *    notice, this list of conditions and the following disclaimer in the
+  13:../freemodbus-v1.5.0/modbus/mb.c ****  *    documentation and/or other materials provided with the distribution.
+  14:../freemodbus-v1.5.0/modbus/mb.c ****  * 3. The name of the author may not be used to endorse or promote products
+  15:../freemodbus-v1.5.0/modbus/mb.c ****  *    derived from this software without specific prior written permission.
+  16:../freemodbus-v1.5.0/modbus/mb.c ****  *
+  17:../freemodbus-v1.5.0/modbus/mb.c ****  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
+  18:../freemodbus-v1.5.0/modbus/mb.c ****  * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+  19:../freemodbus-v1.5.0/modbus/mb.c ****  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+  20:../freemodbus-v1.5.0/modbus/mb.c ****  * IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
+  21:../freemodbus-v1.5.0/modbus/mb.c ****  * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  22:../freemodbus-v1.5.0/modbus/mb.c ****  * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+  23:../freemodbus-v1.5.0/modbus/mb.c ****  * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+  24:../freemodbus-v1.5.0/modbus/mb.c ****  * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+  25:../freemodbus-v1.5.0/modbus/mb.c ****  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+  26:../freemodbus-v1.5.0/modbus/mb.c ****  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  27:../freemodbus-v1.5.0/modbus/mb.c ****  *
+  28:../freemodbus-v1.5.0/modbus/mb.c ****  * File: $Id: mb.c,v 1.28 2010/06/06 13:54:40 wolti Exp $
+  29:../freemodbus-v1.5.0/modbus/mb.c ****  */
+  30:../freemodbus-v1.5.0/modbus/mb.c **** 
+  31:../freemodbus-v1.5.0/modbus/mb.c **** /* ----------------------- System includes ----------------------------------*/
+  32:../freemodbus-v1.5.0/modbus/mb.c **** #include "stdlib.h"
+  33:../freemodbus-v1.5.0/modbus/mb.c **** #include "string.h"
+  34:../freemodbus-v1.5.0/modbus/mb.c **** 
+  35:../freemodbus-v1.5.0/modbus/mb.c **** /* ----------------------- Platform includes --------------------------------*/
+  36:../freemodbus-v1.5.0/modbus/mb.c **** #include "port.h"
+  37:../freemodbus-v1.5.0/modbus/mb.c **** 
+  38:../freemodbus-v1.5.0/modbus/mb.c **** /* ----------------------- Modbus includes ----------------------------------*/
+  39:../freemodbus-v1.5.0/modbus/mb.c **** #include "mb.h"
+  40:../freemodbus-v1.5.0/modbus/mb.c **** #include "mbconfig.h"
+  41:../freemodbus-v1.5.0/modbus/mb.c **** #include "mbframe.h"
+  42:../freemodbus-v1.5.0/modbus/mb.c **** #include "mbproto.h"
+  43:../freemodbus-v1.5.0/modbus/mb.c **** #include "mbfunc.h"
+  44:../freemodbus-v1.5.0/modbus/mb.c **** 
+  45:../freemodbus-v1.5.0/modbus/mb.c **** #include "mbport.h"
+  46:../freemodbus-v1.5.0/modbus/mb.c **** #if MB_RTU_ENABLED == 1
+  47:../freemodbus-v1.5.0/modbus/mb.c **** #include "mbrtu.h"
+  48:../freemodbus-v1.5.0/modbus/mb.c **** #endif
+  49:../freemodbus-v1.5.0/modbus/mb.c **** #if MB_ASCII_ENABLED == 1
+  50:../freemodbus-v1.5.0/modbus/mb.c **** #include "mbascii.h"
+  51:../freemodbus-v1.5.0/modbus/mb.c **** #endif
+  52:../freemodbus-v1.5.0/modbus/mb.c **** #if MB_TCP_ENABLED == 1
+  53:../freemodbus-v1.5.0/modbus/mb.c **** #include "mbtcp.h"
+  54:../freemodbus-v1.5.0/modbus/mb.c **** #endif
+  55:../freemodbus-v1.5.0/modbus/mb.c **** 
+  56:../freemodbus-v1.5.0/modbus/mb.c **** #ifndef MB_PORT_HAS_CLOSE
+  57:../freemodbus-v1.5.0/modbus/mb.c **** #define MB_PORT_HAS_CLOSE 0
+  58:../freemodbus-v1.5.0/modbus/mb.c **** #endif
+  59:../freemodbus-v1.5.0/modbus/mb.c **** 
+  60:../freemodbus-v1.5.0/modbus/mb.c **** /* ----------------------- Static variables ---------------------------------*/
+  61:../freemodbus-v1.5.0/modbus/mb.c **** 
+  62:../freemodbus-v1.5.0/modbus/mb.c **** static UCHAR    ucMBAddress;
+  63:../freemodbus-v1.5.0/modbus/mb.c **** static eMBMode  eMBCurrentMode;
+  64:../freemodbus-v1.5.0/modbus/mb.c **** 
+  65:../freemodbus-v1.5.0/modbus/mb.c **** static enum
+  66:../freemodbus-v1.5.0/modbus/mb.c **** {
+  67:../freemodbus-v1.5.0/modbus/mb.c ****     STATE_ENABLED,
+  68:../freemodbus-v1.5.0/modbus/mb.c ****     STATE_DISABLED,
+  69:../freemodbus-v1.5.0/modbus/mb.c ****     STATE_NOT_INITIALIZED
+  70:../freemodbus-v1.5.0/modbus/mb.c **** } eMBState = STATE_NOT_INITIALIZED;
+  71:../freemodbus-v1.5.0/modbus/mb.c **** 
+  72:../freemodbus-v1.5.0/modbus/mb.c **** /* Functions pointer which are initialized in eMBInit( ). Depending on the
+  73:../freemodbus-v1.5.0/modbus/mb.c ****  * mode (RTU or ASCII) the are set to the correct implementations.
+  74:../freemodbus-v1.5.0/modbus/mb.c ****  */
+  75:../freemodbus-v1.5.0/modbus/mb.c **** static peMBFrameSend peMBFrameSendCur;
+  76:../freemodbus-v1.5.0/modbus/mb.c **** static pvMBFrameStart pvMBFrameStartCur;
+  77:../freemodbus-v1.5.0/modbus/mb.c **** static pvMBFrameStop pvMBFrameStopCur;
+  78:../freemodbus-v1.5.0/modbus/mb.c **** static peMBFrameReceive peMBFrameReceiveCur;
+  79:../freemodbus-v1.5.0/modbus/mb.c **** static pvMBFrameClose pvMBFrameCloseCur;
+  80:../freemodbus-v1.5.0/modbus/mb.c **** 
+  81:../freemodbus-v1.5.0/modbus/mb.c **** /* Callback functions required by the porting layer. They are called when
+  82:../freemodbus-v1.5.0/modbus/mb.c ****  * an external event has happend which includes a timeout or the reception
+  83:../freemodbus-v1.5.0/modbus/mb.c ****  * or transmission of a character.
+  84:../freemodbus-v1.5.0/modbus/mb.c ****  */
+  85:../freemodbus-v1.5.0/modbus/mb.c **** BOOL( *pxMBFrameCBByteReceived ) ( void );
+  86:../freemodbus-v1.5.0/modbus/mb.c **** BOOL( *pxMBFrameCBTransmitterEmpty ) ( void );
+  87:../freemodbus-v1.5.0/modbus/mb.c **** BOOL( *pxMBPortCBTimerExpired ) ( void );
+  88:../freemodbus-v1.5.0/modbus/mb.c **** 
+  89:../freemodbus-v1.5.0/modbus/mb.c **** BOOL( *pxMBFrameCBReceiveFSMCur ) ( void );
+  90:../freemodbus-v1.5.0/modbus/mb.c **** BOOL( *pxMBFrameCBTransmitFSMCur ) ( void );
+  91:../freemodbus-v1.5.0/modbus/mb.c **** 
+  92:../freemodbus-v1.5.0/modbus/mb.c **** /* An array of Modbus functions handlers which associates Modbus function
+  93:../freemodbus-v1.5.0/modbus/mb.c ****  * codes with implementing functions.
+  94:../freemodbus-v1.5.0/modbus/mb.c ****  */
+  95:../freemodbus-v1.5.0/modbus/mb.c **** static xMBFunctionHandler xFuncHandlers[MB_FUNC_HANDLERS_MAX] = {
+  96:../freemodbus-v1.5.0/modbus/mb.c **** #if MB_FUNC_OTHER_REP_SLAVEID_ENABLED > 0
+  97:../freemodbus-v1.5.0/modbus/mb.c ****     {MB_FUNC_OTHER_REPORT_SLAVEID, eMBFuncReportSlaveID},
+  98:../freemodbus-v1.5.0/modbus/mb.c **** #endif
+  99:../freemodbus-v1.5.0/modbus/mb.c **** #if MB_FUNC_READ_INPUT_ENABLED > 0
+ 100:../freemodbus-v1.5.0/modbus/mb.c ****     {MB_FUNC_READ_INPUT_REGISTER, eMBFuncReadInputRegister},
+ 101:../freemodbus-v1.5.0/modbus/mb.c **** #endif
+ 102:../freemodbus-v1.5.0/modbus/mb.c **** #if MB_FUNC_READ_HOLDING_ENABLED > 0
+ 103:../freemodbus-v1.5.0/modbus/mb.c ****     {MB_FUNC_READ_HOLDING_REGISTER, eMBFuncReadHoldingRegister},
+ 104:../freemodbus-v1.5.0/modbus/mb.c **** #endif
+ 105:../freemodbus-v1.5.0/modbus/mb.c **** #if MB_FUNC_WRITE_MULTIPLE_HOLDING_ENABLED > 0
+ 106:../freemodbus-v1.5.0/modbus/mb.c ****     {MB_FUNC_WRITE_MULTIPLE_REGISTERS, eMBFuncWriteMultipleHoldingRegister},
+ 107:../freemodbus-v1.5.0/modbus/mb.c **** #endif
+ 108:../freemodbus-v1.5.0/modbus/mb.c **** #if MB_FUNC_WRITE_HOLDING_ENABLED > 0
+ 109:../freemodbus-v1.5.0/modbus/mb.c ****     {MB_FUNC_WRITE_REGISTER, eMBFuncWriteHoldingRegister},
+ 110:../freemodbus-v1.5.0/modbus/mb.c **** #endif
+ 111:../freemodbus-v1.5.0/modbus/mb.c **** #if MB_FUNC_READWRITE_HOLDING_ENABLED > 0
+ 112:../freemodbus-v1.5.0/modbus/mb.c ****     {MB_FUNC_READWRITE_MULTIPLE_REGISTERS, eMBFuncReadWriteMultipleHoldingRegister},
+ 113:../freemodbus-v1.5.0/modbus/mb.c **** #endif
+ 114:../freemodbus-v1.5.0/modbus/mb.c **** #if MB_FUNC_READ_COILS_ENABLED > 0
+ 115:../freemodbus-v1.5.0/modbus/mb.c ****     {MB_FUNC_READ_COILS, eMBFuncReadCoils},
+ 116:../freemodbus-v1.5.0/modbus/mb.c **** #endif
+ 117:../freemodbus-v1.5.0/modbus/mb.c **** #if MB_FUNC_WRITE_COIL_ENABLED > 0
+ 118:../freemodbus-v1.5.0/modbus/mb.c ****     {MB_FUNC_WRITE_SINGLE_COIL, eMBFuncWriteCoil},
+ 119:../freemodbus-v1.5.0/modbus/mb.c **** #endif
+ 120:../freemodbus-v1.5.0/modbus/mb.c **** #if MB_FUNC_WRITE_MULTIPLE_COILS_ENABLED > 0
+ 121:../freemodbus-v1.5.0/modbus/mb.c ****     {MB_FUNC_WRITE_MULTIPLE_COILS, eMBFuncWriteMultipleCoils},
+ 122:../freemodbus-v1.5.0/modbus/mb.c **** #endif
+ 123:../freemodbus-v1.5.0/modbus/mb.c **** #if MB_FUNC_READ_DISCRETE_INPUTS_ENABLED > 0
+ 124:../freemodbus-v1.5.0/modbus/mb.c ****     {MB_FUNC_READ_DISCRETE_INPUTS, eMBFuncReadDiscreteInputs},
+ 125:../freemodbus-v1.5.0/modbus/mb.c **** #endif
+ 126:../freemodbus-v1.5.0/modbus/mb.c **** };
+ 127:../freemodbus-v1.5.0/modbus/mb.c **** 
+ 128:../freemodbus-v1.5.0/modbus/mb.c **** /* ----------------------- Start implementation -----------------------------*/
+ 129:../freemodbus-v1.5.0/modbus/mb.c **** eMBErrorCode
+ 130:../freemodbus-v1.5.0/modbus/mb.c **** eMBInit( eMBMode eMode, UCHAR ucSlaveAddress, UCHAR ucPort, ULONG ulBaudRate, eMBParity eParity )
+ 131:../freemodbus-v1.5.0/modbus/mb.c **** {
+  26              	 .loc 1 131 0
+  27              	 .cfi_startproc
+  28              	.LVL0:
+  29 0000 70B5     	 push {r4,r5,r6,lr}
+  30              	.LCFI0:
+  31              	 .cfi_def_cfa_offset 16
+  32              	 .cfi_offset 4,-16
+  33              	 .cfi_offset 5,-12
+  34              	 .cfi_offset 6,-8
+  35              	 .cfi_offset 14,-4
+  36 0002 051C     	 mov r5,r0
+  37 0004 04AC     	 add r4,sp,#16
+  38              	.LVL1:
+  39 0006 2678     	 ldrb r6,[r4]
+  40              	.LVL2:
+ 132:../freemodbus-v1.5.0/modbus/mb.c ****     eMBErrorCode    eStatus = MB_ENOERR;
+ 133:../freemodbus-v1.5.0/modbus/mb.c **** 
+ 134:../freemodbus-v1.5.0/modbus/mb.c ****     /* check preconditions */
+ 135:../freemodbus-v1.5.0/modbus/mb.c ****     if( ( ucSlaveAddress == MB_ADDRESS_BROADCAST ) ||
+ 136:../freemodbus-v1.5.0/modbus/mb.c ****         ( ucSlaveAddress < MB_ADDRESS_MIN ) || ( ucSlaveAddress > MB_ADDRESS_MAX ) )
+  41              	 .loc 1 136 0
+  42 0008 4C1E     	 sub r4,r1,#1
+  43              	.LVL3:
+  44 000a E4B2     	 uxtb r4,r4
+ 135:../freemodbus-v1.5.0/modbus/mb.c ****         ( ucSlaveAddress < MB_ADDRESS_MIN ) || ( ucSlaveAddress > MB_ADDRESS_MAX ) )
+  45              	 .loc 1 135 0
+  46 000c F62C     	 cmp r4,#246
+  47 000e 53D8     	 bhi .L6
+ 137:../freemodbus-v1.5.0/modbus/mb.c ****     {
+ 138:../freemodbus-v1.5.0/modbus/mb.c ****         eStatus = MB_EINVAL;
+ 139:../freemodbus-v1.5.0/modbus/mb.c ****     }
+ 140:../freemodbus-v1.5.0/modbus/mb.c ****     else
+ 141:../freemodbus-v1.5.0/modbus/mb.c ****     {
+ 142:../freemodbus-v1.5.0/modbus/mb.c ****         ucMBAddress = ucSlaveAddress;
+  48              	 .loc 1 142 0
+  49 0010 2C4C     	 ldr r4,.L10
+  50 0012 2170     	 strb r1,[r4]
+ 143:../freemodbus-v1.5.0/modbus/mb.c **** 
+ 144:../freemodbus-v1.5.0/modbus/mb.c ****         switch ( eMode )
+  51              	 .loc 1 144 0
+  52 0014 0028     	 cmp r0,#0
+  53 0016 02D0     	 beq .L4
+  54 0018 0128     	 cmp r0,#1
+  55 001a 20D0     	 beq .L5
+  56 001c 3FE0     	 b .L9
+  57              	.L4:
+ 145:../freemodbus-v1.5.0/modbus/mb.c ****         {
+ 146:../freemodbus-v1.5.0/modbus/mb.c **** #if MB_RTU_ENABLED > 0
+ 147:../freemodbus-v1.5.0/modbus/mb.c ****         case MB_RTU:
+ 148:../freemodbus-v1.5.0/modbus/mb.c ****             pvMBFrameStartCur = eMBRTUStart;
+  58              	 .loc 1 148 0
+  59 001e 2A4C     	 ldr r4,.L10+4
+  60 0020 2A48     	 ldr r0,.L10+8
+  61              	.LVL4:
+  62 0022 0460     	 str r4,[r0]
+ 149:../freemodbus-v1.5.0/modbus/mb.c ****             pvMBFrameStopCur = eMBRTUStop;
+  63              	 .loc 1 149 0
+  64 0024 2A4C     	 ldr r4,.L10+12
+  65 0026 2B48     	 ldr r0,.L10+16
+  66 0028 0460     	 str r4,[r0]
+ 150:../freemodbus-v1.5.0/modbus/mb.c ****             peMBFrameSendCur = eMBRTUSend;
+  67              	 .loc 1 150 0
+  68 002a 2B4C     	 ldr r4,.L10+20
+  69 002c 2B48     	 ldr r0,.L10+24
+  70 002e 0460     	 str r4,[r0]
+ 151:../freemodbus-v1.5.0/modbus/mb.c ****             peMBFrameReceiveCur = eMBRTUReceive;
+  71              	 .loc 1 151 0
+  72 0030 2B4C     	 ldr r4,.L10+28
+  73 0032 2C48     	 ldr r0,.L10+32
+  74 0034 0460     	 str r4,[r0]
+ 152:../freemodbus-v1.5.0/modbus/mb.c ****             pvMBFrameCloseCur = MB_PORT_HAS_CLOSE ? vMBPortClose : NULL;
+  75              	 .loc 1 152 0
+  76 0036 0024     	 mov r4,#0
+  77 0038 2B48     	 ldr r0,.L10+36
+  78 003a 0460     	 str r4,[r0]
+ 153:../freemodbus-v1.5.0/modbus/mb.c ****             pxMBFrameCBByteReceived = xMBRTUReceiveFSM;
+  79              	 .loc 1 153 0
+  80 003c 2B4C     	 ldr r4,.L10+40
+  81 003e 2C48     	 ldr r0,.L10+44
+  82 0040 0460     	 str r4,[r0]
+ 154:../freemodbus-v1.5.0/modbus/mb.c ****             pxMBFrameCBTransmitterEmpty = xMBRTUTransmitFSM;
+  83              	 .loc 1 154 0
+  84 0042 2C4C     	 ldr r4,.L10+48
+  85 0044 2C48     	 ldr r0,.L10+52
+  86 0046 0460     	 str r4,[r0]
+ 155:../freemodbus-v1.5.0/modbus/mb.c ****             pxMBPortCBTimerExpired = xMBRTUTimerT35Expired;
+  87              	 .loc 1 155 0
+  88 0048 2C4C     	 ldr r4,.L10+56
+  89 004a 2D48     	 ldr r0,.L10+60
+  90 004c 0460     	 str r4,[r0]
+ 156:../freemodbus-v1.5.0/modbus/mb.c **** 
+ 157:../freemodbus-v1.5.0/modbus/mb.c ****             eStatus = eMBRTUInit( ucMBAddress, ucPort, ulBaudRate, eParity );
+  91              	 .loc 1 157 0
+  92 004e 081C     	 mov r0,r1
+  93 0050 111C     	 mov r1,r2
+  94              	.LVL5:
+  95 0052 1A1C     	 mov r2,r3
+  96              	.LVL6:
+  97 0054 331C     	 mov r3,r6
+  98              	.LVL7:
+  99 0056 FFF7FEFF 	 bl eMBRTUInit
+ 100              	.LVL8:
+ 101 005a 041C     	 mov r4,r0
+ 102              	.LVL9:
+ 158:../freemodbus-v1.5.0/modbus/mb.c ****             break;
+ 103              	 .loc 1 158 0
+ 104 005c 20E0     	 b .L3
+ 105              	.LVL10:
+ 106              	.L5:
+ 159:../freemodbus-v1.5.0/modbus/mb.c **** #endif
+ 160:../freemodbus-v1.5.0/modbus/mb.c **** #if MB_ASCII_ENABLED > 0
+ 161:../freemodbus-v1.5.0/modbus/mb.c ****         case MB_ASCII:
+ 162:../freemodbus-v1.5.0/modbus/mb.c ****             pvMBFrameStartCur = eMBASCIIStart;
+ 107              	 .loc 1 162 0
+ 108 005e 294C     	 ldr r4,.L10+64
+ 109 0060 1A48     	 ldr r0,.L10+8
+ 110              	.LVL11:
+ 111 0062 0460     	 str r4,[r0]
+ 163:../freemodbus-v1.5.0/modbus/mb.c ****             pvMBFrameStopCur = eMBASCIIStop;
+ 112              	 .loc 1 163 0
+ 113 0064 284C     	 ldr r4,.L10+68
+ 114 0066 1B48     	 ldr r0,.L10+16
+ 115 0068 0460     	 str r4,[r0]
+ 164:../freemodbus-v1.5.0/modbus/mb.c ****             peMBFrameSendCur = eMBASCIISend;
+ 116              	 .loc 1 164 0
+ 117 006a 284C     	 ldr r4,.L10+72
+ 118 006c 1B48     	 ldr r0,.L10+24
+ 119 006e 0460     	 str r4,[r0]
+ 165:../freemodbus-v1.5.0/modbus/mb.c ****             peMBFrameReceiveCur = eMBASCIIReceive;
+ 120              	 .loc 1 165 0
+ 121 0070 274C     	 ldr r4,.L10+76
+ 122 0072 1C48     	 ldr r0,.L10+32
+ 123 0074 0460     	 str r4,[r0]
+ 166:../freemodbus-v1.5.0/modbus/mb.c ****             pvMBFrameCloseCur = MB_PORT_HAS_CLOSE ? vMBPortClose : NULL;
+ 124              	 .loc 1 166 0
+ 125 0076 0024     	 mov r4,#0
+ 126 0078 1B48     	 ldr r0,.L10+36
+ 127 007a 0460     	 str r4,[r0]
+ 167:../freemodbus-v1.5.0/modbus/mb.c ****             pxMBFrameCBByteReceived = xMBASCIIReceiveFSM;
+ 128              	 .loc 1 167 0
+ 129 007c 254C     	 ldr r4,.L10+80
+ 130 007e 1C48     	 ldr r0,.L10+44
+ 131 0080 0460     	 str r4,[r0]
+ 168:../freemodbus-v1.5.0/modbus/mb.c ****             pxMBFrameCBTransmitterEmpty = xMBASCIITransmitFSM;
+ 132              	 .loc 1 168 0
+ 133 0082 254C     	 ldr r4,.L10+84
+ 134 0084 1C48     	 ldr r0,.L10+52
+ 135 0086 0460     	 str r4,[r0]
+ 169:../freemodbus-v1.5.0/modbus/mb.c ****             pxMBPortCBTimerExpired = xMBASCIITimerT1SExpired;
+ 136              	 .loc 1 169 0
+ 137 0088 244C     	 ldr r4,.L10+88
+ 138 008a 1D48     	 ldr r0,.L10+60
+ 139 008c 0460     	 str r4,[r0]
+ 170:../freemodbus-v1.5.0/modbus/mb.c **** 
+ 171:../freemodbus-v1.5.0/modbus/mb.c ****             eStatus = eMBASCIIInit( ucMBAddress, ucPort, ulBaudRate, eParity );
+ 140              	 .loc 1 171 0
+ 141 008e 081C     	 mov r0,r1
+ 142 0090 111C     	 mov r1,r2
+ 143              	.LVL12:
+ 144 0092 1A1C     	 mov r2,r3
+ 145              	.LVL13:
+ 146 0094 331C     	 mov r3,r6
+ 147              	.LVL14:
+ 148 0096 FFF7FEFF 	 bl eMBASCIIInit
+ 149              	.LVL15:
+ 150 009a 041C     	 mov r4,r0
+ 151              	.LVL16:
+ 172:../freemodbus-v1.5.0/modbus/mb.c ****             break;
+ 152              	 .loc 1 172 0
+ 153 009c 00E0     	 b .L3
+ 154              	.LVL17:
+ 155              	.L9:
+ 173:../freemodbus-v1.5.0/modbus/mb.c **** #endif
+ 174:../freemodbus-v1.5.0/modbus/mb.c ****         default:
+ 175:../freemodbus-v1.5.0/modbus/mb.c ****             eStatus = MB_EINVAL;
+ 156              	 .loc 1 175 0
+ 157 009e 0224     	 mov r4,#2
+ 158              	.LVL18:
+ 159              	.L3:
+ 176:../freemodbus-v1.5.0/modbus/mb.c ****         }
+ 177:../freemodbus-v1.5.0/modbus/mb.c **** 
+ 178:../freemodbus-v1.5.0/modbus/mb.c ****         if( eStatus == MB_ENOERR )
+ 160              	 .loc 1 178 0
+ 161 00a0 002C     	 cmp r4,#0
+ 162 00a2 0CD1     	 bne .L2
+ 179:../freemodbus-v1.5.0/modbus/mb.c ****         {
+ 180:../freemodbus-v1.5.0/modbus/mb.c ****             if( !xMBPortEventInit(  ) )
+ 163              	 .loc 1 180 0
+ 164 00a4 FFF7FEFF 	 bl xMBPortEventInit
+ 165              	.LVL19:
+ 166 00a8 0028     	 cmp r0,#0
+ 167 00aa 07D0     	 beq .L8
+ 181:../freemodbus-v1.5.0/modbus/mb.c ****             {
+ 182:../freemodbus-v1.5.0/modbus/mb.c ****                 /* port dependent event module initalization failed. */
+ 183:../freemodbus-v1.5.0/modbus/mb.c ****                 eStatus = MB_EPORTERR;
+ 184:../freemodbus-v1.5.0/modbus/mb.c ****             }
+ 185:../freemodbus-v1.5.0/modbus/mb.c ****             else
+ 186:../freemodbus-v1.5.0/modbus/mb.c ****             {
+ 187:../freemodbus-v1.5.0/modbus/mb.c ****                 eMBCurrentMode = eMode;
+ 168              	 .loc 1 187 0
+ 169 00ac 1C4B     	 ldr r3,.L10+92
+ 170 00ae 1D70     	 strb r5,[r3]
+ 188:../freemodbus-v1.5.0/modbus/mb.c ****                 eMBState = STATE_DISABLED;
+ 171              	 .loc 1 188 0
+ 172 00b0 0122     	 mov r2,#1
+ 173 00b2 1C4B     	 ldr r3,.L10+96
+ 174 00b4 1A70     	 strb r2,[r3]
+ 175 00b6 02E0     	 b .L2
+ 176              	.LVL20:
+ 177              	.L6:
+ 138:../freemodbus-v1.5.0/modbus/mb.c ****     }
+ 178              	 .loc 1 138 0
+ 179 00b8 0224     	 mov r4,#2
+ 180 00ba 00E0     	 b .L2
+ 181              	.LVL21:
+ 182              	.L8:
+ 183:../freemodbus-v1.5.0/modbus/mb.c ****             }
+ 183              	 .loc 1 183 0
+ 184 00bc 0324     	 mov r4,#3
+ 185              	.LVL22:
+ 186              	.L2:
+ 189:../freemodbus-v1.5.0/modbus/mb.c ****             }
+ 190:../freemodbus-v1.5.0/modbus/mb.c ****         }
+ 191:../freemodbus-v1.5.0/modbus/mb.c ****     }
+ 192:../freemodbus-v1.5.0/modbus/mb.c ****     return eStatus;
+ 193:../freemodbus-v1.5.0/modbus/mb.c **** }
+ 187              	 .loc 1 193 0
+ 188 00be 201C     	 mov r0,r4
+ 189              	 
+ 190              	.LVL23:
+ 191 00c0 70BD     	 pop {r4,r5,r6,pc}
+ 192              	.L11:
+ 193 00c2 C046     	 .align 2
+ 194              	.L10:
+ 195 00c4 00000000 	 .word .LANCHOR0
+ 196 00c8 00000000 	 .word eMBRTUStart
+ 197 00cc 00000000 	 .word .LANCHOR1
+ 198 00d0 00000000 	 .word eMBRTUStop
+ 199 00d4 00000000 	 .word .LANCHOR2
+ 200 00d8 00000000 	 .word eMBRTUSend
+ 201 00dc 00000000 	 .word .LANCHOR3
+ 202 00e0 00000000 	 .word eMBRTUReceive
+ 203 00e4 00000000 	 .word .LANCHOR4
+ 204 00e8 00000000 	 .word .LANCHOR5
+ 205 00ec 00000000 	 .word xMBRTUReceiveFSM
+ 206 00f0 00000000 	 .word pxMBFrameCBByteReceived
+ 207 00f4 00000000 	 .word xMBRTUTransmitFSM
+ 208 00f8 00000000 	 .word pxMBFrameCBTransmitterEmpty
+ 209 00fc 00000000 	 .word xMBRTUTimerT35Expired
+ 210 0100 00000000 	 .word pxMBPortCBTimerExpired
+ 211 0104 00000000 	 .word eMBASCIIStart
+ 212 0108 00000000 	 .word eMBASCIIStop
+ 213 010c 00000000 	 .word eMBASCIISend
+ 214 0110 00000000 	 .word eMBASCIIReceive
+ 215 0114 00000000 	 .word xMBASCIIReceiveFSM
+ 216 0118 00000000 	 .word xMBASCIITransmitFSM
+ 217 011c 00000000 	 .word xMBASCIITimerT1SExpired
+ 218 0120 00000000 	 .word .LANCHOR6
+ 219 0124 00000000 	 .word .LANCHOR7
+ 220              	 .cfi_endproc
+ 221              	.LFE100:
+ 223              	 .section .text.eMBRegisterCB,"ax",%progbits
+ 224              	 .align 2
+ 225              	 .global eMBRegisterCB
+ 226              	 .code 16
+ 227              	 .thumb_func
+ 229              	eMBRegisterCB:
+ 230              	.LFB101:
+ 194:../freemodbus-v1.5.0/modbus/mb.c **** 
+ 195:../freemodbus-v1.5.0/modbus/mb.c **** #if MB_TCP_ENABLED > 0
+ 196:../freemodbus-v1.5.0/modbus/mb.c **** eMBErrorCode
+ 197:../freemodbus-v1.5.0/modbus/mb.c **** eMBTCPInit( USHORT ucTCPPort )
+ 198:../freemodbus-v1.5.0/modbus/mb.c **** {
+ 199:../freemodbus-v1.5.0/modbus/mb.c ****     eMBErrorCode    eStatus = MB_ENOERR;
+ 200:../freemodbus-v1.5.0/modbus/mb.c **** 
+ 201:../freemodbus-v1.5.0/modbus/mb.c ****     if( ( eStatus = eMBTCPDoInit( ucTCPPort ) ) != MB_ENOERR )
+ 202:../freemodbus-v1.5.0/modbus/mb.c ****     {
+ 203:../freemodbus-v1.5.0/modbus/mb.c ****         eMBState = STATE_DISABLED;
+ 204:../freemodbus-v1.5.0/modbus/mb.c ****     }
+ 205:../freemodbus-v1.5.0/modbus/mb.c ****     else if( !xMBPortEventInit(  ) )
+ 206:../freemodbus-v1.5.0/modbus/mb.c ****     {
+ 207:../freemodbus-v1.5.0/modbus/mb.c ****         /* Port dependent event module initalization failed. */
+ 208:../freemodbus-v1.5.0/modbus/mb.c ****         eStatus = MB_EPORTERR;
+ 209:../freemodbus-v1.5.0/modbus/mb.c ****     }
+ 210:../freemodbus-v1.5.0/modbus/mb.c ****     else
+ 211:../freemodbus-v1.5.0/modbus/mb.c ****     {
+ 212:../freemodbus-v1.5.0/modbus/mb.c ****         pvMBFrameStartCur = eMBTCPStart;
+ 213:../freemodbus-v1.5.0/modbus/mb.c ****         pvMBFrameStopCur = eMBTCPStop;
+ 214:../freemodbus-v1.5.0/modbus/mb.c ****         peMBFrameReceiveCur = eMBTCPReceive;
+ 215:../freemodbus-v1.5.0/modbus/mb.c ****         peMBFrameSendCur = eMBTCPSend;
+ 216:../freemodbus-v1.5.0/modbus/mb.c ****         pvMBFrameCloseCur = MB_PORT_HAS_CLOSE ? vMBTCPPortClose : NULL;
+ 217:../freemodbus-v1.5.0/modbus/mb.c ****         ucMBAddress = MB_TCP_PSEUDO_ADDRESS;
+ 218:../freemodbus-v1.5.0/modbus/mb.c ****         eMBCurrentMode = MB_TCP;
+ 219:../freemodbus-v1.5.0/modbus/mb.c ****         eMBState = STATE_DISABLED;
+ 220:../freemodbus-v1.5.0/modbus/mb.c ****     }
+ 221:../freemodbus-v1.5.0/modbus/mb.c ****     return eStatus;
+ 222:../freemodbus-v1.5.0/modbus/mb.c **** }
+ 223:../freemodbus-v1.5.0/modbus/mb.c **** #endif
+ 224:../freemodbus-v1.5.0/modbus/mb.c **** 
+ 225:../freemodbus-v1.5.0/modbus/mb.c **** eMBErrorCode
+ 226:../freemodbus-v1.5.0/modbus/mb.c **** eMBRegisterCB( UCHAR ucFunctionCode, pxMBFunctionHandler pxHandler )
+ 227:../freemodbus-v1.5.0/modbus/mb.c **** {
+ 231              	 .loc 1 227 0
+ 232              	 .cfi_startproc
+ 233              	.LVL24:
+ 234 0000 10B5     	 push {r4,lr}
+ 235              	.LCFI1:
+ 236              	 .cfi_def_cfa_offset 8
+ 237              	 .cfi_offset 4,-8
+ 238              	 .cfi_offset 14,-4
+ 228:../freemodbus-v1.5.0/modbus/mb.c ****     int             i;
+ 229:../freemodbus-v1.5.0/modbus/mb.c ****     eMBErrorCode    eStatus;
+ 230:../freemodbus-v1.5.0/modbus/mb.c **** 
+ 231:../freemodbus-v1.5.0/modbus/mb.c ****     if( ( 0 < ucFunctionCode ) && ( ucFunctionCode <= 127 ) )
+ 239              	 .loc 1 231 0
+ 240 0002 43B2     	 sxtb r3,r0
+ 241 0004 002B     	 cmp r3,#0
+ 242 0006 2FDD     	 ble .L24
+ 243              	.LBB6:
+ 244              	.LBB7:
+ 245              	 .file 2 "C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include/cmsis_gcc.h"
+   1:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** /**************************************************************************//**
+   2:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****  * @file     cmsis_gcc.h
+   3:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****  * @brief    CMSIS compiler GCC header file
+   4:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****  * @version  V5.0.1
+   5:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****  * @date     02. February 2017
+   6:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****  ******************************************************************************/
+   7:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** /*
+   8:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****  * Copyright (c) 2009-2017 ARM Limited. All rights reserved.
+   9:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****  *
+  10:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****  * SPDX-License-Identifier: Apache-2.0
+  11:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****  *
+  12:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****  * Licensed under the Apache License, Version 2.0 (the License); you may
+  13:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****  * not use this file except in compliance with the License.
+  14:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****  * You may obtain a copy of the License at
+  15:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****  *
+  16:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****  * www.apache.org/licenses/LICENSE-2.0
+  17:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****  *
+  18:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****  * Unless required by applicable law or agreed to in writing, software
+  19:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****  * distributed under the License is distributed on an AS IS BASIS, WITHOUT
+  20:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  21:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****  * See the License for the specific language governing permissions and
+  22:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****  * limitations under the License.
+  23:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****  */
+  24:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** 
+  25:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** #ifndef __CMSIS_GCC_H
+  26:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** #define __CMSIS_GCC_H
+  27:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** 
+  28:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** /* ignore some GCC warnings */
+  29:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** #pragma GCC diagnostic push
+  30:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** #pragma GCC diagnostic ignored "-Wsign-conversion"
+  31:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** #pragma GCC diagnostic ignored "-Wconversion"
+  32:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** #pragma GCC diagnostic ignored "-Wunused-parameter"
+  33:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** 
+  34:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** /* CMSIS compiler specific defines */
+  35:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** #ifndef   __ASM
+  36:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****   #define __ASM                     __asm
+  37:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** #endif
+  38:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** #ifndef   __INLINE
+  39:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****   #define __INLINE                  inline
+  40:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** #endif
+  41:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** #ifndef   __STATIC_INLINE
+  42:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****   #define __STATIC_INLINE           static inline
+  43:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** #endif
+  44:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** #ifndef   __NO_RETURN
+  45:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****   #define __NO_RETURN               __attribute__((noreturn))
+  46:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** #endif
+  47:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** #ifndef   __USED
+  48:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****   #define __USED                    __attribute__((used))
+  49:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** #endif
+  50:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** #ifndef   __WEAK
+  51:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****   #define __WEAK                    __attribute__((weak))
+  52:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** #endif
+  53:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** #ifndef   __UNALIGNED_UINT32
+  54:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** #pragma GCC diagnostic push
+  55:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** #pragma GCC diagnostic ignored "-Wpacked"
+  56:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** #pragma GCC diagnostic ignored "-Wattributes"
+  57:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****   struct __attribute__((packed)) T_UINT32 { uint32_t v; };
+  58:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** #pragma GCC diagnostic pop
+  59:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****   #define __UNALIGNED_UINT32(x)     (((struct T_UINT32 *)(x))->v)
+  60:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** #endif
+  61:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** #ifndef   __ALIGNED
+  62:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****   #define __ALIGNED(x)              __attribute__((aligned(x)))
+  63:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** #endif
+  64:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** #ifndef   __PACKED
+  65:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****   #define __PACKED                  __attribute__((packed, aligned(1)))
+  66:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** #endif
+  67:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** #ifndef   __PACKED_STRUCT
+  68:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****   #define __PACKED_STRUCT           struct __attribute__((packed, aligned(1)))
+  69:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** #endif
+  70:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** 
+  71:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** 
+  72:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** /* ###########################  Core Function Access  ########################### */
+  73:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** /** \ingroup  CMSIS_Core_FunctionInterface
+  74:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****     \defgroup CMSIS_Core_RegAccFunctions CMSIS Core Register Access Functions
+  75:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****   @{
+  76:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****  */
+  77:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** 
+  78:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** /**
+  79:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****   \brief   Enable IRQ Interrupts
+  80:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****   \details Enables IRQ interrupts by clearing the I-bit in the CPSR.
+  81:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****            Can only be executed in Privileged modes.
+  82:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****  */
+  83:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** __attribute__((always_inline)) __STATIC_INLINE void __enable_irq(void)
+  84:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** {
+  85:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****   __ASM volatile ("cpsie i" : : : "memory");
+  86:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** }
+  87:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** 
+  88:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** 
+  89:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** /**
+  90:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****   \brief   Disable IRQ Interrupts
+  91:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****   \details Disables IRQ interrupts by setting the I-bit in the CPSR.
+  92:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****            Can only be executed in Privileged modes.
+  93:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****  */
+  94:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** __attribute__((always_inline)) __STATIC_INLINE void __disable_irq(void)
+  95:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** {
+  96:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h ****   __ASM volatile ("cpsid i" : : : "memory");
+ 246              	 .loc 2 96 0
+ 247              	
+ 248 0008 72B6     	 cpsid i
+ 249              	
+ 250              	 .code 16
+ 251              	.LBE7:
+ 252              	.LBE6:
+ 232:../freemodbus-v1.5.0/modbus/mb.c ****     {
+ 233:../freemodbus-v1.5.0/modbus/mb.c ****         ENTER_CRITICAL_SECTION(  );
+ 234:../freemodbus-v1.5.0/modbus/mb.c ****         if( pxHandler != NULL )
+ 253              	 .loc 1 234 0
+ 254 000a 0029     	 cmp r1,#0
+ 255 000c 11D1     	 bne .L25
+ 256 000e 0023     	 mov r3,#0
+ 257 0010 25E0     	 b .L15
+ 258              	.LVL25:
+ 259              	.L19:
+ 235:../freemodbus-v1.5.0/modbus/mb.c ****         {
+ 236:../freemodbus-v1.5.0/modbus/mb.c ****             for( i = 0; i < MB_FUNC_HANDLERS_MAX; i++ )
+ 237:../freemodbus-v1.5.0/modbus/mb.c ****             {
+ 238:../freemodbus-v1.5.0/modbus/mb.c ****                 if( ( xFuncHandlers[i].pxHandler == NULL ) ||
+ 260              	 .loc 1 238 0
+ 261 0012 D300     	 lsl r3,r2,#3
+ 262 0014 154C     	 ldr r4,.L27
+ 263 0016 E318     	 add r3,r4,r3
+ 264 0018 5B68     	 ldr r3,[r3,#4]
+ 265 001a 002B     	 cmp r3,#0
+ 266 001c 01D0     	 beq .L16
+ 267              	 .loc 1 238 0 is_stmt 0 discriminator 1
+ 268 001e 9942     	 cmp r1,r3
+ 269 0020 05D1     	 bne .L17
+ 270              	.L16:
+ 239:../freemodbus-v1.5.0/modbus/mb.c ****                     ( xFuncHandlers[i].pxHandler == pxHandler ) )
+ 240:../freemodbus-v1.5.0/modbus/mb.c ****                 {
+ 241:../freemodbus-v1.5.0/modbus/mb.c ****                     xFuncHandlers[i].ucFunctionCode = ucFunctionCode;
+ 271              	 .loc 1 241 0 is_stmt 1
+ 272 0022 124C     	 ldr r4,.L27
+ 273 0024 D300     	 lsl r3,r2,#3
+ 274 0026 1855     	 strb r0,[r3,r4]
+ 242:../freemodbus-v1.5.0/modbus/mb.c ****                     xFuncHandlers[i].pxHandler = pxHandler;
+ 275              	 .loc 1 242 0
+ 276 0028 E318     	 add r3,r4,r3
+ 277 002a 5960     	 str r1,[r3,#4]
+ 243:../freemodbus-v1.5.0/modbus/mb.c ****                     break;
+ 278              	 .loc 1 243 0
+ 279 002c 04E0     	 b .L18
+ 280              	.L17:
+ 236:../freemodbus-v1.5.0/modbus/mb.c ****             {
+ 281              	 .loc 1 236 0 discriminator 2
+ 282 002e 0132     	 add r2,r2,#1
+ 283              	.LVL26:
+ 284 0030 00E0     	 b .L14
+ 285              	.LVL27:
+ 286              	.L25:
+ 287 0032 0022     	 mov r2,#0
+ 288              	.L14:
+ 289              	.LVL28:
+ 236:../freemodbus-v1.5.0/modbus/mb.c ****             {
+ 290              	 .loc 1 236 0 is_stmt 0 discriminator 1
+ 291 0034 0F2A     	 cmp r2,#15
+ 292 0036 ECD9     	 bls .L19
+ 293              	.L18:
+ 244:../freemodbus-v1.5.0/modbus/mb.c ****                 }
+ 245:../freemodbus-v1.5.0/modbus/mb.c ****             }
+ 246:../freemodbus-v1.5.0/modbus/mb.c ****             eStatus = ( i != MB_FUNC_HANDLERS_MAX ) ? MB_ENOERR : MB_ENORES;
+ 294              	 .loc 1 246 0 is_stmt 1
+ 295 0038 102A     	 cmp r2,#16
+ 296 003a 01D0     	 beq .L26
+ 297 003c 0020     	 mov r0,#0
+ 298              	.LVL29:
+ 299 003e 11E0     	 b .L21
+ 300              	.LVL30:
+ 301              	.L26:
+ 302 0040 0420     	 mov r0,#4
+ 303              	.LVL31:
+ 304 0042 0FE0     	 b .L21
+ 305              	.LVL32:
+ 306              	.L23:
+ 247:../freemodbus-v1.5.0/modbus/mb.c ****         }
+ 248:../freemodbus-v1.5.0/modbus/mb.c ****         else
+ 249:../freemodbus-v1.5.0/modbus/mb.c ****         {
+ 250:../freemodbus-v1.5.0/modbus/mb.c ****             for( i = 0; i < MB_FUNC_HANDLERS_MAX; i++ )
+ 251:../freemodbus-v1.5.0/modbus/mb.c ****             {
+ 252:../freemodbus-v1.5.0/modbus/mb.c ****                 if( xFuncHandlers[i].ucFunctionCode == ucFunctionCode )
+ 307              	 .loc 1 252 0
+ 308 0044 DA00     	 lsl r2,r3,#3
+ 309 0046 0949     	 ldr r1,.L27
+ 310 0048 525C     	 ldrb r2,[r2,r1]
+ 311 004a 8242     	 cmp r2,r0
+ 312 004c 06D1     	 bne .L22
+ 253:../freemodbus-v1.5.0/modbus/mb.c ****                 {
+ 254:../freemodbus-v1.5.0/modbus/mb.c ****                     xFuncHandlers[i].ucFunctionCode = 0;
+ 313              	 .loc 1 254 0
+ 314 004e DB00     	 lsl r3,r3,#3
+ 315              	.LVL33:
+ 316 0050 0022     	 mov r2,#0
+ 317 0052 5A54     	 strb r2,[r3,r1]
+ 255:../freemodbus-v1.5.0/modbus/mb.c ****                     xFuncHandlers[i].pxHandler = NULL;
+ 318              	 .loc 1 255 0
+ 319 0054 CB18     	 add r3,r1,r3
+ 320 0056 5A60     	 str r2,[r3,#4]
+ 256:../freemodbus-v1.5.0/modbus/mb.c ****                     break;
+ 257:../freemodbus-v1.5.0/modbus/mb.c ****                 }
+ 258:../freemodbus-v1.5.0/modbus/mb.c ****             }
+ 259:../freemodbus-v1.5.0/modbus/mb.c ****             /* Remove can't fail. */
+ 260:../freemodbus-v1.5.0/modbus/mb.c ****             eStatus = MB_ENOERR;
+ 321              	 .loc 1 260 0
+ 322 0058 0020     	 mov r0,#0
+ 323              	.LVL34:
+ 256:../freemodbus-v1.5.0/modbus/mb.c ****                     break;
+ 324              	 .loc 1 256 0
+ 325 005a 03E0     	 b .L21
+ 326              	.LVL35:
+ 327              	.L22:
+ 250:../freemodbus-v1.5.0/modbus/mb.c ****             {
+ 328              	 .loc 1 250 0 discriminator 2
+ 329 005c 0133     	 add r3,r3,#1
+ 330              	.LVL36:
+ 331              	.L15:
+ 250:../freemodbus-v1.5.0/modbus/mb.c ****             {
+ 332              	 .loc 1 250 0 is_stmt 0 discriminator 1
+ 333 005e 0F2B     	 cmp r3,#15
+ 334 0060 F0D9     	 bls .L23
+ 335              	 .loc 1 260 0 is_stmt 1
+ 336 0062 0020     	 mov r0,#0
+ 337              	.LVL37:
+ 338              	.L21:
+ 339              	.LBB8:
+ 340              	.LBB9:
+  85:C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Include\cmsis_gcc.h **** }
+ 341              	 .loc 2 85 0
+ 342              	
+ 343 0064 62B6     	 cpsie i
+ 344              	
+ 345              	 .code 16
+ 346 0066 00E0     	 b .L13
+ 347              	.LVL38:
+ 348              	.L24:
+ 349              	.LBE9:
+ 350              	.LBE8:
+ 261:../freemodbus-v1.5.0/modbus/mb.c ****         }
+ 262:../freemodbus-v1.5.0/modbus/mb.c ****         EXIT_CRITICAL_SECTION(  );
+ 263:../freemodbus-v1.5.0/modbus/mb.c ****     }
+ 264:../freemodbus-v1.5.0/modbus/mb.c ****     else
+ 265:../freemodbus-v1.5.0/modbus/mb.c ****     {
+ 266:../freemodbus-v1.5.0/modbus/mb.c ****         eStatus = MB_EINVAL;
+ 351              	 .loc 1 266 0
+ 352 0068 0220     	 mov r0,#2
+ 353              	.LVL39:
+ 354              	.L13:
+ 267:../freemodbus-v1.5.0/modbus/mb.c ****     }
+ 268:../freemodbus-v1.5.0/modbus/mb.c ****     return eStatus;
+ 269:../freemodbus-v1.5.0/modbus/mb.c **** }
+ 355              	 .loc 1 269 0
+ 356              	 
+ 357 006a 10BD     	 pop {r4,pc}
+ 358              	.L28:
+ 359              	 .align 2
+ 360              	.L27:
+ 361 006c 00000000 	 .word .LANCHOR8
+ 362              	 .cfi_endproc
+ 363              	.LFE101:
+ 365              	 .section .text.eMBClose,"ax",%progbits
+ 366              	 .align 2
+ 367              	 .global eMBClose
+ 368              	 .code 16
+ 369              	 .thumb_func
+ 371              	eMBClose:
+ 372              	.LFB102:
+ 270:../freemodbus-v1.5.0/modbus/mb.c **** 
+ 271:../freemodbus-v1.5.0/modbus/mb.c **** 
+ 272:../freemodbus-v1.5.0/modbus/mb.c **** eMBErrorCode
+ 273:../freemodbus-v1.5.0/modbus/mb.c **** eMBClose( void )
+ 274:../freemodbus-v1.5.0/modbus/mb.c **** {
+ 373              	 .loc 1 274 0
+ 374              	 .cfi_startproc
+ 375 0000 08B5     	 push {r3,lr}
+ 376              	.LCFI2:
+ 377              	 .cfi_def_cfa_offset 8
+ 378              	 .cfi_offset 3,-8
+ 379              	 .cfi_offset 14,-4
+ 380              	.LVL40:
+ 275:../freemodbus-v1.5.0/modbus/mb.c ****     eMBErrorCode    eStatus = MB_ENOERR;
+ 276:../freemodbus-v1.5.0/modbus/mb.c **** 
+ 277:../freemodbus-v1.5.0/modbus/mb.c ****     if( eMBState == STATE_DISABLED )
+ 381              	 .loc 1 277 0
+ 382 0002 074B     	 ldr r3,.L33
+ 383 0004 1B78     	 ldrb r3,[r3]
+ 384 0006 012B     	 cmp r3,#1
+ 385 0008 06D1     	 bne .L31
+ 278:../freemodbus-v1.5.0/modbus/mb.c ****     {
+ 279:../freemodbus-v1.5.0/modbus/mb.c ****         if( pvMBFrameCloseCur != NULL )
+ 386              	 .loc 1 279 0
+ 387 000a 064B     	 ldr r3,.L33+4
+ 388 000c 1B68     	 ldr r3,[r3]
+ 389 000e 002B     	 cmp r3,#0
+ 390 0010 04D0     	 beq .L32
+ 280:../freemodbus-v1.5.0/modbus/mb.c ****         {
+ 281:../freemodbus-v1.5.0/modbus/mb.c ****             pvMBFrameCloseCur(  );
+ 391              	 .loc 1 281 0
+ 392 0012 9847     	 blx r3
+ 393              	.LVL41:
+ 275:../freemodbus-v1.5.0/modbus/mb.c **** 
+ 394              	 .loc 1 275 0
+ 395 0014 0020     	 mov r0,#0
+ 396 0016 02E0     	 b .L30
+ 397              	.L31:
+ 282:../freemodbus-v1.5.0/modbus/mb.c ****         }
+ 283:../freemodbus-v1.5.0/modbus/mb.c ****     }
+ 284:../freemodbus-v1.5.0/modbus/mb.c ****     else
+ 285:../freemodbus-v1.5.0/modbus/mb.c ****     {
+ 286:../freemodbus-v1.5.0/modbus/mb.c ****         eStatus = MB_EILLSTATE;
+ 398              	 .loc 1 286 0
+ 399 0018 0620     	 mov r0,#6
+ 400 001a 00E0     	 b .L30
+ 401              	.L32:
+ 275:../freemodbus-v1.5.0/modbus/mb.c **** 
+ 402              	 .loc 1 275 0
+ 403 001c 0020     	 mov r0,#0
+ 404              	.L30:
+ 405              	.LVL42:
+ 287:../freemodbus-v1.5.0/modbus/mb.c ****     }
+ 288:../freemodbus-v1.5.0/modbus/mb.c ****     return eStatus;
+ 289:../freemodbus-v1.5.0/modbus/mb.c **** }
+ 406              	 .loc 1 289 0
+ 407              	 
+ 408 001e 08BD     	 pop {r3,pc}
+ 409              	.L34:
+ 410              	 .align 2
+ 411              	.L33:
+ 412 0020 00000000 	 .word .LANCHOR7
+ 413 0024 00000000 	 .word .LANCHOR5
+ 414              	 .cfi_endproc
+ 415              	.LFE102:
+ 417              	 .section .text.eMBEnable,"ax",%progbits
+ 418              	 .align 2
+ 419              	 .global eMBEnable
+ 420              	 .code 16
+ 421              	 .thumb_func
+ 423              	eMBEnable:
+ 424              	.LFB103:
+ 290:../freemodbus-v1.5.0/modbus/mb.c **** 
+ 291:../freemodbus-v1.5.0/modbus/mb.c **** eMBErrorCode
+ 292:../freemodbus-v1.5.0/modbus/mb.c **** eMBEnable( void )
+ 293:../freemodbus-v1.5.0/modbus/mb.c **** {
+ 425              	 .loc 1 293 0
+ 426              	 .cfi_startproc
+ 427 0000 08B5     	 push {r3,lr}
+ 428              	.LCFI3:
+ 429              	 .cfi_def_cfa_offset 8
+ 430              	 .cfi_offset 3,-8
+ 431              	 .cfi_offset 14,-4
+ 432              	.LVL43:
+ 294:../freemodbus-v1.5.0/modbus/mb.c ****     eMBErrorCode    eStatus = MB_ENOERR;
+ 295:../freemodbus-v1.5.0/modbus/mb.c **** 
+ 296:../freemodbus-v1.5.0/modbus/mb.c ****     if( eMBState == STATE_DISABLED )
+ 433              	 .loc 1 296 0
+ 434 0002 074B     	 ldr r3,.L38
+ 435 0004 1B78     	 ldrb r3,[r3]
+ 436 0006 012B     	 cmp r3,#1
+ 437 0008 07D1     	 bne .L37
+ 297:../freemodbus-v1.5.0/modbus/mb.c ****     {
+ 298:../freemodbus-v1.5.0/modbus/mb.c ****         /* Activate the protocol stack. */
+ 299:../freemodbus-v1.5.0/modbus/mb.c ****         pvMBFrameStartCur(  );
+ 438              	 .loc 1 299 0
+ 439 000a 064B     	 ldr r3,.L38+4
+ 440 000c 1B68     	 ldr r3,[r3]
+ 441 000e 9847     	 blx r3
+ 442              	.LVL44:
+ 300:../freemodbus-v1.5.0/modbus/mb.c ****         eMBState = STATE_ENABLED;
+ 443              	 .loc 1 300 0
+ 444 0010 0022     	 mov r2,#0
+ 445 0012 034B     	 ldr r3,.L38
+ 446 0014 1A70     	 strb r2,[r3]
+ 294:../freemodbus-v1.5.0/modbus/mb.c ****     eMBErrorCode    eStatus = MB_ENOERR;
+ 447              	 .loc 1 294 0
+ 448 0016 0020     	 mov r0,#0
+ 449 0018 00E0     	 b .L36
+ 450              	.L37:
+ 301:../freemodbus-v1.5.0/modbus/mb.c ****     }
+ 302:../freemodbus-v1.5.0/modbus/mb.c ****     else
+ 303:../freemodbus-v1.5.0/modbus/mb.c ****     {
+ 304:../freemodbus-v1.5.0/modbus/mb.c ****         eStatus = MB_EILLSTATE;
+ 451              	 .loc 1 304 0
+ 452 001a 0620     	 mov r0,#6
+ 453              	.L36:
+ 454              	.LVL45:
+ 305:../freemodbus-v1.5.0/modbus/mb.c ****     }
+ 306:../freemodbus-v1.5.0/modbus/mb.c ****     return eStatus;
+ 307:../freemodbus-v1.5.0/modbus/mb.c **** }
+ 455              	 .loc 1 307 0
+ 456              	 
+ 457 001c 08BD     	 pop {r3,pc}
+ 458              	.L39:
+ 459 001e C046     	 .align 2
+ 460              	.L38:
+ 461 0020 00000000 	 .word .LANCHOR7
+ 462 0024 00000000 	 .word .LANCHOR1
+ 463              	 .cfi_endproc
+ 464              	.LFE103:
+ 466              	 .section .text.eMBDisable,"ax",%progbits
+ 467              	 .align 2
+ 468              	 .global eMBDisable
+ 469              	 .code 16
+ 470              	 .thumb_func
+ 472              	eMBDisable:
+ 473              	.LFB104:
+ 308:../freemodbus-v1.5.0/modbus/mb.c **** 
+ 309:../freemodbus-v1.5.0/modbus/mb.c **** eMBErrorCode
+ 310:../freemodbus-v1.5.0/modbus/mb.c **** eMBDisable( void )
+ 311:../freemodbus-v1.5.0/modbus/mb.c **** {
+ 474              	 .loc 1 311 0
+ 475              	 .cfi_startproc
+ 476 0000 08B5     	 push {r3,lr}
+ 477              	.LCFI4:
+ 478              	 .cfi_def_cfa_offset 8
+ 479              	 .cfi_offset 3,-8
+ 480              	 .cfi_offset 14,-4
+ 312:../freemodbus-v1.5.0/modbus/mb.c ****     eMBErrorCode    eStatus;
+ 313:../freemodbus-v1.5.0/modbus/mb.c **** 
+ 314:../freemodbus-v1.5.0/modbus/mb.c ****     if( eMBState == STATE_ENABLED )
+ 481              	 .loc 1 314 0
+ 482 0002 094B     	 ldr r3,.L44
+ 483 0004 1B78     	 ldrb r3,[r3]
+ 484 0006 002B     	 cmp r3,#0
+ 485 0008 07D1     	 bne .L41
+ 315:../freemodbus-v1.5.0/modbus/mb.c ****     {
+ 316:../freemodbus-v1.5.0/modbus/mb.c ****         pvMBFrameStopCur(  );
+ 486              	 .loc 1 316 0
+ 487 000a 084B     	 ldr r3,.L44+4
+ 488 000c 1B68     	 ldr r3,[r3]
+ 489 000e 9847     	 blx r3
+ 490              	.LVL46:
+ 317:../freemodbus-v1.5.0/modbus/mb.c ****         eMBState = STATE_DISABLED;
+ 491              	 .loc 1 317 0
+ 492 0010 0122     	 mov r2,#1
+ 493 0012 054B     	 ldr r3,.L44
+ 494 0014 1A70     	 strb r2,[r3]
+ 495              	.LVL47:
+ 318:../freemodbus-v1.5.0/modbus/mb.c ****         eStatus = MB_ENOERR;
+ 496              	 .loc 1 318 0
+ 497 0016 0020     	 mov r0,#0
+ 498 0018 04E0     	 b .L42
+ 499              	.LVL48:
+ 500              	.L41:
+ 319:../freemodbus-v1.5.0/modbus/mb.c ****     }
+ 320:../freemodbus-v1.5.0/modbus/mb.c ****     else if( eMBState == STATE_DISABLED )
+ 501              	 .loc 1 320 0
+ 502 001a 012B     	 cmp r3,#1
+ 503 001c 01D1     	 bne .L43
+ 321:../freemodbus-v1.5.0/modbus/mb.c ****     {
+ 322:../freemodbus-v1.5.0/modbus/mb.c ****         eStatus = MB_ENOERR;
+ 504              	 .loc 1 322 0
+ 505 001e 0020     	 mov r0,#0
+ 506 0020 00E0     	 b .L42
+ 507              	.L43:
+ 323:../freemodbus-v1.5.0/modbus/mb.c ****     }
+ 324:../freemodbus-v1.5.0/modbus/mb.c ****     else
+ 325:../freemodbus-v1.5.0/modbus/mb.c ****     {
+ 326:../freemodbus-v1.5.0/modbus/mb.c ****         eStatus = MB_EILLSTATE;
+ 508              	 .loc 1 326 0
+ 509 0022 0620     	 mov r0,#6
+ 510              	.L42:
+ 511              	.LVL49:
+ 327:../freemodbus-v1.5.0/modbus/mb.c ****     }
+ 328:../freemodbus-v1.5.0/modbus/mb.c ****     return eStatus;
+ 329:../freemodbus-v1.5.0/modbus/mb.c **** }
+ 512              	 .loc 1 329 0
+ 513              	 
+ 514 0024 08BD     	 pop {r3,pc}
+ 515              	.L45:
+ 516 0026 C046     	 .align 2
+ 517              	.L44:
+ 518 0028 00000000 	 .word .LANCHOR7
+ 519 002c 00000000 	 .word .LANCHOR2
+ 520              	 .cfi_endproc
+ 521              	.LFE104:
+ 523              	 .section .text.eMBPoll,"ax",%progbits
+ 524              	 .align 2
+ 525              	 .global eMBPoll
+ 526              	 .code 16
+ 527              	 .thumb_func
+ 529              	eMBPoll:
+ 530              	.LFB105:
+ 330:../freemodbus-v1.5.0/modbus/mb.c **** 
+ 331:../freemodbus-v1.5.0/modbus/mb.c **** eMBErrorCode
+ 332:../freemodbus-v1.5.0/modbus/mb.c **** eMBPoll( void )
+ 333:../freemodbus-v1.5.0/modbus/mb.c **** {
+ 531              	 .loc 1 333 0
+ 532              	 .cfi_startproc
+ 533 0000 30B5     	 push {r4,r5,lr}
+ 534              	.LCFI5:
+ 535              	 .cfi_def_cfa_offset 12
+ 536              	 .cfi_offset 4,-12
+ 537              	 .cfi_offset 5,-8
+ 538              	 .cfi_offset 14,-4
+ 539 0002 83B0     	 sub sp,sp,#12
+ 540              	.LCFI6:
+ 541              	 .cfi_def_cfa_offset 24
+ 542              	.LVL50:
+ 334:../freemodbus-v1.5.0/modbus/mb.c ****     static UCHAR   *ucMBFrame;
+ 335:../freemodbus-v1.5.0/modbus/mb.c ****     static UCHAR    ucRcvAddress;
+ 336:../freemodbus-v1.5.0/modbus/mb.c ****     static UCHAR    ucFunctionCode;
+ 337:../freemodbus-v1.5.0/modbus/mb.c ****     static USHORT   usLength;
+ 338:../freemodbus-v1.5.0/modbus/mb.c ****     static eMBException eException;
+ 339:../freemodbus-v1.5.0/modbus/mb.c **** 
+ 340:../freemodbus-v1.5.0/modbus/mb.c ****     int             i;
+ 341:../freemodbus-v1.5.0/modbus/mb.c ****     eMBErrorCode    eStatus = MB_ENOERR;
+ 342:../freemodbus-v1.5.0/modbus/mb.c ****     eMBEventType    eEvent;
+ 343:../freemodbus-v1.5.0/modbus/mb.c **** 
+ 344:../freemodbus-v1.5.0/modbus/mb.c ****     /* Check if the protocol stack is ready. */
+ 345:../freemodbus-v1.5.0/modbus/mb.c ****     if( eMBState != STATE_ENABLED )
+ 543              	 .loc 1 345 0
+ 544 0004 384B     	 ldr r3,.L63
+ 545 0006 1B78     	 ldrb r3,[r3]
+ 546 0008 002B     	 cmp r3,#0
+ 547 000a 60D1     	 bne .L56
+ 346:../freemodbus-v1.5.0/modbus/mb.c ****     {
+ 347:../freemodbus-v1.5.0/modbus/mb.c ****         return MB_EILLSTATE;
+ 348:../freemodbus-v1.5.0/modbus/mb.c ****     }
+ 349:../freemodbus-v1.5.0/modbus/mb.c **** 
+ 350:../freemodbus-v1.5.0/modbus/mb.c ****     /* Check if there is a event available. If not return control to caller.
+ 351:../freemodbus-v1.5.0/modbus/mb.c ****      * Otherwise we will handle the event. */
+ 352:../freemodbus-v1.5.0/modbus/mb.c ****     if( xMBPortEventGet( &eEvent ) == TRUE )
+ 548              	 .loc 1 352 0
+ 549 000c 6B46     	 mov r3,sp
+ 550 000e D81D     	 add r0,r3,#7
+ 551 0010 FFF7FEFF 	 bl xMBPortEventGet
+ 552              	.LVL51:
+ 553 0014 0128     	 cmp r0,#1
+ 554 0016 5CD1     	 bne .L57
+ 353:../freemodbus-v1.5.0/modbus/mb.c ****     {
+ 354:../freemodbus-v1.5.0/modbus/mb.c ****         switch ( eEvent )
+ 555              	 .loc 1 354 0
+ 556 0018 6B46     	 mov r3,sp
+ 557 001a 0733     	 add r3,r3,#7
+ 558 001c 1B78     	 ldrb r3,[r3]
+ 559 001e 012B     	 cmp r3,#1
+ 560 0020 02D0     	 beq .L48
+ 561 0022 022B     	 cmp r3,#2
+ 562 0024 15D0     	 beq .L49
+ 563 0026 56E0     	 b .L62
+ 564              	.L48:
+ 355:../freemodbus-v1.5.0/modbus/mb.c ****         {
+ 356:../freemodbus-v1.5.0/modbus/mb.c ****         case EV_READY:
+ 357:../freemodbus-v1.5.0/modbus/mb.c ****             break;
+ 358:../freemodbus-v1.5.0/modbus/mb.c **** 
+ 359:../freemodbus-v1.5.0/modbus/mb.c ****         case EV_FRAME_RECEIVED:
+ 360:../freemodbus-v1.5.0/modbus/mb.c ****             eStatus = peMBFrameReceiveCur( &ucRcvAddress, &ucMBFrame, &usLength );
+ 565              	 .loc 1 360 0
+ 566 0028 304B     	 ldr r3,.L63+4
+ 567 002a 1B68     	 ldr r3,[r3]
+ 568 002c 3048     	 ldr r0,.L63+8
+ 569 002e 3149     	 ldr r1,.L63+12
+ 570 0030 314A     	 ldr r2,.L63+16
+ 571 0032 9847     	 blx r3
+ 572              	.LVL52:
+ 361:../freemodbus-v1.5.0/modbus/mb.c ****             if( eStatus == MB_ENOERR )
+ 573              	 .loc 1 361 0
+ 574 0034 0028     	 cmp r0,#0
+ 575 0036 50D1     	 bne .L59
+ 362:../freemodbus-v1.5.0/modbus/mb.c ****             {
+ 363:../freemodbus-v1.5.0/modbus/mb.c ****                 /* Check if the frame is for us. If not ignore the frame. */
+ 364:../freemodbus-v1.5.0/modbus/mb.c ****                 if( ( ucRcvAddress == ucMBAddress ) || ( ucRcvAddress == MB_ADDRESS_BROADCAST ) )
+ 576              	 .loc 1 364 0
+ 577 0038 2D4B     	 ldr r3,.L63+8
+ 578 003a 1B78     	 ldrb r3,[r3]
+ 579 003c 2F4A     	 ldr r2,.L63+20
+ 580 003e 1278     	 ldrb r2,[r2]
+ 581 0040 9342     	 cmp r3,r2
+ 582 0042 01D0     	 beq .L50
+ 583              	 .loc 1 364 0 is_stmt 0 discriminator 1
+ 584 0044 002B     	 cmp r3,#0
+ 585 0046 4AD1     	 bne .L60
+ 586              	.L50:
+ 365:../freemodbus-v1.5.0/modbus/mb.c ****                 {
+ 366:../freemodbus-v1.5.0/modbus/mb.c ****                     ( void )xMBPortEventPost( EV_EXECUTE );
+ 587              	 .loc 1 366 0 is_stmt 1
+ 588 0048 0220     	 mov r0,#2
+ 589              	.LVL53:
+ 590 004a FFF7FEFF 	 bl xMBPortEventPost
+ 591              	.LVL54:
+ 367:../freemodbus-v1.5.0/modbus/mb.c ****                 }
+ 368:../freemodbus-v1.5.0/modbus/mb.c ****             }
+ 369:../freemodbus-v1.5.0/modbus/mb.c ****             break;
+ 370:../freemodbus-v1.5.0/modbus/mb.c **** 
+ 371:../freemodbus-v1.5.0/modbus/mb.c ****         case EV_EXECUTE:
+ 372:../freemodbus-v1.5.0/modbus/mb.c ****             ucFunctionCode = ucMBFrame[MB_PDU_FUNC_OFF];
+ 373:../freemodbus-v1.5.0/modbus/mb.c ****             eException = MB_EX_ILLEGAL_FUNCTION;
+ 374:../freemodbus-v1.5.0/modbus/mb.c ****             for( i = 0; i < MB_FUNC_HANDLERS_MAX; i++ )
+ 375:../freemodbus-v1.5.0/modbus/mb.c ****             {
+ 376:../freemodbus-v1.5.0/modbus/mb.c ****                 /* No more function handlers registered. Abort. */
+ 377:../freemodbus-v1.5.0/modbus/mb.c ****                 if( xFuncHandlers[i].ucFunctionCode == 0 )
+ 378:../freemodbus-v1.5.0/modbus/mb.c ****                 {
+ 379:../freemodbus-v1.5.0/modbus/mb.c ****                     break;
+ 380:../freemodbus-v1.5.0/modbus/mb.c ****                 }
+ 381:../freemodbus-v1.5.0/modbus/mb.c ****                 else if( xFuncHandlers[i].ucFunctionCode == ucFunctionCode )
+ 382:../freemodbus-v1.5.0/modbus/mb.c ****                 {
+ 383:../freemodbus-v1.5.0/modbus/mb.c ****                     eException = xFuncHandlers[i].pxHandler( ucMBFrame, &usLength );
+ 384:../freemodbus-v1.5.0/modbus/mb.c ****                     break;
+ 385:../freemodbus-v1.5.0/modbus/mb.c ****                 }
+ 386:../freemodbus-v1.5.0/modbus/mb.c ****             }
+ 387:../freemodbus-v1.5.0/modbus/mb.c **** 
+ 388:../freemodbus-v1.5.0/modbus/mb.c ****             /* If the request was not sent to the broadcast address we
+ 389:../freemodbus-v1.5.0/modbus/mb.c ****              * return a reply. */
+ 390:../freemodbus-v1.5.0/modbus/mb.c ****             if( ucRcvAddress != MB_ADDRESS_BROADCAST )
+ 391:../freemodbus-v1.5.0/modbus/mb.c ****             {
+ 392:../freemodbus-v1.5.0/modbus/mb.c ****                 if( eException != MB_EX_NONE )
+ 393:../freemodbus-v1.5.0/modbus/mb.c ****                 {
+ 394:../freemodbus-v1.5.0/modbus/mb.c ****                     /* An exception occured. Build an error frame. */
+ 395:../freemodbus-v1.5.0/modbus/mb.c ****                     usLength = 0;
+ 396:../freemodbus-v1.5.0/modbus/mb.c ****                     ucMBFrame[usLength++] = ( UCHAR )( ucFunctionCode | MB_FUNC_ERROR );
+ 397:../freemodbus-v1.5.0/modbus/mb.c ****                     ucMBFrame[usLength++] = eException;
+ 398:../freemodbus-v1.5.0/modbus/mb.c ****                 }
+ 399:../freemodbus-v1.5.0/modbus/mb.c ****                 if( ( eMBCurrentMode == MB_ASCII ) && MB_ASCII_TIMEOUT_WAIT_BEFORE_SEND_MS )
+ 400:../freemodbus-v1.5.0/modbus/mb.c ****                 {
+ 401:../freemodbus-v1.5.0/modbus/mb.c ****                     vMBPortTimersDelay( MB_ASCII_TIMEOUT_WAIT_BEFORE_SEND_MS );
+ 402:../freemodbus-v1.5.0/modbus/mb.c ****                 }                
+ 403:../freemodbus-v1.5.0/modbus/mb.c ****                 eStatus = peMBFrameSendCur( ucMBAddress, ucMBFrame, usLength );
+ 404:../freemodbus-v1.5.0/modbus/mb.c ****             }
+ 405:../freemodbus-v1.5.0/modbus/mb.c ****             break;
+ 406:../freemodbus-v1.5.0/modbus/mb.c **** 
+ 407:../freemodbus-v1.5.0/modbus/mb.c ****         case EV_FRAME_SENT:
+ 408:../freemodbus-v1.5.0/modbus/mb.c ****             break;
+ 409:../freemodbus-v1.5.0/modbus/mb.c ****         }
+ 410:../freemodbus-v1.5.0/modbus/mb.c ****     }
+ 411:../freemodbus-v1.5.0/modbus/mb.c ****     return MB_ENOERR;
+ 592              	 .loc 1 411 0
+ 593 004e 0020     	 mov r0,#0
+ 594 0050 48E0     	 b .L47
+ 595              	.LVL55:
+ 596              	.L49:
+ 372:../freemodbus-v1.5.0/modbus/mb.c ****             eException = MB_EX_ILLEGAL_FUNCTION;
+ 597              	 .loc 1 372 0
+ 598 0052 284B     	 ldr r3,.L63+12
+ 599 0054 1868     	 ldr r0,[r3]
+ 600 0056 0478     	 ldrb r4,[r0]
+ 601 0058 294B     	 ldr r3,.L63+24
+ 602 005a 1C70     	 strb r4,[r3]
+ 373:../freemodbus-v1.5.0/modbus/mb.c ****             for( i = 0; i < MB_FUNC_HANDLERS_MAX; i++ )
+ 603              	 .loc 1 373 0
+ 604 005c 0122     	 mov r2,#1
+ 605 005e 294B     	 ldr r3,.L63+28
+ 606 0060 1A70     	 strb r2,[r3]
+ 607              	.LVL56:
+ 374:../freemodbus-v1.5.0/modbus/mb.c ****             {
+ 608              	 .loc 1 374 0
+ 609 0062 0023     	 mov r3,#0
+ 610 0064 0FE0     	 b .L51
+ 611              	.LVL57:
+ 612              	.L54:
+ 377:../freemodbus-v1.5.0/modbus/mb.c ****                 {
+ 613              	 .loc 1 377 0
+ 614 0066 DA00     	 lsl r2,r3,#3
+ 615 0068 2749     	 ldr r1,.L63+32
+ 616 006a 525C     	 ldrb r2,[r2,r1]
+ 617 006c 002A     	 cmp r2,#0
+ 618 006e 0CD0     	 beq .L52
+ 381:../freemodbus-v1.5.0/modbus/mb.c ****                 {
+ 619              	 .loc 1 381 0
+ 620 0070 9442     	 cmp r4,r2
+ 621 0072 07D1     	 bne .L53
+ 383:../freemodbus-v1.5.0/modbus/mb.c ****                     break;
+ 622              	 .loc 1 383 0
+ 623 0074 DB00     	 lsl r3,r3,#3
+ 624              	.LVL58:
+ 625 0076 CB18     	 add r3,r1,r3
+ 626 0078 5B68     	 ldr r3,[r3,#4]
+ 627 007a 1F49     	 ldr r1,.L63+16
+ 628 007c 9847     	 blx r3
+ 629              	.LVL59:
+ 630 007e 214B     	 ldr r3,.L63+28
+ 631 0080 1870     	 strb r0,[r3]
+ 384:../freemodbus-v1.5.0/modbus/mb.c ****                 }
+ 632              	 .loc 1 384 0
+ 633 0082 02E0     	 b .L52
+ 634              	.LVL60:
+ 635              	.L53:
+ 374:../freemodbus-v1.5.0/modbus/mb.c ****             {
+ 636              	 .loc 1 374 0 discriminator 2
+ 637 0084 0133     	 add r3,r3,#1
+ 638              	.LVL61:
+ 639              	.L51:
+ 374:../freemodbus-v1.5.0/modbus/mb.c ****             {
+ 640              	 .loc 1 374 0 is_stmt 0 discriminator 1
+ 641 0086 0F2B     	 cmp r3,#15
+ 642 0088 EDD9     	 bls .L54
+ 643              	.LVL62:
+ 644              	.L52:
+ 390:../freemodbus-v1.5.0/modbus/mb.c ****             {
+ 645              	 .loc 1 390 0 is_stmt 1
+ 646 008a 194B     	 ldr r3,.L63+8
+ 647 008c 1B78     	 ldrb r3,[r3]
+ 648 008e 002B     	 cmp r3,#0
+ 649 0090 27D0     	 beq .L61
+ 392:../freemodbus-v1.5.0/modbus/mb.c ****                 {
+ 650              	 .loc 1 392 0
+ 651 0092 1C4B     	 ldr r3,.L63+28
+ 652 0094 1B78     	 ldrb r3,[r3]
+ 653 0096 002B     	 cmp r3,#0
+ 654 0098 0ED0     	 beq .L55
+ 395:../freemodbus-v1.5.0/modbus/mb.c ****                     ucMBFrame[usLength++] = ( UCHAR )( ucFunctionCode | MB_FUNC_ERROR );
+ 655              	 .loc 1 395 0
+ 656 009a 174A     	 ldr r2,.L63+16
+ 396:../freemodbus-v1.5.0/modbus/mb.c ****                     ucMBFrame[usLength++] = eException;
+ 657              	 .loc 1 396 0
+ 658 009c 1548     	 ldr r0,.L63+12
+ 659 009e 0468     	 ldr r4,[r0]
+ 660 00a0 0121     	 mov r1,#1
+ 661 00a2 1180     	 strh r1,[r2]
+ 662 00a4 1649     	 ldr r1,.L63+24
+ 663 00a6 0D78     	 ldrb r5,[r1]
+ 664 00a8 8021     	 mov r1,#128
+ 665 00aa 2943     	 orr r1,r5
+ 666 00ac 2170     	 strb r1,[r4]
+ 397:../freemodbus-v1.5.0/modbus/mb.c ****                 }
+ 667              	 .loc 1 397 0
+ 668 00ae 0068     	 ldr r0,[r0]
+ 669 00b0 1188     	 ldrh r1,[r2]
+ 670 00b2 4C1C     	 add r4,r1,#1
+ 671 00b4 1480     	 strh r4,[r2]
+ 672 00b6 4354     	 strb r3,[r0,r1]
+ 673              	.L55:
+ 403:../freemodbus-v1.5.0/modbus/mb.c ****             }
+ 674              	 .loc 1 403 0
+ 675 00b8 144B     	 ldr r3,.L63+36
+ 676 00ba 1B68     	 ldr r3,[r3]
+ 677 00bc 0F4A     	 ldr r2,.L63+20
+ 678 00be 1078     	 ldrb r0,[r2]
+ 679 00c0 0C4A     	 ldr r2,.L63+12
+ 680 00c2 1168     	 ldr r1,[r2]
+ 681 00c4 0C4A     	 ldr r2,.L63+16
+ 682 00c6 1288     	 ldrh r2,[r2]
+ 683 00c8 9847     	 blx r3
+ 684              	.LVL63:
+ 685              	 .loc 1 411 0
+ 686 00ca 0020     	 mov r0,#0
+ 687 00cc 0AE0     	 b .L47
+ 688              	.LVL64:
+ 689              	.L56:
+ 347:../freemodbus-v1.5.0/modbus/mb.c ****     }
+ 690              	 .loc 1 347 0
+ 691 00ce 0620     	 mov r0,#6
+ 692 00d0 08E0     	 b .L47
+ 693              	.L57:
+ 694              	 .loc 1 411 0
+ 695 00d2 0020     	 mov r0,#0
+ 696 00d4 06E0     	 b .L47
+ 697              	.L62:
+ 698 00d6 0020     	 mov r0,#0
+ 699 00d8 04E0     	 b .L47
+ 700              	.LVL65:
+ 701              	.L59:
+ 702 00da 0020     	 mov r0,#0
+ 703              	.LVL66:
+ 704 00dc 02E0     	 b .L47
+ 705              	.LVL67:
+ 706              	.L60:
+ 707 00de 0020     	 mov r0,#0
+ 708              	.LVL68:
+ 709 00e0 00E0     	 b .L47
+ 710              	.LVL69:
+ 711              	.L61:
+ 712 00e2 0020     	 mov r0,#0
+ 713              	.LVL70:
+ 714              	.L47:
+ 412:../freemodbus-v1.5.0/modbus/mb.c **** }
+ 715              	 .loc 1 412 0
+ 716 00e4 03B0     	 add sp,sp,#12
+ 717              	 
+ 718 00e6 30BD     	 pop {r4,r5,pc}
+ 719              	.L64:
+ 720              	 .align 2
+ 721              	.L63:
+ 722 00e8 00000000 	 .word .LANCHOR7
+ 723 00ec 00000000 	 .word .LANCHOR4
+ 724 00f0 00000000 	 .word .LANCHOR9
+ 725 00f4 00000000 	 .word .LANCHOR10
+ 726 00f8 00000000 	 .word .LANCHOR11
+ 727 00fc 00000000 	 .word .LANCHOR0
+ 728 0100 00000000 	 .word .LANCHOR12
+ 729 0104 00000000 	 .word .LANCHOR13
+ 730 0108 00000000 	 .word .LANCHOR8
+ 731 010c 00000000 	 .word .LANCHOR3
+ 732              	 .cfi_endproc
+ 733              	.LFE105:
+ 735              	 .comm pxMBFrameCBTransmitFSMCur,4,4
+ 736              	 .comm pxMBFrameCBReceiveFSMCur,4,4
+ 737              	 .comm pxMBPortCBTimerExpired,4,4
+ 738              	 .comm pxMBFrameCBTransmitterEmpty,4,4
+ 739              	 .comm pxMBFrameCBByteReceived,4,4
+ 740              	 .section .bss.pvMBFrameStopCur,"aw",%nobits
+ 741              	 .align 2
+ 742              	 .set .LANCHOR2,.+0
+ 745              	pvMBFrameStopCur:
+ 746 0000 00000000 	 .space 4
+ 747              	 .section .bss.peMBFrameReceiveCur,"aw",%nobits
+ 748              	 .align 2
+ 749              	 .set .LANCHOR4,.+0
+ 752              	peMBFrameReceiveCur:
+ 753 0000 00000000 	 .space 4
+ 754              	 .section .bss.pvMBFrameStartCur,"aw",%nobits
+ 755              	 .align 2
+ 756              	 .set .LANCHOR1,.+0
+ 759              	pvMBFrameStartCur:
+ 760 0000 00000000 	 .space 4
+ 761              	 .section .bss.ucRcvAddress.6265,"aw",%nobits
+ 762              	 .set .LANCHOR9,.+0
+ 765              	ucRcvAddress.6265:
+ 766 0000 00       	 .space 1
+ 767              	 .section .bss.peMBFrameSendCur,"aw",%nobits
+ 768              	 .align 2
+ 769              	 .set .LANCHOR3,.+0
+ 772              	peMBFrameSendCur:
+ 773 0000 00000000 	 .space 4
+ 774              	 .section .bss.ucFunctionCode.6266,"aw",%nobits
+ 775              	 .set .LANCHOR12,.+0
+ 778              	ucFunctionCode.6266:
+ 779 0000 00       	 .space 1
+ 780              	 .section .bss.eMBCurrentMode,"aw",%nobits
+ 781              	 .set .LANCHOR6,.+0
+ 784              	eMBCurrentMode:
+ 785 0000 00       	 .space 1
+ 786              	 .section .bss.ucMBFrame.6264,"aw",%nobits
+ 787              	 .align 2
+ 788              	 .set .LANCHOR10,.+0
+ 791              	ucMBFrame.6264:
+ 792 0000 00000000 	 .space 4
+ 793              	 .section .bss.usLength.6267,"aw",%nobits
+ 794              	 .align 1
+ 795              	 .set .LANCHOR11,.+0
+ 798              	usLength.6267:
+ 799 0000 0000     	 .space 2
+ 800              	 .section .bss.eException.6268,"aw",%nobits
+ 801              	 .set .LANCHOR13,.+0
+ 804              	eException.6268:
+ 805 0000 00       	 .space 1
+ 806              	 .section .data.xFuncHandlers,"aw",%progbits
+ 807              	 .align 2
+ 808              	 .set .LANCHOR8,.+0
+ 811              	xFuncHandlers:
+ 812 0000 11       	 .byte 17
+ 813 0001 000000   	 .space 3
+ 814 0004 00000000 	 .word eMBFuncReportSlaveID
+ 815 0008 04       	 .byte 4
+ 816 0009 000000   	 .space 3
+ 817 000c 00000000 	 .word eMBFuncReadInputRegister
+ 818 0010 03       	 .byte 3
+ 819 0011 000000   	 .space 3
+ 820 0014 00000000 	 .word eMBFuncReadHoldingRegister
+ 821 0018 10       	 .byte 16
+ 822 0019 000000   	 .space 3
+ 823 001c 00000000 	 .word eMBFuncWriteMultipleHoldingRegister
+ 824 0020 06       	 .byte 6
+ 825 0021 000000   	 .space 3
+ 826 0024 00000000 	 .word eMBFuncWriteHoldingRegister
+ 827 0028 17       	 .byte 23
+ 828 0029 000000   	 .space 3
+ 829 002c 00000000 	 .word eMBFuncReadWriteMultipleHoldingRegister
+ 830 0030 01       	 .byte 1
+ 831 0031 000000   	 .space 3
+ 832 0034 00000000 	 .word eMBFuncReadCoils
+ 833 0038 05       	 .byte 5
+ 834 0039 000000   	 .space 3
+ 835 003c 00000000 	 .word eMBFuncWriteCoil
+ 836 0040 0F       	 .byte 15
+ 837 0041 000000   	 .space 3
+ 838 0044 00000000 	 .word eMBFuncWriteMultipleCoils
+ 839 0048 02       	 .byte 2
+ 840 0049 000000   	 .space 3
+ 841 004c 00000000 	 .word eMBFuncReadDiscreteInputs
+ 842 0050 00000000 	 .space 48
+ 842      00000000 
+ 842      00000000 
+ 842      00000000 
+ 842      00000000 
+ 843              	 .section .bss.ucMBAddress,"aw",%nobits
+ 844              	 .set .LANCHOR0,.+0
+ 847              	ucMBAddress:
+ 848 0000 00       	 .space 1
+ 849              	 .section .data.eMBState,"aw",%progbits
+ 850              	 .set .LANCHOR7,.+0
+ 853              	eMBState:
+ 854 0000 02       	 .byte 2
+ 855              	 .section .bss.pvMBFrameCloseCur,"aw",%nobits
+ 856              	 .align 2
+ 857              	 .set .LANCHOR5,.+0
+ 860              	pvMBFrameCloseCur:
+ 861 0000 00000000 	 .space 4
+ 862              	 .text
+ 863              	.Letext0:
+ 864              	 .file 3 "c:\\davev4-64bit\\dave-4.3.2\\eclipse\\arm-gcc-49\\arm-none-eabi\\include\\machine\\_default_types.h"
+ 865              	 .file 4 "c:\\davev4-64bit\\dave-4.3.2\\eclipse\\arm-gcc-49\\arm-none-eabi\\include\\stdint.h"
+ 866              	 .file 5 "C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/freemodbus-v1.5.0/port/port.h"
+ 867              	 .file 6 "C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/freemodbus-v1.5.0/modbus/include/mbport.h"
+ 868              	 .file 7 "C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/freemodbus-v1.5.0/modbus/include/mbproto.h"
+ 869              	 .file 8 "C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/freemodbus-v1.5.0/modbus/include/mb.h"
+ 870              	 .file 9 "C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/freemodbus-v1.5.0/modbus/include/mbframe.h"
+ 871              	 .file 10 "C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/freemodbus-v1.5.0/modbus/rtu/mbrtu.h"
+ 872              	 .file 11 "C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/freemodbus-v1.5.0/modbus/ascii/mbascii.h"
+DEFINED SYMBOLS
+                            *ABS*:00000000 mb.c
+    {standard input}:18     .text.eMBInit:00000000 $t
+    {standard input}:23     .text.eMBInit:00000000 eMBInit
+    {standard input}:195    .text.eMBInit:000000c4 $d
+                            *COM*:00000004 pxMBFrameCBByteReceived
+                            *COM*:00000004 pxMBFrameCBTransmitterEmpty
+                            *COM*:00000004 pxMBPortCBTimerExpired
+    {standard input}:224    .text.eMBRegisterCB:00000000 $t
+    {standard input}:229    .text.eMBRegisterCB:00000000 eMBRegisterCB
+    {standard input}:361    .text.eMBRegisterCB:0000006c $d
+    {standard input}:366    .text.eMBClose:00000000 $t
+    {standard input}:371    .text.eMBClose:00000000 eMBClose
+    {standard input}:412    .text.eMBClose:00000020 $d
+    {standard input}:418    .text.eMBEnable:00000000 $t
+    {standard input}:423    .text.eMBEnable:00000000 eMBEnable
+    {standard input}:461    .text.eMBEnable:00000020 $d
+    {standard input}:467    .text.eMBDisable:00000000 $t
+    {standard input}:472    .text.eMBDisable:00000000 eMBDisable
+    {standard input}:518    .text.eMBDisable:00000028 $d
+    {standard input}:524    .text.eMBPoll:00000000 $t
+    {standard input}:529    .text.eMBPoll:00000000 eMBPoll
+    {standard input}:722    .text.eMBPoll:000000e8 $d
+                            *COM*:00000004 pxMBFrameCBTransmitFSMCur
+                            *COM*:00000004 pxMBFrameCBReceiveFSMCur
+    {standard input}:741    .bss.pvMBFrameStopCur:00000000 $d
+    {standard input}:745    .bss.pvMBFrameStopCur:00000000 pvMBFrameStopCur
+    {standard input}:748    .bss.peMBFrameReceiveCur:00000000 $d
+    {standard input}:752    .bss.peMBFrameReceiveCur:00000000 peMBFrameReceiveCur
+    {standard input}:755    .bss.pvMBFrameStartCur:00000000 $d
+    {standard input}:759    .bss.pvMBFrameStartCur:00000000 pvMBFrameStartCur
+    {standard input}:765    .bss.ucRcvAddress.6265:00000000 ucRcvAddress.6265
+    {standard input}:766    .bss.ucRcvAddress.6265:00000000 $d
+    {standard input}:768    .bss.peMBFrameSendCur:00000000 $d
+    {standard input}:772    .bss.peMBFrameSendCur:00000000 peMBFrameSendCur
+    {standard input}:778    .bss.ucFunctionCode.6266:00000000 ucFunctionCode.6266
+    {standard input}:779    .bss.ucFunctionCode.6266:00000000 $d
+    {standard input}:784    .bss.eMBCurrentMode:00000000 eMBCurrentMode
+    {standard input}:785    .bss.eMBCurrentMode:00000000 $d
+    {standard input}:787    .bss.ucMBFrame.6264:00000000 $d
+    {standard input}:791    .bss.ucMBFrame.6264:00000000 ucMBFrame.6264
+    {standard input}:794    .bss.usLength.6267:00000000 $d
+    {standard input}:798    .bss.usLength.6267:00000000 usLength.6267
+    {standard input}:804    .bss.eException.6268:00000000 eException.6268
+    {standard input}:805    .bss.eException.6268:00000000 $d
+    {standard input}:807    .data.xFuncHandlers:00000000 $d
+    {standard input}:811    .data.xFuncHandlers:00000000 xFuncHandlers
+    {standard input}:847    .bss.ucMBAddress:00000000 ucMBAddress
+    {standard input}:848    .bss.ucMBAddress:00000000 $d
+    {standard input}:853    .data.eMBState:00000000 eMBState
+    {standard input}:856    .bss.pvMBFrameCloseCur:00000000 $d
+    {standard input}:860    .bss.pvMBFrameCloseCur:00000000 pvMBFrameCloseCur
+                     .debug_frame:00000010 $d
+
+UNDEFINED SYMBOLS
+eMBRTUInit
+eMBASCIIInit
+xMBPortEventInit
+eMBRTUStart
+eMBRTUStop
+eMBRTUSend
+eMBRTUReceive
+xMBRTUReceiveFSM
+xMBRTUTransmitFSM
+xMBRTUTimerT35Expired
+eMBASCIIStart
+eMBASCIIStop
+eMBASCIISend
+eMBASCIIReceive
+xMBASCIIReceiveFSM
+xMBASCIITransmitFSM
+xMBASCIITimerT1SExpired
+xMBPortEventGet
+xMBPortEventPost
+eMBFuncReportSlaveID
+eMBFuncReadInputRegister
+eMBFuncReadHoldingRegister
+eMBFuncWriteMultipleHoldingRegister
+eMBFuncWriteHoldingRegister
+eMBFuncReadWriteMultipleHoldingRegister
+eMBFuncReadCoils
+eMBFuncWriteCoil
+eMBFuncWriteMultipleCoils
+eMBFuncReadDiscreteInputs

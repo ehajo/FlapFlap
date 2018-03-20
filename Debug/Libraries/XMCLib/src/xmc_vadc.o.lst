@@ -1,0 +1,2217 @@
+   1              	 .cpu cortex-m0
+   2              	 .fpu softvfp
+   3              	 .eabi_attribute 20,1
+   4              	 .eabi_attribute 21,1
+   5              	 .eabi_attribute 23,3
+   6              	 .eabi_attribute 24,1
+   7              	 .eabi_attribute 25,1
+   8              	 .eabi_attribute 26,1
+   9              	 .eabi_attribute 30,1
+  10              	 .eabi_attribute 34,0
+  11              	 .eabi_attribute 18,4
+  12              	 .code 16
+  13              	 .file "xmc_vadc.c"
+  14              	 .text
+  15              	.Ltext0:
+  16              	 .cfi_sections .debug_frame
+  17              	 .section .text.XMC_VADC_GLOBAL_EnableModule,"ax",%progbits
+  18              	 .align 2
+  19              	 .global XMC_VADC_GLOBAL_EnableModule
+  20              	 .code 16
+  21              	 .thumb_func
+  23              	XMC_VADC_GLOBAL_EnableModule:
+  24              	.LFB81:
+  25              	 .file 1 "../Libraries/XMCLib/src/xmc_vadc.c"
+   1:../Libraries/XMCLib/src/xmc_vadc.c **** /**
+   2:../Libraries/XMCLib/src/xmc_vadc.c ****  * @file xmc_vadc.c
+   3:../Libraries/XMCLib/src/xmc_vadc.c ****  * @date 2016-06-17
+   4:../Libraries/XMCLib/src/xmc_vadc.c ****  *
+   5:../Libraries/XMCLib/src/xmc_vadc.c ****  * @cond
+   6:../Libraries/XMCLib/src/xmc_vadc.c ****  **************************************************************************************************
+   7:../Libraries/XMCLib/src/xmc_vadc.c ****  * XMClib v2.1.16 - XMC Peripheral Driver Library 
+   8:../Libraries/XMCLib/src/xmc_vadc.c ****  *
+   9:../Libraries/XMCLib/src/xmc_vadc.c ****  * Copyright (c) 2015-2017, Infineon Technologies AG
+  10:../Libraries/XMCLib/src/xmc_vadc.c ****  * All rights reserved.                        
+  11:../Libraries/XMCLib/src/xmc_vadc.c ****  *                                             
+  12:../Libraries/XMCLib/src/xmc_vadc.c ****  * Redistribution and use in source and binary forms, with or without modification,are permitted pr
+  13:../Libraries/XMCLib/src/xmc_vadc.c ****  * following conditions are met:   
+  14:../Libraries/XMCLib/src/xmc_vadc.c ****  *                                                                              
+  15:../Libraries/XMCLib/src/xmc_vadc.c ****  * Redistributions of source code must retain the above copyright notice, this list of conditions a
+  16:../Libraries/XMCLib/src/xmc_vadc.c ****  * disclaimer.                        
+  17:../Libraries/XMCLib/src/xmc_vadc.c ****  * 
+  18:../Libraries/XMCLib/src/xmc_vadc.c ****  * Redistributions in binary form must reproduce the above copyright notice, this list of condition
+  19:../Libraries/XMCLib/src/xmc_vadc.c ****  * disclaimer in the documentation and/or other materials provided with the distribution.          
+  20:../Libraries/XMCLib/src/xmc_vadc.c ****  * 
+  21:../Libraries/XMCLib/src/xmc_vadc.c ****  * Neither the name of the copyright holders nor the names of its contributors may be used to endor
+  22:../Libraries/XMCLib/src/xmc_vadc.c ****  * products derived from this software without specific prior written permission.                  
+  23:../Libraries/XMCLib/src/xmc_vadc.c ****  *                                                                              
+  24:../Libraries/XMCLib/src/xmc_vadc.c ****  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR I
+  25:../Libraries/XMCLib/src/xmc_vadc.c ****  * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTI
+  26:../Libraries/XMCLib/src/xmc_vadc.c ****  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE  FOR ANY DIRECT, IN
+  27:../Libraries/XMCLib/src/xmc_vadc.c ****  * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBS
+  28:../Libraries/XMCLib/src/xmc_vadc.c ****  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THE
+  29:../Libraries/XMCLib/src/xmc_vadc.c ****  * WHETHER IN CONTRACT, STRICT LIABILITY,OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY
+  30:../Libraries/XMCLib/src/xmc_vadc.c ****  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                            
+  31:../Libraries/XMCLib/src/xmc_vadc.c ****  *                                                                              
+  32:../Libraries/XMCLib/src/xmc_vadc.c ****  * To improve the quality of the software, users are encouraged to share modifications, enhancement
+  33:../Libraries/XMCLib/src/xmc_vadc.c ****  * Infineon Technologies AG dave@infineon.com).                                                    
+  34:../Libraries/XMCLib/src/xmc_vadc.c ****  **************************************************************************************************
+  35:../Libraries/XMCLib/src/xmc_vadc.c ****  *
+  36:../Libraries/XMCLib/src/xmc_vadc.c ****  * Change History
+  37:../Libraries/XMCLib/src/xmc_vadc.c ****  * --------------
+  38:../Libraries/XMCLib/src/xmc_vadc.c ****  *
+  39:../Libraries/XMCLib/src/xmc_vadc.c ****  * 2015-02-15:
+  40:../Libraries/XMCLib/src/xmc_vadc.c ****  *     - Initial <br>
+  41:../Libraries/XMCLib/src/xmc_vadc.c ****  *      
+  42:../Libraries/XMCLib/src/xmc_vadc.c ****  * 2015-02-20:
+  43:../Libraries/XMCLib/src/xmc_vadc.c ****  *     - Revised for XMC1201 device.<br>
+  44:../Libraries/XMCLib/src/xmc_vadc.c ****  *   
+  45:../Libraries/XMCLib/src/xmc_vadc.c ****  * 2015-04-27:
+  46:../Libraries/XMCLib/src/xmc_vadc.c ****  *     - Added new APIs for SHS.<br>
+  47:../Libraries/XMCLib/src/xmc_vadc.c ****  *     - Added New APIs for trigger edge selection.<BR>
+  48:../Libraries/XMCLib/src/xmc_vadc.c ****  *     - Added new APIs for Queue flush entries, boundary selection, Boundary node pointer.<BR>
+  49:../Libraries/XMCLib/src/xmc_vadc.c ****  *     - Revised GatingMode APIs and EMUX Control Init API.<BR>
+  50:../Libraries/XMCLib/src/xmc_vadc.c ****  *
+  51:../Libraries/XMCLib/src/xmc_vadc.c ****  * 2015-06-20:
+  52:../Libraries/XMCLib/src/xmc_vadc.c ****  *     - Removed version macros and declaration of GetDriverVersion API
+  53:../Libraries/XMCLib/src/xmc_vadc.c ****  *
+  54:../Libraries/XMCLib/src/xmc_vadc.c ****  * 2015-06-25:
+  55:../Libraries/XMCLib/src/xmc_vadc.c ****  *     - BFL configuration in channel initialization fixed.
+  56:../Libraries/XMCLib/src/xmc_vadc.c ****  *
+  57:../Libraries/XMCLib/src/xmc_vadc.c ****  * 2015-07-28:
+  58:../Libraries/XMCLib/src/xmc_vadc.c ****  *     - CLOCK_GATING_SUPPORTED and PERIPHERAL_RESET_SUPPORTED macros used
+  59:../Libraries/XMCLib/src/xmc_vadc.c ****  *     - Clubbed the macro definitions for XMC13 XMC12 and XMC14
+  60:../Libraries/XMCLib/src/xmc_vadc.c ****  *     - Clubbed the macro definitions for XMC44 XMC47 and XMC48
+  61:../Libraries/XMCLib/src/xmc_vadc.c ****  *     - New APIs Created.
+  62:../Libraries/XMCLib/src/xmc_vadc.c ****  *           - XMC_VADC_GLOBAL_SetIndividualBoundary
+  63:../Libraries/XMCLib/src/xmc_vadc.c ****  *           - XMC_VADC_GROUP_SetIndividualBoundary
+  64:../Libraries/XMCLib/src/xmc_vadc.c ****  *           - XMC_VADC_GROUP_GetAlias
+  65:../Libraries/XMCLib/src/xmc_vadc.c ****  *           - XMC_VADC_GROUP_GetInputClass
+  66:../Libraries/XMCLib/src/xmc_vadc.c ****  *           - XMC_VADC_GROUP_ChannelSetIclass
+  67:../Libraries/XMCLib/src/xmc_vadc.c ****  *           - XMC_VADC_GROUP_ChannelGetResultAlignment
+  68:../Libraries/XMCLib/src/xmc_vadc.c ****  *           - XMC_VADC_GROUP_ChannelGetInputClass
+  69:../Libraries/XMCLib/src/xmc_vadc.c ****  *           - XMC_VADC_GROUP_SetResultSubtractionValue
+  70:../Libraries/XMCLib/src/xmc_vadc.c ****  *
+  71:../Libraries/XMCLib/src/xmc_vadc.c ****  * 2015-12-01:
+  72:../Libraries/XMCLib/src/xmc_vadc.c ****  *     - Fixed the analog calibration voltage for XMC1100 to external reference upper supply range.
+  73:../Libraries/XMCLib/src/xmc_vadc.c ****  *     - Fixed the XMC_VADC_GLOBAL_StartupCalibration() for XMC1100.
+  74:../Libraries/XMCLib/src/xmc_vadc.c ****  *
+  75:../Libraries/XMCLib/src/xmc_vadc.c ****  * 2016-06-17:
+  76:../Libraries/XMCLib/src/xmc_vadc.c ****  *     - New macros added XMC_VADC_SHS_FULL_SET_REG, XMC_VADC_RESULT_PRIORITY_AVAILABLE 
+  77:../Libraries/XMCLib/src/xmc_vadc.c ****  *       and XMC_VADC_SYNCTR_START_LOCATION
+  78:../Libraries/XMCLib/src/xmc_vadc.c ****  *     - New Enum added XMC_VADC_SHS_GAIN_LEVEL_t and XMC_VADC_SYNCTR_EVAL_t
+  79:../Libraries/XMCLib/src/xmc_vadc.c ****  *     - Fixed the EVAL configuration in API XMC_VADC_GROUP_CheckSlaveReadiness and XMC_VADC_GROUP_
+  80:../Libraries/XMCLib/src/xmc_vadc.c ****  *     - New APIs added are:
+  81:../Libraries/XMCLib/src/xmc_vadc.c ****  *           - XMC_VADC_GROUP_SetSyncSlaveReadySignal
+  82:../Libraries/XMCLib/src/xmc_vadc.c ****  *           - XMC_VADC_GROUP_ChannelGetAssertedEvents
+  83:../Libraries/XMCLib/src/xmc_vadc.c ****  *           - XMC_VADC_GROUP_GetAssertedResultEvents
+  84:../Libraries/XMCLib/src/xmc_vadc.c ****  *           - XMC_VADC_GROUP_SetResultRegPriority
+  85:../Libraries/XMCLib/src/xmc_vadc.c ****  *           - XMC_VADC_GROUP_SetSyncReadySignal
+  86:../Libraries/XMCLib/src/xmc_vadc.c ****  *           - XMC_VADC_GROUP_GetSyncReadySignal
+  87:../Libraries/XMCLib/src/xmc_vadc.c ****  *           - XMC_VADC_GROUP_GetResultRegPriority
+  88:../Libraries/XMCLib/src/xmc_vadc.c ****  *
+  89:../Libraries/XMCLib/src/xmc_vadc.c ****  * 2017-01-11:
+  90:../Libraries/XMCLib/src/xmc_vadc.c ****  *     - Fix assertion in XMC_VADC_GROUP_CheckSlaveReadiness() and XMC_VADC_GROUP_IgnoreSlaveReadin
+  91:../Libraries/XMCLib/src/xmc_vadc.c ****  *
+  92:../Libraries/XMCLib/src/xmc_vadc.c ****  * @endcond 
+  93:../Libraries/XMCLib/src/xmc_vadc.c ****  *
+  94:../Libraries/XMCLib/src/xmc_vadc.c ****  */
+  95:../Libraries/XMCLib/src/xmc_vadc.c **** 
+  96:../Libraries/XMCLib/src/xmc_vadc.c **** /**************************************************************************************************
+  97:../Libraries/XMCLib/src/xmc_vadc.c ****  * HEADER FILES
+  98:../Libraries/XMCLib/src/xmc_vadc.c ****  **************************************************************************************************
+  99:../Libraries/XMCLib/src/xmc_vadc.c **** #include <xmc_vadc.h>
+ 100:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 101:../Libraries/XMCLib/src/xmc_vadc.c **** /**************************************************************************************************
+ 102:../Libraries/XMCLib/src/xmc_vadc.c ****  * MACROS
+ 103:../Libraries/XMCLib/src/xmc_vadc.c ****  **************************************************************************************************
+ 104:../Libraries/XMCLib/src/xmc_vadc.c **** #define XMC_VADC_MAX_ICLASS_SET          (2U)  /**< Defines the maximum number of conversion parame
+ 105:../Libraries/XMCLib/src/xmc_vadc.c **** #define XMC_VADC_NUM_EMUX_INTERFACES     (2U)  /**< Defines the maximum number of external multiple
+ 106:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 107:../Libraries/XMCLib/src/xmc_vadc.c **** #define XMC_VADC_RESULT_LEFT_ALIGN_10BIT (2U)  /**< Defines the 10 bit converted result register le
+ 108:../Libraries/XMCLib/src/xmc_vadc.c ****                                                     is used in the XMC_VADC_GLOBAL_SetCompareValue(
+ 109:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 110:../Libraries/XMCLib/src/xmc_vadc.c **** #define XMC_VADC_SYNCTR_START_LOCATION (3U)  /**< Defines the location in SYNCTR needed for calcula
+ 111:../Libraries/XMCLib/src/xmc_vadc.c **** /**************************************************************************************************
+ 112:../Libraries/XMCLib/src/xmc_vadc.c ****  * ENUMS
+ 113:../Libraries/XMCLib/src/xmc_vadc.c ****  **************************************************************************************************
+ 114:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 115:../Libraries/XMCLib/src/xmc_vadc.c **** /**************************************************************************************************
+ 116:../Libraries/XMCLib/src/xmc_vadc.c ****  * DATA STRUCTURES
+ 117:../Libraries/XMCLib/src/xmc_vadc.c ****  **************************************************************************************************
+ 118:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 119:../Libraries/XMCLib/src/xmc_vadc.c **** /**************************************************************************************************
+ 120:../Libraries/XMCLib/src/xmc_vadc.c ****  * GLOBAL DATA
+ 121:../Libraries/XMCLib/src/xmc_vadc.c ****  **************************************************************************************************
+ 122:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 123:../Libraries/XMCLib/src/xmc_vadc.c **** #if (XMC_VADC_GROUP_AVAILABLE == 1U)
+ 124:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 125:../Libraries/XMCLib/src/xmc_vadc.c **** #if (XMC_VADC_MAXIMUM_NUM_GROUPS == 4U) 
+ 126:../Libraries/XMCLib/src/xmc_vadc.c **** static VADC_G_TypeDef *const g_xmc_vadc_group_array[XMC_VADC_MAXIMUM_NUM_GROUPS] = {(VADC_G_TypeDef
+ 127:../Libraries/XMCLib/src/xmc_vadc.c ****                                                                                     (VADC_G_TypeDef
+ 128:../Libraries/XMCLib/src/xmc_vadc.c ****                                                                                     (VADC_G_TypeDef
+ 129:../Libraries/XMCLib/src/xmc_vadc.c ****                                                                                     (VADC_G_TypeDef
+ 130:../Libraries/XMCLib/src/xmc_vadc.c **** #else
+ 131:../Libraries/XMCLib/src/xmc_vadc.c **** static VADC_G_TypeDef *const g_xmc_vadc_group_array[XMC_VADC_MAXIMUM_NUM_GROUPS] = {(VADC_G_TypeDef
+ 132:../Libraries/XMCLib/src/xmc_vadc.c ****                                                                                     (VADC_G_TypeDef
+ 133:../Libraries/XMCLib/src/xmc_vadc.c **** #endif
+ 134:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 135:../Libraries/XMCLib/src/xmc_vadc.c **** #endif 
+ 136:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 137:../Libraries/XMCLib/src/xmc_vadc.c **** /**************************************************************************************************
+ 138:../Libraries/XMCLib/src/xmc_vadc.c ****  * LOCAL ROUTINES
+ 139:../Libraries/XMCLib/src/xmc_vadc.c ****  **************************************************************************************************
+ 140:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 141:../Libraries/XMCLib/src/xmc_vadc.c **** /**************************************************************************************************
+ 142:../Libraries/XMCLib/src/xmc_vadc.c ****  * API IMPLEMENTATION
+ 143:../Libraries/XMCLib/src/xmc_vadc.c ****  **************************************************************************************************
+ 144:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 145:../Libraries/XMCLib/src/xmc_vadc.c **** /*API to enable the VADC Module*/
+ 146:../Libraries/XMCLib/src/xmc_vadc.c **** void XMC_VADC_GLOBAL_EnableModule(void)
+ 147:../Libraries/XMCLib/src/xmc_vadc.c **** {
+  26              	 .loc 1 147 0
+  27              	 .cfi_startproc
+  28 0000 08B5     	 push {r3,lr}
+  29              	.LCFI0:
+  30              	 .cfi_def_cfa_offset 8
+  31              	 .cfi_offset 3,-8
+  32              	 .cfi_offset 14,-4
+ 148:../Libraries/XMCLib/src/xmc_vadc.c ****   /*
+ 149:../Libraries/XMCLib/src/xmc_vadc.c ****    * Enable Out of Range Comparator for ADC channels pins P2.2to P2.9. This hack is applicable only
+ 150:../Libraries/XMCLib/src/xmc_vadc.c ****    * and in particular the G11 step.
+ 151:../Libraries/XMCLib/src/xmc_vadc.c ****    *
+ 152:../Libraries/XMCLib/src/xmc_vadc.c ****    * Please refer to the XMC1000 Errata sheet V1.4 released 2014-06 Errata ID : ADC_AI.003 Additona
+ 153:../Libraries/XMCLib/src/xmc_vadc.c ****    * function
+ 154:../Libraries/XMCLib/src/xmc_vadc.c ****    */
+ 155:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 156:../Libraries/XMCLib/src/xmc_vadc.c **** #if defined (COMPARATOR)
+ 157:../Libraries/XMCLib/src/xmc_vadc.c ****   COMPARATOR->ORCCTRL = (uint32_t)0xFF;
+ 158:../Libraries/XMCLib/src/xmc_vadc.c **** #endif
+ 159:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 160:../Libraries/XMCLib/src/xmc_vadc.c **** #if defined(CLOCK_GATING_SUPPORTED)
+ 161:../Libraries/XMCLib/src/xmc_vadc.c ****     XMC_SCU_CLOCK_UngatePeripheralClock(XMC_SCU_PERIPHERAL_CLOCK_VADC);
+  33              	 .loc 1 161 0
+  34 0002 0120     	 mov r0,#1
+  35 0004 FFF7FEFF 	 bl XMC_SCU_CLOCK_UngatePeripheralClock
+  36              	.LVL0:
+ 162:../Libraries/XMCLib/src/xmc_vadc.c **** #endif
+ 163:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 164:../Libraries/XMCLib/src/xmc_vadc.c **** #if defined(PERIPHERAL_RESET_SUPPORTED)
+ 165:../Libraries/XMCLib/src/xmc_vadc.c ****   /* Reset the Hardware */
+ 166:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_SCU_RESET_DeassertPeripheralReset((XMC_SCU_PERIPHERAL_RESET_t)XMC_SCU_PERIPHERAL_RESET_VADC )
+ 167:../Libraries/XMCLib/src/xmc_vadc.c **** #endif
+ 168:../Libraries/XMCLib/src/xmc_vadc.c **** }
+  37              	 .loc 1 168 0
+  38              	 
+  39 0008 08BD     	 pop {r3,pc}
+  40              	 .cfi_endproc
+  41              	.LFE81:
+  43 000a C046     	 .section .text.XMC_VADC_GLOBAL_DisableModule,"ax",%progbits
+  44              	 .align 2
+  45              	 .global XMC_VADC_GLOBAL_DisableModule
+  46              	 .code 16
+  47              	 .thumb_func
+  49              	XMC_VADC_GLOBAL_DisableModule:
+  50              	.LFB82:
+ 169:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 170:../Libraries/XMCLib/src/xmc_vadc.c **** /*API to Disable the VADC Module*/
+ 171:../Libraries/XMCLib/src/xmc_vadc.c **** void XMC_VADC_GLOBAL_DisableModule(void)
+ 172:../Libraries/XMCLib/src/xmc_vadc.c **** {
+  51              	 .loc 1 172 0
+  52              	 .cfi_startproc
+  53 0000 08B5     	 push {r3,lr}
+  54              	.LCFI1:
+  55              	 .cfi_def_cfa_offset 8
+  56              	 .cfi_offset 3,-8
+  57              	 .cfi_offset 14,-4
+ 173:../Libraries/XMCLib/src/xmc_vadc.c **** #if defined(PERIPHERAL_RESET_SUPPORTED)
+ 174:../Libraries/XMCLib/src/xmc_vadc.c ****   /* Reset the Hardware */
+ 175:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_SCU_RESET_AssertPeripheralReset((XMC_SCU_PERIPHERAL_RESET_t)XMC_SCU_PERIPHERAL_RESET_VADC );
+ 176:../Libraries/XMCLib/src/xmc_vadc.c **** #endif
+ 177:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 178:../Libraries/XMCLib/src/xmc_vadc.c **** #if defined(CLOCK_GATING_SUPPORTED)
+ 179:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_SCU_CLOCK_GatePeripheralClock(XMC_SCU_PERIPHERAL_CLOCK_VADC);
+  58              	 .loc 1 179 0
+  59 0002 0120     	 mov r0,#1
+  60 0004 FFF7FEFF 	 bl XMC_SCU_CLOCK_GatePeripheralClock
+  61              	.LVL1:
+ 180:../Libraries/XMCLib/src/xmc_vadc.c **** #endif
+ 181:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 182:../Libraries/XMCLib/src/xmc_vadc.c **** }
+  62              	 .loc 1 182 0
+  63              	 
+  64 0008 08BD     	 pop {r3,pc}
+  65              	 .cfi_endproc
+  66              	.LFE82:
+  68              	 .section .text.XMC_VADC_GLOBAL_Init,"ax",%progbits
+  69              	 .align 2
+  70              	 .global XMC_VADC_GLOBAL_Init
+  71              	 .code 16
+  72              	 .thumb_func
+  74              	XMC_VADC_GLOBAL_Init:
+  75              	.LFB83:
+ 183:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 184:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 185:../Libraries/XMCLib/src/xmc_vadc.c **** /* API to initialize global resources */
+ 186:../Libraries/XMCLib/src/xmc_vadc.c **** void XMC_VADC_GLOBAL_Init(XMC_VADC_GLOBAL_t *const global_ptr, const XMC_VADC_GLOBAL_CONFIG_t *conf
+ 187:../Libraries/XMCLib/src/xmc_vadc.c **** {
+  76              	 .loc 1 187 0
+  77              	 .cfi_startproc
+  78              	.LVL2:
+  79 0000 38B5     	 push {r3,r4,r5,lr}
+  80              	.LCFI2:
+  81              	 .cfi_def_cfa_offset 16
+  82              	 .cfi_offset 3,-16
+  83              	 .cfi_offset 4,-12
+  84              	 .cfi_offset 5,-8
+  85              	 .cfi_offset 14,-4
+  86 0002 041C     	 mov r4,r0
+  87 0004 0D1C     	 mov r5,r1
+ 188:../Libraries/XMCLib/src/xmc_vadc.c **** #if (XMC_VADC_GROUP_AVAILABLE == 0U)
+ 189:../Libraries/XMCLib/src/xmc_vadc.c ****   uint32_t reg;
+ 190:../Libraries/XMCLib/src/xmc_vadc.c **** #endif
+ 191:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GLOBAL_Init:Wrong Module Pointer", (global_ptr == VADC))
+ 192:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 193:../Libraries/XMCLib/src/xmc_vadc.c ****   /* Enable the VADC module*/
+ 194:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_VADC_GLOBAL_EnableModule();
+  88              	 .loc 1 194 0
+  89 0006 FFF7FEFF 	 bl XMC_VADC_GLOBAL_EnableModule
+  90              	.LVL3:
+ 195:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 196:../Libraries/XMCLib/src/xmc_vadc.c ****   global_ptr->CLC = (uint32_t)(config->clc);
+  91              	 .loc 1 196 0
+  92 000a 2B69     	 ldr r3,[r5,#16]
+  93 000c 2360     	 str r3,[r4]
+ 197:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 198:../Libraries/XMCLib/src/xmc_vadc.c ****   /* Clock configuration */
+ 199:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 200:../Libraries/XMCLib/src/xmc_vadc.c **** #if (XMC_VADC_GROUP_AVAILABLE == 1U)
+ 201:../Libraries/XMCLib/src/xmc_vadc.c ****   global_ptr->GLOBCFG  = (uint32_t)(config->clock_config.globcfg | (uint32_t)(VADC_GLOBCFG_DIVWC_Ms
+ 202:../Libraries/XMCLib/src/xmc_vadc.c **** #endif
+ 203:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 204:../Libraries/XMCLib/src/xmc_vadc.c ****   /* ICLASS-0 configuration */
+ 205:../Libraries/XMCLib/src/xmc_vadc.c ****   global_ptr->GLOBICLASS[0] = (uint32_t)(config->class0.globiclass);
+  94              	 .loc 1 205 0
+  95 000e A023     	 mov r3,#160
+  96 0010 6A68     	 ldr r2,[r5,#4]
+  97 0012 E250     	 str r2,[r4,r3]
+ 206:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 207:../Libraries/XMCLib/src/xmc_vadc.c ****   /* ICLASS-1 configuration */
+ 208:../Libraries/XMCLib/src/xmc_vadc.c ****   global_ptr->GLOBICLASS[1] = (uint32_t)(config->class1.globiclass);
+  98              	 .loc 1 208 0
+  99 0014 0433     	 add r3,r3,#4
+ 100 0016 AA68     	 ldr r2,[r5,#8]
+ 101 0018 E250     	 str r2,[r4,r3]
+ 209:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 210:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 211:../Libraries/XMCLib/src/xmc_vadc.c ****   /*Result generation related configuration */
+ 212:../Libraries/XMCLib/src/xmc_vadc.c ****   global_ptr->GLOBRCR = (uint32_t)(config->globrcr);
+ 102              	 .loc 1 212 0
+ 103 001a EA68     	 ldr r2,[r5,#12]
+ 104 001c DD33     	 add r3,r3,#221
+ 105 001e FF33     	 add r3,r3,#255
+ 106 0020 E250     	 str r2,[r4,r3]
+ 213:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 214:../Libraries/XMCLib/src/xmc_vadc.c **** #if (XMC_VADC_BOUNDARY_AVAILABLE == 1U)
+ 215:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 216:../Libraries/XMCLib/src/xmc_vadc.c ****   /* Boundaries */
+ 217:../Libraries/XMCLib/src/xmc_vadc.c ****   global_ptr->GLOBBOUND = (uint32_t)(config->globbound);
+ 218:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 219:../Libraries/XMCLib/src/xmc_vadc.c **** #endif
+ 220:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 221:../Libraries/XMCLib/src/xmc_vadc.c ****   /* Configure the SHS register that are needed for XMC11xx devices*/
+ 222:../Libraries/XMCLib/src/xmc_vadc.c **** #if (XMC_VADC_GROUP_AVAILABLE == 0U)
+ 223:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 224:../Libraries/XMCLib/src/xmc_vadc.c ****   /* Enabling the Analog part of the converter*/
+ 225:../Libraries/XMCLib/src/xmc_vadc.c ****   reg = SHS0->SHSCFG  | SHS_SHSCFG_SCWC_Msk;
+ 107              	 .loc 1 225 0
+ 108 0022 064A     	 ldr r2,.L4
+ 109 0024 116C     	 ldr r1,[r2,#64]
+ 110              	.LVL4:
+ 226:../Libraries/XMCLib/src/xmc_vadc.c ****   reg &= ~(SHS_SHSCFG_ANOFF_Msk);
+ 111              	 .loc 1 226 0
+ 112 0026 064B     	 ldr r3,.L4+4
+ 113 0028 0B40     	 and r3,r1
+ 114 002a 8021     	 mov r1,#128
+ 115              	.LVL5:
+ 116 002c 0902     	 lsl r1,r1,#8
+ 117 002e 0B43     	 orr r3,r1
+ 118              	.LVL6:
+ 227:../Libraries/XMCLib/src/xmc_vadc.c ****   SHS0->SHSCFG = reg;
+ 119              	 .loc 1 227 0
+ 120 0030 1364     	 str r3,[r2,#64]
+ 228:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 229:../Libraries/XMCLib/src/xmc_vadc.c ****   /* From the Errata sheet of XMC1100 V1.7*/
+ 230:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_VADC_CONV_ENABLE_FOR_XMC11 = 1U;
+ 121              	 .loc 1 230 0
+ 122 0032 0122     	 mov r2,#1
+ 123 0034 034B     	 ldr r3,.L4+8
+ 124              	.LVL7:
+ 125 0036 1A60     	 str r2,[r3]
+ 231:../Libraries/XMCLib/src/xmc_vadc.c **** #endif
+ 232:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 233:../Libraries/XMCLib/src/xmc_vadc.c **** }
+ 126              	 .loc 1 233 0
+ 127              	 
+ 128              	.LVL8:
+ 129              	.LVL9:
+ 130 0038 38BD     	 pop {r3,r4,r5,pc}
+ 131              	.L5:
+ 132 003a C046     	 .align 2
+ 133              	.L4:
+ 134 003c 00400348 	 .word 1208172544
+ 135 0040 FFEFFFFF 	 .word -4097
+ 136 0044 00050140 	 .word 1073808640
+ 137              	 .cfi_endproc
+ 138              	.LFE83:
+ 140              	 .section .text.XMC_VADC_GLOBAL_InputClassInit,"ax",%progbits
+ 141              	 .align 2
+ 142              	 .global XMC_VADC_GLOBAL_InputClassInit
+ 143              	 .code 16
+ 144              	 .thumb_func
+ 146              	XMC_VADC_GLOBAL_InputClassInit:
+ 147              	.LFB84:
+ 234:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 235:../Libraries/XMCLib/src/xmc_vadc.c **** /* API to Set the Global IClass registers*/
+ 236:../Libraries/XMCLib/src/xmc_vadc.c **** void XMC_VADC_GLOBAL_InputClassInit(XMC_VADC_GLOBAL_t *const global_ptr, const XMC_VADC_GLOBAL_CLAS
+ 237:../Libraries/XMCLib/src/xmc_vadc.c ****                                           const XMC_VADC_GROUP_CONV_t conv_type, const uint32_t set
+ 238:../Libraries/XMCLib/src/xmc_vadc.c **** {
+ 148              	 .loc 1 238 0
+ 149              	 .cfi_startproc
+ 150              	.LVL10:
+ 239:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 240:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GLOBAL_InputClassInit:Wrong Module Pointer", (global_ptr == VADC))
+ 241:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GLOBAL_InputClassInit:Wrong Conversion Type", ((conv_type) <= XMC_VADC_GROUP
+ 242:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GLOBAL_InputClassInit:Wrong ICLASS set number", (set_num < XMC_VADC_MAX_ICLA
+ 243:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 244:../Libraries/XMCLib/src/xmc_vadc.c **** #if(XMC_VADC_EMUX_AVAILABLE == 1U)
+ 245:../Libraries/XMCLib/src/xmc_vadc.c ****   if (conv_type == XMC_VADC_GROUP_CONV_STD )
+ 246:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+ 247:../Libraries/XMCLib/src/xmc_vadc.c **** #endif
+ 248:../Libraries/XMCLib/src/xmc_vadc.c ****     global_ptr->GLOBICLASS[set_num] = config.globiclass &
+ 151              	 .loc 1 248 0
+ 152 0000 024A     	 ldr r2,.L7
+ 153              	.LVL11:
+ 154 0002 1140     	 and r1,r2
+ 155              	.LVL12:
+ 156 0004 2833     	 add r3,r3,#40
+ 157              	.LVL13:
+ 158 0006 9B00     	 lsl r3,r3,#2
+ 159              	.LVL14:
+ 160 0008 1950     	 str r1,[r3,r0]
+ 249:../Libraries/XMCLib/src/xmc_vadc.c ****                                       (uint32_t)(VADC_GLOBICLASS_CMS_Msk | VADC_GLOBICLASS_STCS_Msk
+ 250:../Libraries/XMCLib/src/xmc_vadc.c **** #if(XMC_VADC_EMUX_AVAILABLE == 1U)
+ 251:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+ 252:../Libraries/XMCLib/src/xmc_vadc.c ****   else
+ 253:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+ 254:../Libraries/XMCLib/src/xmc_vadc.c ****     global_ptr->GLOBICLASS[set_num] = config.globiclass & (uint32_t)(VADC_GLOBICLASS_CME_Msk | VADC
+ 255:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+ 256:../Libraries/XMCLib/src/xmc_vadc.c **** #endif
+ 257:../Libraries/XMCLib/src/xmc_vadc.c **** }
+ 161              	 .loc 1 257 0
+ 162              	 
+ 163 000a 7047     	 bx lr
+ 164              	.L8:
+ 165              	 .align 2
+ 166              	.L7:
+ 167 000c 1F070000 	 .word 1823
+ 168              	 .cfi_endproc
+ 169              	.LFE84:
+ 171              	 .section .text.XMC_VADC_GLOBAL_StartupCalibration,"ax",%progbits
+ 172              	 .align 2
+ 173              	 .global XMC_VADC_GLOBAL_StartupCalibration
+ 174              	 .code 16
+ 175              	 .thumb_func
+ 177              	XMC_VADC_GLOBAL_StartupCalibration:
+ 178              	.LFB85:
+ 258:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 259:../Libraries/XMCLib/src/xmc_vadc.c **** /* API to enable startup calibration feature */
+ 260:../Libraries/XMCLib/src/xmc_vadc.c **** void XMC_VADC_GLOBAL_StartupCalibration(XMC_VADC_GLOBAL_t *const global_ptr)
+ 261:../Libraries/XMCLib/src/xmc_vadc.c **** {
+ 179              	 .loc 1 261 0
+ 180              	 .cfi_startproc
+ 181              	.LVL15:
+ 262:../Libraries/XMCLib/src/xmc_vadc.c **** #if (XMC_VADC_GROUP_AVAILABLE == 1U)
+ 263:../Libraries/XMCLib/src/xmc_vadc.c ****   uint8_t i;
+ 264:../Libraries/XMCLib/src/xmc_vadc.c ****   VADC_G_TypeDef *group_ptr;
+ 265:../Libraries/XMCLib/src/xmc_vadc.c **** #endif
+ 266:../Libraries/XMCLib/src/xmc_vadc.c ****   
+ 267:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GLOBAL_StartupCalibration:Wrong Module Pointer", (global_ptr == VADC))
+ 268:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 269:../Libraries/XMCLib/src/xmc_vadc.c ****   global_ptr->GLOBCFG |= (uint32_t)VADC_GLOBCFG_SUCAL_Msk;
+ 182              	 .loc 1 269 0
+ 183 0000 8022     	 mov r2,#128
+ 184 0002 8358     	 ldr r3,[r0,r2]
+ 185 0004 8021     	 mov r1,#128
+ 186 0006 0906     	 lsl r1,r1,#24
+ 187 0008 0B43     	 orr r3,r1
+ 188 000a 8350     	 str r3,[r0,r2]
+ 189              	.L10:
+ 270:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 271:../Libraries/XMCLib/src/xmc_vadc.c **** #if (XMC_VADC_GROUP_AVAILABLE == 1U)
+ 272:../Libraries/XMCLib/src/xmc_vadc.c ****   /* Loop until all active groups finish calibration */
+ 273:../Libraries/XMCLib/src/xmc_vadc.c ****   for(i=0U; i<XMC_VADC_MAXIMUM_NUM_GROUPS; i++)
+ 274:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+ 275:../Libraries/XMCLib/src/xmc_vadc.c ****     group_ptr = g_xmc_vadc_group_array[i];
+ 276:../Libraries/XMCLib/src/xmc_vadc.c ****     if ( (group_ptr->ARBCFG) & (uint32_t)VADC_G_ARBCFG_ANONS_Msk)
+ 277:../Libraries/XMCLib/src/xmc_vadc.c ****     {
+ 278:../Libraries/XMCLib/src/xmc_vadc.c ****       /* This group is active. Loop until it finishes calibration */
+ 279:../Libraries/XMCLib/src/xmc_vadc.c ****       while((group_ptr->ARBCFG) & (uint32_t)VADC_G_ARBCFG_CAL_Msk)
+ 280:../Libraries/XMCLib/src/xmc_vadc.c ****       {
+ 281:../Libraries/XMCLib/src/xmc_vadc.c ****         /* NOP */
+ 282:../Libraries/XMCLib/src/xmc_vadc.c ****       }
+ 283:../Libraries/XMCLib/src/xmc_vadc.c ****     }
+ 284:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+ 285:../Libraries/XMCLib/src/xmc_vadc.c **** #else
+ 286:../Libraries/XMCLib/src/xmc_vadc.c ****   /* Loop until it finishes calibration */
+ 287:../Libraries/XMCLib/src/xmc_vadc.c ****   while ((((SHS0->SHSCFG) & (uint32_t)SHS_SHSCFG_STATE_Msk) >> (uint32_t)SHS_SHSCFG_STATE_Pos) ==
+ 190              	 .loc 1 287 0 discriminator 1
+ 191 000c 024B     	 ldr r3,.L11
+ 192 000e 1B6C     	 ldr r3,[r3,#64]
+ 193 0010 1B0F     	 lsr r3,r3,#28
+ 194 0012 032B     	 cmp r3,#3
+ 195 0014 FAD0     	 beq .L10
+ 288:../Libraries/XMCLib/src/xmc_vadc.c ****          XMC_VADC_SHS_START_UP_CAL_ACTIVE )
+ 289:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+ 290:../Libraries/XMCLib/src/xmc_vadc.c ****     /* NOP */
+ 291:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+ 292:../Libraries/XMCLib/src/xmc_vadc.c **** #endif
+ 293:../Libraries/XMCLib/src/xmc_vadc.c **** }
+ 196              	 .loc 1 293 0
+ 197              	 
+ 198 0016 7047     	 bx lr
+ 199              	.L12:
+ 200              	 .align 2
+ 201              	.L11:
+ 202 0018 00400348 	 .word 1208172544
+ 203              	 .cfi_endproc
+ 204              	.LFE85:
+ 206              	 .section .text.XMC_VADC_GLOBAL_SetCompareValue,"ax",%progbits
+ 207              	 .align 2
+ 208              	 .global XMC_VADC_GLOBAL_SetCompareValue
+ 209              	 .code 16
+ 210              	 .thumb_func
+ 212              	XMC_VADC_GLOBAL_SetCompareValue:
+ 213              	.LFB86:
+ 294:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 295:../Libraries/XMCLib/src/xmc_vadc.c **** /* API to set boudaries for result of conversion. Should the boundaries be violated, interrupts are
+ 296:../Libraries/XMCLib/src/xmc_vadc.c **** #if (XMC_VADC_BOUNDARY_AVAILABLE == 1U)
+ 297:../Libraries/XMCLib/src/xmc_vadc.c **** void XMC_VADC_GLOBAL_SetBoundaries(XMC_VADC_GLOBAL_t *const global_ptr,
+ 298:../Libraries/XMCLib/src/xmc_vadc.c ****                                    const uint32_t boundary0,
+ 299:../Libraries/XMCLib/src/xmc_vadc.c ****                                    const uint32_t boundary1)
+ 300:../Libraries/XMCLib/src/xmc_vadc.c **** {
+ 301:../Libraries/XMCLib/src/xmc_vadc.c ****   uint32_t globbound;
+ 302:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 303:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GLOBAL_SetBoundaries:Wrong Module Pointer", (global_ptr == VADC))
+ 304:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 305:../Libraries/XMCLib/src/xmc_vadc.c ****   globbound = 0U;
+ 306:../Libraries/XMCLib/src/xmc_vadc.c ****   globbound |= (uint32_t) (boundary0 << VADC_GLOBBOUND_BOUNDARY0_Pos);
+ 307:../Libraries/XMCLib/src/xmc_vadc.c ****   globbound |= (uint32_t) (boundary1 << VADC_GLOBBOUND_BOUNDARY1_Pos);
+ 308:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 309:../Libraries/XMCLib/src/xmc_vadc.c ****   global_ptr->GLOBBOUND = globbound;
+ 310:../Libraries/XMCLib/src/xmc_vadc.c **** }
+ 311:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 312:../Libraries/XMCLib/src/xmc_vadc.c **** /* API to set an individual boundary for conversion results */
+ 313:../Libraries/XMCLib/src/xmc_vadc.c **** void XMC_VADC_GLOBAL_SetIndividualBoundary(XMC_VADC_GLOBAL_t *const global_ptr,
+ 314:../Libraries/XMCLib/src/xmc_vadc.c ****                                            const XMC_VADC_CHANNEL_BOUNDARY_t selection,
+ 315:../Libraries/XMCLib/src/xmc_vadc.c ****                                            const uint16_t boundary_value)
+ 316:../Libraries/XMCLib/src/xmc_vadc.c **** {
+ 317:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 318:../Libraries/XMCLib/src/xmc_vadc.c ****   uint32_t globbound;
+ 319:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 320:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GLOBAL_SetBoundaries:Wrong Module Pointer", (global_ptr == VADC))
+ 321:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GLOBAL_SetBoundaries:Wrong Boundary Selection",
+ 322:../Libraries/XMCLib/src/xmc_vadc.c ****              ((XMC_VADC_CHANNEL_BOUNDARY_GLOBAL_BOUND0 == selection) ||
+ 323:../Libraries/XMCLib/src/xmc_vadc.c ****               (XMC_VADC_CHANNEL_BOUNDARY_GLOBAL_BOUND1 == selection)))
+ 324:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 325:../Libraries/XMCLib/src/xmc_vadc.c ****   /* Program the Boundary registers */
+ 326:../Libraries/XMCLib/src/xmc_vadc.c ****   globbound = global_ptr->GLOBBOUND;
+ 327:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 328:../Libraries/XMCLib/src/xmc_vadc.c ****   if (XMC_VADC_CHANNEL_BOUNDARY_GLOBAL_BOUND0 == selection)
+ 329:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+ 330:../Libraries/XMCLib/src/xmc_vadc.c ****     globbound &= ~((uint32_t) VADC_GLOBBOUND_BOUNDARY0_Msk);
+ 331:../Libraries/XMCLib/src/xmc_vadc.c ****     globbound |= (uint32_t) ((uint32_t) boundary_value << VADC_GLOBBOUND_BOUNDARY0_Pos);
+ 332:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+ 333:../Libraries/XMCLib/src/xmc_vadc.c ****   else if (XMC_VADC_CHANNEL_BOUNDARY_GLOBAL_BOUND1 == selection)
+ 334:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+ 335:../Libraries/XMCLib/src/xmc_vadc.c ****     globbound &= ~((uint32_t) VADC_GLOBBOUND_BOUNDARY1_Msk);
+ 336:../Libraries/XMCLib/src/xmc_vadc.c ****     globbound |= (uint32_t) ((uint32_t) boundary_value << VADC_GLOBBOUND_BOUNDARY1_Pos);
+ 337:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+ 338:../Libraries/XMCLib/src/xmc_vadc.c ****   else
+ 339:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+ 340:../Libraries/XMCLib/src/xmc_vadc.c ****     /* For MISRA*/
+ 341:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+ 342:../Libraries/XMCLib/src/xmc_vadc.c ****   global_ptr->GLOBBOUND = globbound;
+ 343:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 344:../Libraries/XMCLib/src/xmc_vadc.c **** }
+ 345:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 346:../Libraries/XMCLib/src/xmc_vadc.c **** #endif
+ 347:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 348:../Libraries/XMCLib/src/xmc_vadc.c **** /* API to set compare value for the result register. Result of conversion is compared against this 
+ 349:../Libraries/XMCLib/src/xmc_vadc.c **** void XMC_VADC_GLOBAL_SetCompareValue(XMC_VADC_GLOBAL_t *const global_ptr, const XMC_VADC_RESULT_SIZ
+ 350:../Libraries/XMCLib/src/xmc_vadc.c **** {
+ 214              	 .loc 1 350 0
+ 215              	 .cfi_startproc
+ 216              	.LVL16:
+ 351:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GLOBAL_SetCompareValue:Wrong Module Pointer", (global_ptr == VADC))
+ 352:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 353:../Libraries/XMCLib/src/xmc_vadc.c ****   global_ptr->GLOBRES &= ~((uint32_t)VADC_GLOBRES_RESULT_Msk);
+ 217              	 .loc 1 353 0
+ 218 0000 C022     	 mov r2,#192
+ 219 0002 9200     	 lsl r2,r2,#2
+ 220 0004 8358     	 ldr r3,[r0,r2]
+ 221 0006 1B0C     	 lsr r3,r3,#16
+ 222 0008 1B04     	 lsl r3,r3,#16
+ 223 000a 8350     	 str r3,[r0,r2]
+ 354:../Libraries/XMCLib/src/xmc_vadc.c ****   global_ptr->GLOBRES |= (uint32_t)((uint32_t)compare_val << XMC_VADC_RESULT_LEFT_ALIGN_10BIT);
+ 224              	 .loc 1 354 0
+ 225 000c 8358     	 ldr r3,[r0,r2]
+ 226 000e 8900     	 lsl r1,r1,#2
+ 227              	.LVL17:
+ 228 0010 1943     	 orr r1,r3
+ 229 0012 8150     	 str r1,[r0,r2]
+ 355:../Libraries/XMCLib/src/xmc_vadc.c **** }
+ 230              	 .loc 1 355 0
+ 231              	 
+ 232 0014 7047     	 bx lr
+ 233              	 .cfi_endproc
+ 234              	.LFE86:
+ 236 0016 C046     	 .section .text.XMC_VADC_GLOBAL_GetCompareResult,"ax",%progbits
+ 237              	 .align 2
+ 238              	 .global XMC_VADC_GLOBAL_GetCompareResult
+ 239              	 .code 16
+ 240              	 .thumb_func
+ 242              	XMC_VADC_GLOBAL_GetCompareResult:
+ 243              	.LFB87:
+ 356:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 357:../Libraries/XMCLib/src/xmc_vadc.c **** /* API to retrieve the result of comparison */
+ 358:../Libraries/XMCLib/src/xmc_vadc.c **** XMC_VADC_FAST_COMPARE_t XMC_VADC_GLOBAL_GetCompareResult(XMC_VADC_GLOBAL_t *const global_ptr)
+ 359:../Libraries/XMCLib/src/xmc_vadc.c **** {
+ 244              	 .loc 1 359 0
+ 245              	 .cfi_startproc
+ 246              	.LVL18:
+ 360:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_VADC_FAST_COMPARE_t result;
+ 361:../Libraries/XMCLib/src/xmc_vadc.c ****   uint32_t res;
+ 362:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 363:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GLOBAL_GetCompareResult:Wrong Module Pointer", (global_ptr == VADC))
+ 364:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 365:../Libraries/XMCLib/src/xmc_vadc.c ****   res = global_ptr->GLOBRES;
+ 247              	 .loc 1 365 0
+ 248 0000 C023     	 mov r3,#192
+ 249 0002 9B00     	 lsl r3,r3,#2
+ 250 0004 C058     	 ldr r0,[r0,r3]
+ 251              	.LVL19:
+ 366:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 367:../Libraries/XMCLib/src/xmc_vadc.c ****   if (res & (uint32_t)VADC_GLOBRES_VF_Msk)
+ 252              	 .loc 1 367 0
+ 253 0006 0028     	 cmp r0,#0
+ 254 0008 02DA     	 bge .L16
+ 368:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+ 369:../Libraries/XMCLib/src/xmc_vadc.c ****     result = (XMC_VADC_FAST_COMPARE_t)((uint32_t)(res >> (uint32_t)VADC_GLOBRES_FCR_Pos) & (uint32_
+ 255              	 .loc 1 369 0
+ 256 000a 4000     	 lsl r0,r0,#1
+ 257              	.LVL20:
+ 258 000c C00F     	 lsr r0,r0,#31
+ 259              	.LVL21:
+ 260 000e 00E0     	 b .L15
+ 261              	.LVL22:
+ 262              	.L16:
+ 370:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+ 371:../Libraries/XMCLib/src/xmc_vadc.c ****   else
+ 372:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+ 373:../Libraries/XMCLib/src/xmc_vadc.c ****     result = XMC_VADC_FAST_COMPARE_UNKNOWN;
+ 263              	 .loc 1 373 0
+ 264 0010 0220     	 mov r0,#2
+ 265              	.LVL23:
+ 266              	.L15:
+ 374:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+ 375:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 376:../Libraries/XMCLib/src/xmc_vadc.c ****   return result;
+ 377:../Libraries/XMCLib/src/xmc_vadc.c **** }
+ 267              	 .loc 1 377 0
+ 268              	 
+ 269 0012 7047     	 bx lr
+ 270              	 .cfi_endproc
+ 271              	.LFE87:
+ 273              	 .section .text.XMC_VADC_GLOBAL_SetResultEventInterruptNode,"ax",%progbits
+ 274              	 .align 2
+ 275              	 .global XMC_VADC_GLOBAL_SetResultEventInterruptNode
+ 276              	 .code 16
+ 277              	 .thumb_func
+ 279              	XMC_VADC_GLOBAL_SetResultEventInterruptNode:
+ 280              	.LFB88:
+ 378:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 379:../Libraries/XMCLib/src/xmc_vadc.c **** /* Bind one of the four groups to one of the two EMUX interfaces */
+ 380:../Libraries/XMCLib/src/xmc_vadc.c **** #if (XMC_VADC_EMUX_AVAILABLE == 1U)
+ 381:../Libraries/XMCLib/src/xmc_vadc.c **** void XMC_VADC_GLOBAL_BindGroupToEMux(XMC_VADC_GLOBAL_t *const global_ptr, const uint32_t emuxif, co
+ 382:../Libraries/XMCLib/src/xmc_vadc.c **** {
+ 383:../Libraries/XMCLib/src/xmc_vadc.c ****   uint32_t mask;
+ 384:../Libraries/XMCLib/src/xmc_vadc.c ****   uint32_t pos;
+ 385:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 386:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GLOBAL_BindGroupToEMux:Wrong Module Pointer", (global_ptr == VADC))
+ 387:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GLOBAL_BindGroupToEMux:Wrong EMUX Group", (emuxif < XMC_VADC_NUM_EMUX_INTERF
+ 388:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GLOBAL_BindGroupToEMux:Wrong VADC Group", (group < XMC_VADC_MAXIMUM_NUM_GROU
+ 389:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 390:../Libraries/XMCLib/src/xmc_vadc.c ****   if (0U == emuxif)
+ 391:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+ 392:../Libraries/XMCLib/src/xmc_vadc.c ****     pos  = (uint32_t)VADC_EMUXSEL_EMUXGRP0_Pos;
+ 393:../Libraries/XMCLib/src/xmc_vadc.c ****     mask = (uint32_t)VADC_EMUXSEL_EMUXGRP0_Msk;
+ 394:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+ 395:../Libraries/XMCLib/src/xmc_vadc.c ****   else
+ 396:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+ 397:../Libraries/XMCLib/src/xmc_vadc.c ****     pos  = (uint32_t)VADC_EMUXSEL_EMUXGRP1_Pos;
+ 398:../Libraries/XMCLib/src/xmc_vadc.c ****     mask = (uint32_t)VADC_EMUXSEL_EMUXGRP1_Msk;
+ 399:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+ 400:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 401:../Libraries/XMCLib/src/xmc_vadc.c ****   global_ptr->EMUXSEL &= ~(mask);
+ 402:../Libraries/XMCLib/src/xmc_vadc.c ****   global_ptr->EMUXSEL |= (uint32_t) (group << pos);
+ 403:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 404:../Libraries/XMCLib/src/xmc_vadc.c **** }
+ 405:../Libraries/XMCLib/src/xmc_vadc.c **** #endif 
+ 406:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 407:../Libraries/XMCLib/src/xmc_vadc.c **** /* API to bind result event with a service request line */
+ 408:../Libraries/XMCLib/src/xmc_vadc.c **** void XMC_VADC_GLOBAL_SetResultEventInterruptNode(XMC_VADC_GLOBAL_t *const global_ptr, XMC_VADC_SR_t
+ 409:../Libraries/XMCLib/src/xmc_vadc.c **** {
+ 281              	 .loc 1 409 0
+ 282              	 .cfi_startproc
+ 283              	.LVL24:
+ 284 0000 10B5     	 push {r4,lr}
+ 285              	.LCFI3:
+ 286              	 .cfi_def_cfa_offset 8
+ 287              	 .cfi_offset 4,-8
+ 288              	 .cfi_offset 14,-4
+ 410:../Libraries/XMCLib/src/xmc_vadc.c ****   uint32_t node;
+ 411:../Libraries/XMCLib/src/xmc_vadc.c ****   
+ 412:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GLOBAL_SetResultEventInterruptNode:Wrong Module Pointer", (global_ptr == VAD
+ 413:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GLOBAL_SetResultEventInterruptNode:Wrong SR Number", (sr <= XMC_VADC_SR_SHAR
+ 414:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 415:../Libraries/XMCLib/src/xmc_vadc.c ****   if (sr >= XMC_VADC_SR_SHARED_SR0)
+ 289              	 .loc 1 415 0
+ 290 0002 0329     	 cmp r1,#3
+ 291 0004 00D9     	 bls .L19
+ 416:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+ 417:../Libraries/XMCLib/src/xmc_vadc.c ****     node = (uint32_t)sr - (uint32_t)XMC_VADC_SR_SHARED_SR0;
+ 292              	 .loc 1 417 0
+ 293 0006 0439     	 sub r1,r1,#4
+ 294              	.LVL25:
+ 295              	.L19:
+ 418:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+ 419:../Libraries/XMCLib/src/xmc_vadc.c ****   else
+ 420:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+ 421:../Libraries/XMCLib/src/xmc_vadc.c ****     node = (uint32_t)sr;
+ 422:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+ 423:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 424:../Libraries/XMCLib/src/xmc_vadc.c ****   global_ptr->GLOBEVNP &= ~((uint32_t)VADC_GLOBEVNP_REV0NP_Msk);
+ 296              	 .loc 1 424 0
+ 297 0008 A023     	 mov r3,#160
+ 298 000a 5B00     	 lsl r3,r3,#1
+ 299 000c C458     	 ldr r4,[r0,r3]
+ 300 000e 044A     	 ldr r2,.L20
+ 301 0010 2240     	 and r2,r4
+ 302 0012 C250     	 str r2,[r0,r3]
+ 425:../Libraries/XMCLib/src/xmc_vadc.c ****   global_ptr->GLOBEVNP |= (uint32_t)(node << VADC_GLOBEVNP_REV0NP_Pos);
+ 303              	 .loc 1 425 0
+ 304 0014 C258     	 ldr r2,[r0,r3]
+ 305 0016 0904     	 lsl r1,r1,#16
+ 306              	.LVL26:
+ 307 0018 1143     	 orr r1,r2
+ 308 001a C150     	 str r1,[r0,r3]
+ 426:../Libraries/XMCLib/src/xmc_vadc.c **** }
+ 309              	 .loc 1 426 0
+ 310              	 
+ 311 001c 10BD     	 pop {r4,pc}
+ 312              	.L21:
+ 313 001e C046     	 .align 2
+ 314              	.L20:
+ 315 0020 FFFFF0FF 	 .word -983041
+ 316              	 .cfi_endproc
+ 317              	.LFE88:
+ 319              	 .section .text.XMC_VADC_GLOBAL_BackgroundSetReqSrcEventInterruptNode,"ax",%progbits
+ 320              	 .align 2
+ 321              	 .global XMC_VADC_GLOBAL_BackgroundSetReqSrcEventInterruptNode
+ 322              	 .code 16
+ 323              	 .thumb_func
+ 325              	XMC_VADC_GLOBAL_BackgroundSetReqSrcEventInterruptNode:
+ 326              	.LFB89:
+ 427:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 428:../Libraries/XMCLib/src/xmc_vadc.c **** /* API to bind request source event with a service request line */
+ 429:../Libraries/XMCLib/src/xmc_vadc.c **** void XMC_VADC_GLOBAL_BackgroundSetReqSrcEventInterruptNode(XMC_VADC_GLOBAL_t *const global_ptr, XMC
+ 430:../Libraries/XMCLib/src/xmc_vadc.c **** {
+ 327              	 .loc 1 430 0
+ 328              	 .cfi_startproc
+ 329              	.LVL27:
+ 330 0000 10B5     	 push {r4,lr}
+ 331              	.LCFI4:
+ 332              	 .cfi_def_cfa_offset 8
+ 333              	 .cfi_offset 4,-8
+ 334              	 .cfi_offset 14,-4
+ 431:../Libraries/XMCLib/src/xmc_vadc.c ****   uint32_t node;
+ 432:../Libraries/XMCLib/src/xmc_vadc.c ****   
+ 433:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GLOBAL_BackgroundSetReqSrcEventInterruptNode:Wrong Module Pointer", (global_
+ 434:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 435:../Libraries/XMCLib/src/xmc_vadc.c ****   if (sr >= XMC_VADC_SR_SHARED_SR0)
+ 335              	 .loc 1 435 0
+ 336 0002 0329     	 cmp r1,#3
+ 337 0004 00D9     	 bls .L24
+ 436:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+ 437:../Libraries/XMCLib/src/xmc_vadc.c ****     node = (uint32_t)sr - (uint32_t)XMC_VADC_SR_SHARED_SR0;
+ 338              	 .loc 1 437 0
+ 339 0006 0439     	 sub r1,r1,#4
+ 340              	.LVL28:
+ 341              	.L24:
+ 438:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+ 439:../Libraries/XMCLib/src/xmc_vadc.c ****   else
+ 440:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+ 441:../Libraries/XMCLib/src/xmc_vadc.c ****     node = (uint32_t)sr;
+ 442:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+ 443:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 444:../Libraries/XMCLib/src/xmc_vadc.c ****   global_ptr->GLOBEVNP &= ~((uint32_t)VADC_GLOBEVNP_SEV0NP_Msk);
+ 342              	 .loc 1 444 0
+ 343 0008 A023     	 mov r3,#160
+ 344 000a 5B00     	 lsl r3,r3,#1
+ 345 000c C258     	 ldr r2,[r0,r3]
+ 346 000e 0F24     	 mov r4,#15
+ 347 0010 A243     	 bic r2,r4
+ 348 0012 C250     	 str r2,[r0,r3]
+ 445:../Libraries/XMCLib/src/xmc_vadc.c ****   global_ptr->GLOBEVNP |= (uint32_t) (node << VADC_GLOBEVNP_SEV0NP_Pos);
+ 349              	 .loc 1 445 0
+ 350 0014 C258     	 ldr r2,[r0,r3]
+ 351 0016 1143     	 orr r1,r2
+ 352              	.LVL29:
+ 353 0018 C150     	 str r1,[r0,r3]
+ 446:../Libraries/XMCLib/src/xmc_vadc.c **** }
+ 354              	 .loc 1 446 0
+ 355              	 
+ 356 001a 10BD     	 pop {r4,pc}
+ 357              	 .cfi_endproc
+ 358              	.LFE89:
+ 360              	 .section .text.XMC_VADC_GLOBAL_SHS_Init,"ax",%progbits
+ 361              	 .align 2
+ 362              	 .global XMC_VADC_GLOBAL_SHS_Init
+ 363              	 .code 16
+ 364              	 .thumb_func
+ 366              	XMC_VADC_GLOBAL_SHS_Init:
+ 367              	.LFB90:
+ 447:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 448:../Libraries/XMCLib/src/xmc_vadc.c **** /* API to initialize an instance of group of VADC hardware */
+ 449:../Libraries/XMCLib/src/xmc_vadc.c **** #if (XMC_VADC_GROUP_AVAILABLE == 1U)  
+ 450:../Libraries/XMCLib/src/xmc_vadc.c **** void XMC_VADC_GROUP_Init( XMC_VADC_GROUP_t *const group_ptr, const XMC_VADC_GROUP_CONFIG_t *config)
+ 451:../Libraries/XMCLib/src/xmc_vadc.c **** {
+ 452:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GROUP_Init:Wrong Group Pointer", XMC_VADC_CHECK_GROUP_PTR(group_ptr))
+ 453:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 454:../Libraries/XMCLib/src/xmc_vadc.c ****   /* Program the input classes */
+ 455:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_VADC_GROUP_InputClassInit(group_ptr, config->class0, XMC_VADC_GROUP_CONV_STD, 0U);
+ 456:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_VADC_GROUP_InputClassInit(group_ptr, config->class0, XMC_VADC_GROUP_CONV_EMUX, 0U);
+ 457:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_VADC_GROUP_InputClassInit(group_ptr, config->class1, XMC_VADC_GROUP_CONV_STD, 1U);
+ 458:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_VADC_GROUP_InputClassInit(group_ptr, config->class1, XMC_VADC_GROUP_CONV_EMUX, 1U);
+ 459:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 460:../Libraries/XMCLib/src/xmc_vadc.c ****   group_ptr->ARBCFG = config->g_arbcfg;
+ 461:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 462:../Libraries/XMCLib/src/xmc_vadc.c ****   group_ptr->BOUND = config->g_bound;
+ 463:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 464:../Libraries/XMCLib/src/xmc_vadc.c ****   /* External mux configuration */
+ 465:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_VADC_GROUP_ExternalMuxControlInit(group_ptr,config->emux_config);
+ 466:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 467:../Libraries/XMCLib/src/xmc_vadc.c **** }
+ 468:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 469:../Libraries/XMCLib/src/xmc_vadc.c **** /* API to program conversion characteristics */
+ 470:../Libraries/XMCLib/src/xmc_vadc.c **** void XMC_VADC_GROUP_InputClassInit(XMC_VADC_GROUP_t *const group_ptr, const XMC_VADC_GROUP_CLASS_t 
+ 471:../Libraries/XMCLib/src/xmc_vadc.c ****                                           const XMC_VADC_GROUP_CONV_t conv_type, const uint32_t set
+ 472:../Libraries/XMCLib/src/xmc_vadc.c **** {
+ 473:../Libraries/XMCLib/src/xmc_vadc.c ****   uint32_t        conv_class;
+ 474:../Libraries/XMCLib/src/xmc_vadc.c ****   uint32_t        conv_mode_pos;
+ 475:../Libraries/XMCLib/src/xmc_vadc.c ****   uint32_t        sample_time_pos;
+ 476:../Libraries/XMCLib/src/xmc_vadc.c ****   uint32_t        conv_mode_mask;
+ 477:../Libraries/XMCLib/src/xmc_vadc.c ****   uint32_t        sample_time_mask;
+ 478:../Libraries/XMCLib/src/xmc_vadc.c ****   uint32_t        sample_time;
+ 479:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_VADC_CONVMODE_t conv_mode;
+ 480:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 481:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GROUP_InputClassInit:Wrong Group Pointer", XMC_VADC_CHECK_GROUP_PTR(group_pt
+ 482:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GROUP_InputClassInit:Wrong Conversion Type", ((conv_type) <= XMC_VADC_GROUP_
+ 483:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GROUP_InputClassInit:Wrong ICLASS set number", (set_num < XMC_VADC_MAX_ICLAS
+ 484:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 485:../Libraries/XMCLib/src/xmc_vadc.c ****   /* 
+ 486:../Libraries/XMCLib/src/xmc_vadc.c ****    * Obtain the mask and position macros of the parameters based on what is being requested - Stand
+ 487:../Libraries/XMCLib/src/xmc_vadc.c ****    * external mux channels.
+ 488:../Libraries/XMCLib/src/xmc_vadc.c ****    */
+ 489:../Libraries/XMCLib/src/xmc_vadc.c ****   if (XMC_VADC_GROUP_CONV_STD == conv_type)
+ 490:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+ 491:../Libraries/XMCLib/src/xmc_vadc.c ****     conv_mode_pos    = (uint32_t) VADC_G_ICLASS_CMS_Pos;
+ 492:../Libraries/XMCLib/src/xmc_vadc.c ****     conv_mode_mask   = (uint32_t) VADC_G_ICLASS_CMS_Msk;
+ 493:../Libraries/XMCLib/src/xmc_vadc.c ****     sample_time_pos  = (uint32_t) VADC_G_ICLASS_STCS_Pos;
+ 494:../Libraries/XMCLib/src/xmc_vadc.c ****     sample_time_mask = (uint32_t) VADC_G_ICLASS_STCS_Msk;
+ 495:../Libraries/XMCLib/src/xmc_vadc.c ****     sample_time      = (uint32_t) config.sample_time_std_conv;
+ 496:../Libraries/XMCLib/src/xmc_vadc.c ****     conv_mode        = (XMC_VADC_CONVMODE_t)config.conversion_mode_standard;
+ 497:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+ 498:../Libraries/XMCLib/src/xmc_vadc.c ****   else
+ 499:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+ 500:../Libraries/XMCLib/src/xmc_vadc.c ****     conv_mode_pos    = (uint32_t) VADC_G_ICLASS_CME_Pos;
+ 501:../Libraries/XMCLib/src/xmc_vadc.c ****     conv_mode_mask   = (uint32_t) VADC_G_ICLASS_CME_Msk;
+ 502:../Libraries/XMCLib/src/xmc_vadc.c ****     sample_time_pos  = (uint32_t) VADC_G_ICLASS_STCE_Pos;
+ 503:../Libraries/XMCLib/src/xmc_vadc.c ****     sample_time_mask = (uint32_t) VADC_G_ICLASS_STCE_Msk;
+ 504:../Libraries/XMCLib/src/xmc_vadc.c ****     sample_time      = (uint32_t) config.sampling_phase_emux_channel;
+ 505:../Libraries/XMCLib/src/xmc_vadc.c ****     conv_mode        = (XMC_VADC_CONVMODE_t)config.conversion_mode_emux;
+ 506:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+ 507:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 508:../Libraries/XMCLib/src/xmc_vadc.c ****   /* Determine the class */
+ 509:../Libraries/XMCLib/src/xmc_vadc.c ****   conv_class  = group_ptr->ICLASS[set_num];
+ 510:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 511:../Libraries/XMCLib/src/xmc_vadc.c ****   /* Program the class register */
+ 512:../Libraries/XMCLib/src/xmc_vadc.c ****   conv_class &= ~(conv_mode_mask);
+ 513:../Libraries/XMCLib/src/xmc_vadc.c ****   conv_class |= (uint32_t)((uint32_t) conv_mode << conv_mode_pos);
+ 514:../Libraries/XMCLib/src/xmc_vadc.c ****   conv_class &= ~(sample_time_mask);
+ 515:../Libraries/XMCLib/src/xmc_vadc.c ****   conv_class |= (uint32_t)(sample_time <<  sample_time_pos);
+ 516:../Libraries/XMCLib/src/xmc_vadc.c ****   group_ptr->ICLASS[set_num] = conv_class;
+ 517:../Libraries/XMCLib/src/xmc_vadc.c **** }
+ 518:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 519:../Libraries/XMCLib/src/xmc_vadc.c **** /* API which sets the power mode of analog converter of a VADC group */
+ 520:../Libraries/XMCLib/src/xmc_vadc.c **** void XMC_VADC_GROUP_SetPowerMode(XMC_VADC_GROUP_t *const group_ptr, const XMC_VADC_GROUP_POWERMODE_
+ 521:../Libraries/XMCLib/src/xmc_vadc.c **** {
+ 522:../Libraries/XMCLib/src/xmc_vadc.c ****   uint32_t arbcfg;
+ 523:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 524:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GROUP_SetPowerMode:Wrong Group Pointer", XMC_VADC_CHECK_GROUP_PTR(group_ptr)
+ 525:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GROUP_SetPowerMode:Wrong Power Mode", (power_mode <= XMC_VADC_GROUP_POWERMOD
+ 526:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 527:../Libraries/XMCLib/src/xmc_vadc.c ****   arbcfg = group_ptr->ARBCFG;
+ 528:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 529:../Libraries/XMCLib/src/xmc_vadc.c ****   arbcfg &= ~((uint32_t)VADC_G_ARBCFG_ANONC_Msk);
+ 530:../Libraries/XMCLib/src/xmc_vadc.c ****   arbcfg |= (uint32_t)power_mode;
+ 531:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 532:../Libraries/XMCLib/src/xmc_vadc.c ****   group_ptr->ARBCFG = arbcfg;
+ 533:../Libraries/XMCLib/src/xmc_vadc.c **** }
+ 534:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 535:../Libraries/XMCLib/src/xmc_vadc.c **** /* API which programs a group as a slave group during sync conversions */
+ 536:../Libraries/XMCLib/src/xmc_vadc.c **** void XMC_VADC_GROUP_SetSyncSlave(XMC_VADC_GROUP_t *const group_ptr, uint32_t master_grp, uint32_t s
+ 537:../Libraries/XMCLib/src/xmc_vadc.c **** {
+ 538:../Libraries/XMCLib/src/xmc_vadc.c ****   uint32_t synctr;
+ 539:../Libraries/XMCLib/src/xmc_vadc.c ****   #if (XMC_VADC_MULTIPLE_SLAVEGROUPS == 1U )
+ 540:../Libraries/XMCLib/src/xmc_vadc.c ****   #endif
+ 541:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GROUP_SetSyncSlave:Wrong Group Pointer", XMC_VADC_CHECK_GROUP_PTR(group_ptr)
+ 542:../Libraries/XMCLib/src/xmc_vadc.c ****   
+ 543:../Libraries/XMCLib/src/xmc_vadc.c ****   #if (XMC_VADC_MULTIPLE_SLAVEGROUPS == 1U )
+ 544:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 545:../Libraries/XMCLib/src/xmc_vadc.c ****   /* Determine the coding of SYNCTR */
+ 546:../Libraries/XMCLib/src/xmc_vadc.c ****   if (slave_grp > master_grp)
+ 547:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+ 548:../Libraries/XMCLib/src/xmc_vadc.c ****     master_grp = master_grp + 1U;
+ 549:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+ 550:../Libraries/XMCLib/src/xmc_vadc.c ****   #endif
+ 551:../Libraries/XMCLib/src/xmc_vadc.c ****   
+ 552:../Libraries/XMCLib/src/xmc_vadc.c ****   /* Program SYNCTR */
+ 553:../Libraries/XMCLib/src/xmc_vadc.c ****   synctr = group_ptr->SYNCTR;
+ 554:../Libraries/XMCLib/src/xmc_vadc.c ****   synctr   &= ~((uint32_t)VADC_G_SYNCTR_STSEL_Msk);
+ 555:../Libraries/XMCLib/src/xmc_vadc.c ****   synctr   |= master_grp;
+ 556:../Libraries/XMCLib/src/xmc_vadc.c ****   group_ptr->SYNCTR = synctr;
+ 557:../Libraries/XMCLib/src/xmc_vadc.c **** }
+ 558:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 559:../Libraries/XMCLib/src/xmc_vadc.c **** /* API which programs a group as a master group during sync conversions */
+ 560:../Libraries/XMCLib/src/xmc_vadc.c **** void XMC_VADC_GROUP_SetSyncMaster(XMC_VADC_GROUP_t *const group_ptr)
+ 561:../Libraries/XMCLib/src/xmc_vadc.c **** {
+ 562:../Libraries/XMCLib/src/xmc_vadc.c ****   uint32_t synctr;
+ 563:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 564:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GROUP_SetSyncMaster:Wrong Group Pointer", XMC_VADC_CHECK_GROUP_PTR(group_ptr
+ 565:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 566:../Libraries/XMCLib/src/xmc_vadc.c ****   synctr = group_ptr->SYNCTR;
+ 567:../Libraries/XMCLib/src/xmc_vadc.c ****   synctr   &= ~((uint32_t)VADC_G_SYNCTR_STSEL_Msk);
+ 568:../Libraries/XMCLib/src/xmc_vadc.c ****   group_ptr->SYNCTR = synctr;
+ 569:../Libraries/XMCLib/src/xmc_vadc.c **** }
+ 570:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 571:../Libraries/XMCLib/src/xmc_vadc.c **** /* API to enable checking of readiness of slaves before a synchronous conversion request is issued 
+ 572:../Libraries/XMCLib/src/xmc_vadc.c **** void XMC_VADC_GROUP_CheckSlaveReadiness(XMC_VADC_GROUP_t *const group_ptr, uint32_t slave_group)
+ 573:../Libraries/XMCLib/src/xmc_vadc.c **** {
+ 574:../Libraries/XMCLib/src/xmc_vadc.c ****   uint32_t i,master_grp_num;
+ 575:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GROUP_CheckSlaveReadiness:Wrong Group Pointer", XMC_VADC_CHECK_GROUP_PTR(gro
+ 576:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GROUP_CheckSlaveReadiness:Wrong Slave group", ((slave_group >= 0) && (slave_
+ 577:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 578:../Libraries/XMCLib/src/xmc_vadc.c ****   master_grp_num =0;
+ 579:../Libraries/XMCLib/src/xmc_vadc.c ****   for(i=0; i<XMC_VADC_MAXIMUM_NUM_GROUPS; i++)
+ 580:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+ 581:../Libraries/XMCLib/src/xmc_vadc.c ****     if(g_xmc_vadc_group_array[i] == group_ptr)
+ 582:../Libraries/XMCLib/src/xmc_vadc.c ****     {
+ 583:../Libraries/XMCLib/src/xmc_vadc.c ****       master_grp_num = i;
+ 584:../Libraries/XMCLib/src/xmc_vadc.c ****     }
+ 585:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+ 586:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 587:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 588:../Libraries/XMCLib/src/xmc_vadc.c ****   if(slave_group < master_grp_num)
+ 589:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+ 590:../Libraries/XMCLib/src/xmc_vadc.c ****     slave_group++;
+ 591:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+ 592:../Libraries/XMCLib/src/xmc_vadc.c ****   group_ptr->SYNCTR |= (1U << (slave_group + XMC_VADC_SYNCTR_START_LOCATION));
+ 593:../Libraries/XMCLib/src/xmc_vadc.c **** }
+ 594:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 595:../Libraries/XMCLib/src/xmc_vadc.c **** /* API to disable checking of readiness of slaves during synchronous conversions */
+ 596:../Libraries/XMCLib/src/xmc_vadc.c **** void XMC_VADC_GROUP_IgnoreSlaveReadiness(XMC_VADC_GROUP_t *const group_ptr, uint32_t slave_group)
+ 597:../Libraries/XMCLib/src/xmc_vadc.c **** {
+ 598:../Libraries/XMCLib/src/xmc_vadc.c ****   uint32_t i,master_grp_num;
+ 599:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GROUP_IgnoreSlaveReadiness:Wrong Group Pointer", XMC_VADC_CHECK_GROUP_PTR(gr
+ 600:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GROUP_IgnoreSlaveReadiness:Wrong Slave group", ((slave_group >= 0) && (slave
+ 601:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 602:../Libraries/XMCLib/src/xmc_vadc.c ****   master_grp_num =0;
+ 603:../Libraries/XMCLib/src/xmc_vadc.c ****   for(i=0; i<XMC_VADC_MAXIMUM_NUM_GROUPS; i++)
+ 604:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+ 605:../Libraries/XMCLib/src/xmc_vadc.c **** 	  if(g_xmc_vadc_group_array[i] == group_ptr)
+ 606:../Libraries/XMCLib/src/xmc_vadc.c **** 	  {
+ 607:../Libraries/XMCLib/src/xmc_vadc.c **** 	    master_grp_num = i;
+ 608:../Libraries/XMCLib/src/xmc_vadc.c **** 	  }
+ 609:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+ 610:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 611:../Libraries/XMCLib/src/xmc_vadc.c ****   if(slave_group < master_grp_num)
+ 612:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+ 613:../Libraries/XMCLib/src/xmc_vadc.c **** 	  slave_group++;
+ 614:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+ 615:../Libraries/XMCLib/src/xmc_vadc.c ****   group_ptr->SYNCTR &= ~(1U << (slave_group + XMC_VADC_SYNCTR_START_LOCATION));
+ 616:../Libraries/XMCLib/src/xmc_vadc.c **** }
+ 617:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 618:../Libraries/XMCLib/src/xmc_vadc.c **** /* API to configure EVAL bit in the slave groups*/
+ 619:../Libraries/XMCLib/src/xmc_vadc.c **** void XMC_VADC_GROUP_SetSyncSlaveReadySignal(XMC_VADC_GROUP_t *const group_ptr,
+ 620:../Libraries/XMCLib/src/xmc_vadc.c ****                                             uint32_t eval_waiting_group,
+ 621:../Libraries/XMCLib/src/xmc_vadc.c ****                                             uint32_t eval_origin_group)
+ 622:../Libraries/XMCLib/src/xmc_vadc.c **** {
+ 623:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GROUP_SetSyncSlaveReadySignal:Wrong Group Pointer", XMC_VADC_CHECK_GROUP_PTR
+ 624:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GROUP_SetSyncSlaveReadySignal:Wrong Group numbers", (eval_waiting_group == e
+ 625:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 626:../Libraries/XMCLib/src/xmc_vadc.c ****   if(eval_origin_group < eval_waiting_group)
+ 627:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+ 628:../Libraries/XMCLib/src/xmc_vadc.c **** 	  eval_origin_group++;
+ 629:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+ 630:../Libraries/XMCLib/src/xmc_vadc.c ****   group_ptr->SYNCTR |= (1U << (eval_origin_group + XMC_VADC_SYNCTR_START_LOCATION));
+ 631:../Libraries/XMCLib/src/xmc_vadc.c **** }
+ 632:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 633:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 634:../Libraries/XMCLib/src/xmc_vadc.c **** /* API to enable the synchronous conversion feature - Applicable only to kernel configured as maste
+ 635:../Libraries/XMCLib/src/xmc_vadc.c **** void XMC_VADC_GROUP_EnableChannelSyncRequest(XMC_VADC_GROUP_t *const group_ptr, const uint32_t ch_n
+ 636:../Libraries/XMCLib/src/xmc_vadc.c **** {
+ 637:../Libraries/XMCLib/src/xmc_vadc.c ****   uint32_t synctr;
+ 638:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 639:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GROUP_EnableChannelSyncRequest:Wrong Group Pointer", XMC_VADC_CHECK_GROUP_PT
+ 640:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GROUP_EnableChannelSyncRequest:Wrong Channel Number",
+ 641:../Libraries/XMCLib/src/xmc_vadc.c ****              ((ch_num) < XMC_VADC_NUM_CHANNELS_PER_GROUP))
+ 642:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 643:../Libraries/XMCLib/src/xmc_vadc.c ****   synctr  = group_ptr->SYNCTR;
+ 644:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 645:../Libraries/XMCLib/src/xmc_vadc.c ****   if (!(synctr &  (uint32_t)VADC_G_SYNCTR_STSEL_Msk))
+ 646:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+ 647:../Libraries/XMCLib/src/xmc_vadc.c ****     group_ptr->CHCTR[ch_num] |= (uint32_t)((uint32_t)1 << VADC_G_CHCTR_SYNC_Pos);
+ 648:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+ 649:../Libraries/XMCLib/src/xmc_vadc.c **** }
+ 650:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 651:../Libraries/XMCLib/src/xmc_vadc.c **** /* API to disable synchronous conversion feature */
+ 652:../Libraries/XMCLib/src/xmc_vadc.c **** void XMC_VADC_GROUP_DisableChannelSyncRequest(XMC_VADC_GROUP_t *const group_ptr, const uint32_t ch_
+ 653:../Libraries/XMCLib/src/xmc_vadc.c **** {
+ 654:../Libraries/XMCLib/src/xmc_vadc.c ****   uint32_t    synctr;
+ 655:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 656:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GROUP_DisableChannelSyncRequest:Wrong Group Pointer", XMC_VADC_CHECK_GROUP_P
+ 657:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GROUP_DisableChannelSyncRequest:Wrong Channel Number",
+ 658:../Libraries/XMCLib/src/xmc_vadc.c ****              ((ch_num) < XMC_VADC_NUM_CHANNELS_PER_GROUP))
+ 659:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 660:../Libraries/XMCLib/src/xmc_vadc.c ****   synctr  = group_ptr->SYNCTR;
+ 661:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 662:../Libraries/XMCLib/src/xmc_vadc.c ****   if (synctr &  (uint32_t)VADC_G_SYNCTR_STSEL_Msk)
+ 663:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+ 664:../Libraries/XMCLib/src/xmc_vadc.c ****     group_ptr->CHCTR[ch_num] &= ~((uint32_t)VADC_G_CHCTR_SYNC_Msk);
+ 665:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+ 666:../Libraries/XMCLib/src/xmc_vadc.c **** }
+ 667:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 668:../Libraries/XMCLib/src/xmc_vadc.c **** /* API to retrieve the converter state - Idle vs Busy */ 
+ 669:../Libraries/XMCLib/src/xmc_vadc.c **** XMC_VADC_GROUP_STATE_t XMC_VADC_GROUP_IsConverterBusy(XMC_VADC_GROUP_t *const group_ptr)
+ 670:../Libraries/XMCLib/src/xmc_vadc.c **** {
+ 671:../Libraries/XMCLib/src/xmc_vadc.c ****   uint32_t      arbcfg;
+ 672:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 673:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GROUP_IsConverterBusy:Wrong Group Pointer", XMC_VADC_CHECK_GROUP_PTR(group_p
+ 674:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 675:../Libraries/XMCLib/src/xmc_vadc.c ****   arbcfg  = group_ptr->ARBCFG;
+ 676:../Libraries/XMCLib/src/xmc_vadc.c ****   arbcfg &= (uint32_t)VADC_G_ARBCFG_BUSY_Msk;
+ 677:../Libraries/XMCLib/src/xmc_vadc.c ****   arbcfg = arbcfg >> VADC_G_ARBCFG_BUSY_Pos;
+ 678:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 679:../Libraries/XMCLib/src/xmc_vadc.c ****   return( (XMC_VADC_GROUP_STATE_t)arbcfg);
+ 680:../Libraries/XMCLib/src/xmc_vadc.c **** }
+ 681:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 682:../Libraries/XMCLib/src/xmc_vadc.c **** /* API to set boundaries for conversion results */
+ 683:../Libraries/XMCLib/src/xmc_vadc.c **** void XMC_VADC_GROUP_SetBoundaries(XMC_VADC_GROUP_t *const group_ptr, const uint32_t boundary0, cons
+ 684:../Libraries/XMCLib/src/xmc_vadc.c **** {
+ 685:../Libraries/XMCLib/src/xmc_vadc.c ****   uint32_t bound;
+ 686:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 687:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GROUP_SetBoundaries:Wrong Group Pointer", XMC_VADC_CHECK_GROUP_PTR(group_ptr
+ 688:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 689:../Libraries/XMCLib/src/xmc_vadc.c ****   /* Program the Boundary registers */
+ 690:../Libraries/XMCLib/src/xmc_vadc.c ****   bound  = group_ptr->BOUND;
+ 691:../Libraries/XMCLib/src/xmc_vadc.c ****   bound &= ~((uint32_t) VADC_G_BOUND_BOUNDARY0_Msk);
+ 692:../Libraries/XMCLib/src/xmc_vadc.c ****   bound &= ~((uint32_t) VADC_G_BOUND_BOUNDARY1_Msk);
+ 693:../Libraries/XMCLib/src/xmc_vadc.c ****   bound |= (uint32_t) ((uint32_t) boundary0 << VADC_G_BOUND_BOUNDARY0_Pos);
+ 694:../Libraries/XMCLib/src/xmc_vadc.c ****   bound |= (uint32_t) ((uint32_t) boundary1 << VADC_G_BOUND_BOUNDARY1_Pos);
+ 695:../Libraries/XMCLib/src/xmc_vadc.c ****   group_ptr->BOUND = bound;
+ 696:../Libraries/XMCLib/src/xmc_vadc.c **** }
+ 697:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 698:../Libraries/XMCLib/src/xmc_vadc.c **** /* API to set an individual boundary for conversion results */
+ 699:../Libraries/XMCLib/src/xmc_vadc.c **** void XMC_VADC_GROUP_SetIndividualBoundary(XMC_VADC_GROUP_t *const group_ptr,
+ 700:../Libraries/XMCLib/src/xmc_vadc.c ****                                           const XMC_VADC_CHANNEL_BOUNDARY_t selection,
+ 701:../Libraries/XMCLib/src/xmc_vadc.c ****                                           const uint16_t boundary_value)
+ 702:../Libraries/XMCLib/src/xmc_vadc.c **** {
+ 703:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 704:../Libraries/XMCLib/src/xmc_vadc.c ****   uint32_t bound;
+ 705:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 706:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GROUP_SetIndividualBoundary:Wrong Group Pointer", XMC_VADC_CHECK_GROUP_PTR(g
+ 707:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GROUP_SetIndividualBoundary:Wrong Boundary Selection",
+ 708:../Libraries/XMCLib/src/xmc_vadc.c ****                ((XMC_VADC_CHANNEL_BOUNDARY_GROUP_BOUND0 == selection) ||
+ 709:../Libraries/XMCLib/src/xmc_vadc.c ****                 (XMC_VADC_CHANNEL_BOUNDARY_GROUP_BOUND1 == selection)))
+ 710:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 711:../Libraries/XMCLib/src/xmc_vadc.c ****   /* Program the Boundary registers */
+ 712:../Libraries/XMCLib/src/xmc_vadc.c ****   bound  = group_ptr->BOUND;
+ 713:../Libraries/XMCLib/src/xmc_vadc.c ****   if (XMC_VADC_CHANNEL_BOUNDARY_GROUP_BOUND0 == selection)
+ 714:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+ 715:../Libraries/XMCLib/src/xmc_vadc.c ****     bound &= ~((uint32_t) VADC_G_BOUND_BOUNDARY0_Msk);
+ 716:../Libraries/XMCLib/src/xmc_vadc.c ****     bound |= (uint32_t) ((uint32_t) boundary_value << VADC_G_BOUND_BOUNDARY0_Pos);
+ 717:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+ 718:../Libraries/XMCLib/src/xmc_vadc.c ****   else if (XMC_VADC_CHANNEL_BOUNDARY_GROUP_BOUND1 == selection)
+ 719:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+ 720:../Libraries/XMCLib/src/xmc_vadc.c ****     bound &= ~((uint32_t) VADC_G_BOUND_BOUNDARY1_Msk);
+ 721:../Libraries/XMCLib/src/xmc_vadc.c ****     bound |= (uint32_t) ((uint32_t) boundary_value << VADC_G_BOUND_BOUNDARY1_Pos);
+ 722:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+ 723:../Libraries/XMCLib/src/xmc_vadc.c ****   else
+ 724:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+ 725:../Libraries/XMCLib/src/xmc_vadc.c ****     /* For MISRA*/
+ 726:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+ 727:../Libraries/XMCLib/src/xmc_vadc.c ****   group_ptr->BOUND = bound;
+ 728:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 729:../Libraries/XMCLib/src/xmc_vadc.c **** }
+ 730:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 731:../Libraries/XMCLib/src/xmc_vadc.c **** /* Manually assert service request (Interrupt) to NVIC */
+ 732:../Libraries/XMCLib/src/xmc_vadc.c **** void XMC_VADC_GROUP_TriggerServiceRequest(XMC_VADC_GROUP_t *const group_ptr,
+ 733:../Libraries/XMCLib/src/xmc_vadc.c ****                                           const uint32_t sr_num,
+ 734:../Libraries/XMCLib/src/xmc_vadc.c ****                                           const XMC_VADC_GROUP_IRQ_t type)
+ 735:../Libraries/XMCLib/src/xmc_vadc.c **** {
+ 736:../Libraries/XMCLib/src/xmc_vadc.c ****   uint32_t sract;
+ 737:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 738:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GROUP_TriggerServiceRequest:Wrong Group Pointer", XMC_VADC_CHECK_GROUP_PTR(g
+ 739:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GROUP_TriggerServiceRequest:Wrong SR number", (sr_num <= XMC_VADC_SR_SHARED_
+ 740:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GROUP_TriggerServiceRequest:Wrong SR type", ((type)<= XMC_VADC_GROUP_IRQ_SHA
+ 741:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 742:../Libraries/XMCLib/src/xmc_vadc.c ****   sract = group_ptr->SRACT;
+ 743:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 744:../Libraries/XMCLib/src/xmc_vadc.c ****   if (XMC_VADC_GROUP_IRQ_KERNEL == type)
+ 745:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+ 746:../Libraries/XMCLib/src/xmc_vadc.c ****     sract |= (uint32_t)((uint32_t)1 << sr_num);
+ 747:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+ 748:../Libraries/XMCLib/src/xmc_vadc.c ****   else
+ 749:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+ 750:../Libraries/XMCLib/src/xmc_vadc.c ****     sract |= (uint32_t)((uint32_t)1 << (sr_num + (uint32_t)8));
+ 751:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+ 752:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 753:../Libraries/XMCLib/src/xmc_vadc.c ****   group_ptr->SRACT = sract;
+ 754:../Libraries/XMCLib/src/xmc_vadc.c **** }
+ 755:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 756:../Libraries/XMCLib/src/xmc_vadc.c **** #if XMC_VADC_BOUNDARY_FLAG_SELECT == 1U
+ 757:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 758:../Libraries/XMCLib/src/xmc_vadc.c **** /* API to set the SR line for the Boundary flag node pointer*/
+ 759:../Libraries/XMCLib/src/xmc_vadc.c **** void XMC_VADC_GROUP_SetBoundaryEventInterruptNode(XMC_VADC_GROUP_t *const group_ptr,
+ 760:../Libraries/XMCLib/src/xmc_vadc.c ****                                                                   const uint8_t boundary_flag_num,
+ 761:../Libraries/XMCLib/src/xmc_vadc.c ****                                                                   const XMC_VADC_BOUNDARY_NODE_t sr
+ 762:../Libraries/XMCLib/src/xmc_vadc.c **** {
+ 763:../Libraries/XMCLib/src/xmc_vadc.c ****   uint32_t flag_pos;
+ 764:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GROUP_SetBoundaryEventInterruptNode:Wrong Group Pointer", XMC_VADC_CHECK_GRO
+ 765:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 766:../Libraries/XMCLib/src/xmc_vadc.c ****   /* Program the GxBFLNP */
+ 767:../Libraries/XMCLib/src/xmc_vadc.c ****   flag_pos = (uint32_t)boundary_flag_num << (uint32_t)2;
+ 768:../Libraries/XMCLib/src/xmc_vadc.c ****   group_ptr->BFLNP &= ~((uint32_t)VADC_G_BFLNP_BFL0NP_Msk << flag_pos);
+ 769:../Libraries/XMCLib/src/xmc_vadc.c ****   group_ptr->BFLNP |= (uint32_t)sr << flag_pos;
+ 770:../Libraries/XMCLib/src/xmc_vadc.c **** }
+ 771:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 772:../Libraries/XMCLib/src/xmc_vadc.c **** #endif
+ 773:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 774:../Libraries/XMCLib/src/xmc_vadc.c **** #endif
+ 775:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 776:../Libraries/XMCLib/src/xmc_vadc.c **** #if(XMC_VADC_SHS_AVAILABLE == 1U)
+ 777:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 778:../Libraries/XMCLib/src/xmc_vadc.c **** /* API to Initialize the Sample and hold features*/
+ 779:../Libraries/XMCLib/src/xmc_vadc.c **** void XMC_VADC_GLOBAL_SHS_Init(XMC_VADC_GLOBAL_SHS_t *const shs_ptr, const XMC_VADC_GLOBAL_SHS_CONFI
+ 780:../Libraries/XMCLib/src/xmc_vadc.c **** {
+ 368              	 .loc 1 780 0
+ 369              	 .cfi_startproc
+ 370              	.LVL30:
+ 781:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GLOBAL_SHS_Init:Wrong SHS Pointer", (shs_ptr == (XMC_VADC_GLOBAL_SHS_t*)(voi
+ 782:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GLOBAL_SHS_Init:Wrong Index number",(config == (XMC_VADC_GLOBAL_SHS_CONFIG_t
+ 783:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 784:../Libraries/XMCLib/src/xmc_vadc.c ****   /* Initialize the SHS Configuration register*/
+ 785:../Libraries/XMCLib/src/xmc_vadc.c ****   shs_ptr->SHSCFG = (uint32_t)((uint32_t)config->shscfg | (uint32_t)SHS_SHSCFG_SCWC_Msk);
+ 371              	 .loc 1 785 0
+ 372 0000 0B68     	 ldr r3,[r1]
+ 373 0002 8022     	 mov r2,#128
+ 374 0004 1202     	 lsl r2,r2,#8
+ 375 0006 1343     	 orr r3,r2
+ 376 0008 0364     	 str r3,[r0,#64]
+ 786:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 787:../Libraries/XMCLib/src/xmc_vadc.c **** #if(XMC_VADC_SHS_FULL_SET_REG == 1U)
+ 788:../Libraries/XMCLib/src/xmc_vadc.c ****   /* Select the Calibration order*/
+ 789:../Libraries/XMCLib/src/xmc_vadc.c ****   shs_ptr->CALCTR &= ~((uint32_t)SHS_CALCTR_CALORD_Msk);
+ 790:../Libraries/XMCLib/src/xmc_vadc.c ****   shs_ptr->CALCTR |=  (uint32_t) ((uint32_t)config->calibration_order << SHS_CALCTR_CALORD_Pos);
+ 791:../Libraries/XMCLib/src/xmc_vadc.c **** #endif
+ 792:../Libraries/XMCLib/src/xmc_vadc.c **** }
+ 377              	 .loc 1 792 0
+ 378              	 
+ 379 000a 7047     	 bx lr
+ 380              	 .cfi_endproc
+ 381              	.LFE90:
+ 383              	 .section .text.XMC_VADC_GLOBAL_SHS_SetGainFactor,"ax",%progbits
+ 384              	 .align 2
+ 385              	 .global XMC_VADC_GLOBAL_SHS_SetGainFactor
+ 386              	 .code 16
+ 387              	 .thumb_func
+ 389              	XMC_VADC_GLOBAL_SHS_SetGainFactor:
+ 390              	.LFB91:
+ 793:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 794:../Libraries/XMCLib/src/xmc_vadc.c **** #if(XMC_VADC_SHS_FULL_SET_REG == 1U)
+ 795:../Libraries/XMCLib/src/xmc_vadc.c **** /* API to enable the accelerated mode of conversion */
+ 796:../Libraries/XMCLib/src/xmc_vadc.c **** void XMC_VADC_GLOBAL_SHS_EnableAcceleratedMode(XMC_VADC_GLOBAL_SHS_t *const shs_ptr, XMC_VADC_GROUP
+ 797:../Libraries/XMCLib/src/xmc_vadc.c **** {
+ 798:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GLOBAL_SHS_EnableAcceleratedMode:Wrong SHS Pointer",
+ 799:../Libraries/XMCLib/src/xmc_vadc.c ****              (shs_ptr == (XMC_VADC_GLOBAL_SHS_t*)(void*)SHS0))
+ 800:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GLOBAL_SHS_EnableAcceleratedMode:Wrong Index number",(group_num <= XMC_VADC_
+ 801:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 802:../Libraries/XMCLib/src/xmc_vadc.c ****   /* Set the converted to Accelerated mode from compatible mode*/
+ 803:../Libraries/XMCLib/src/xmc_vadc.c ****   if (group_num == XMC_VADC_GROUP_INDEX_0 )
+ 804:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+ 805:../Libraries/XMCLib/src/xmc_vadc.c ****     shs_ptr->TIMCFG0 |= (uint32_t)SHS_TIMCFG0_AT_Msk;
+ 806:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+ 807:../Libraries/XMCLib/src/xmc_vadc.c ****   else if (group_num == XMC_VADC_GROUP_INDEX_1 )
+ 808:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+ 809:../Libraries/XMCLib/src/xmc_vadc.c ****     shs_ptr->TIMCFG1 |= (uint32_t)SHS_TIMCFG1_AT_Msk;
+ 810:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+ 811:../Libraries/XMCLib/src/xmc_vadc.c ****   else
+ 812:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+ 813:../Libraries/XMCLib/src/xmc_vadc.c ****     /* for MISRA*/
+ 814:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+ 815:../Libraries/XMCLib/src/xmc_vadc.c **** }
+ 816:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 817:../Libraries/XMCLib/src/xmc_vadc.c **** /* API to disable the accelerated mode of conversion */
+ 818:../Libraries/XMCLib/src/xmc_vadc.c **** void XMC_VADC_GLOBAL_SHS_DisableAcceleratedMode(XMC_VADC_GLOBAL_SHS_t *const shs_ptr, XMC_VADC_GROU
+ 819:../Libraries/XMCLib/src/xmc_vadc.c **** {
+ 820:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GLOBAL_SHS_DisableAcceleratedMode:Wrong SHS Pointer",
+ 821:../Libraries/XMCLib/src/xmc_vadc.c ****              (shs_ptr == (XMC_VADC_GLOBAL_SHS_t*)(void*)SHS0))
+ 822:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GLOBAL_SHS_DisableAcceleratedMode:Wrong Index number",(group_num <= XMC_VADC
+ 823:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 824:../Libraries/XMCLib/src/xmc_vadc.c ****   /* Set the converted to Accelerated mode from compatible mode*/
+ 825:../Libraries/XMCLib/src/xmc_vadc.c ****   if (group_num == XMC_VADC_GROUP_INDEX_0 )
+ 826:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+ 827:../Libraries/XMCLib/src/xmc_vadc.c ****     shs_ptr->TIMCFG0 &= ~(uint32_t)SHS_TIMCFG0_AT_Msk;
+ 828:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+ 829:../Libraries/XMCLib/src/xmc_vadc.c ****   else if (group_num == XMC_VADC_GROUP_INDEX_1 )
+ 830:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+ 831:../Libraries/XMCLib/src/xmc_vadc.c ****     shs_ptr->TIMCFG1 &= ~(uint32_t)SHS_TIMCFG1_AT_Msk;
+ 832:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+ 833:../Libraries/XMCLib/src/xmc_vadc.c ****   else
+ 834:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+ 835:../Libraries/XMCLib/src/xmc_vadc.c ****     /* for MISRA*/
+ 836:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+ 837:../Libraries/XMCLib/src/xmc_vadc.c **** }
+ 838:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 839:../Libraries/XMCLib/src/xmc_vadc.c **** /* API to set the Short sample time of the Sample and hold module*/
+ 840:../Libraries/XMCLib/src/xmc_vadc.c **** void XMC_VADC_GLOBAL_SHS_SetShortSampleTime(XMC_VADC_GLOBAL_SHS_t *const shs_ptr,
+ 841:../Libraries/XMCLib/src/xmc_vadc.c ****                                             XMC_VADC_GROUP_INDEX_t group_num,
+ 842:../Libraries/XMCLib/src/xmc_vadc.c ****                                             uint8_t sst_value)
+ 843:../Libraries/XMCLib/src/xmc_vadc.c **** {
+ 844:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GLOBAL_SHS_SetShortSampleTime:Wrong SHS Pointer",
+ 845:../Libraries/XMCLib/src/xmc_vadc.c ****              (shs_ptr == (XMC_VADC_GLOBAL_SHS_t*)(void*)SHS0))
+ 846:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GLOBAL_SHS_SetShortSampleTime:Wrong Index number",(group_num <= XMC_VADC_GRO
+ 847:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GLOBAL_SHS_SetShortSampleTime:Wrong SST value",(sst_value < 64U))
+ 848:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 849:../Libraries/XMCLib/src/xmc_vadc.c ****   /* Set the short sample time for the Accelerated mode of operation*/
+ 850:../Libraries/XMCLib/src/xmc_vadc.c ****   if (group_num == XMC_VADC_GROUP_INDEX_0 )
+ 851:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+ 852:../Libraries/XMCLib/src/xmc_vadc.c ****     shs_ptr->TIMCFG0 &= ~((uint32_t)SHS_TIMCFG0_SST_Msk);
+ 853:../Libraries/XMCLib/src/xmc_vadc.c ****     shs_ptr->TIMCFG0 |= (uint32_t)((uint32_t)sst_value << SHS_TIMCFG0_SST_Pos );
+ 854:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+ 855:../Libraries/XMCLib/src/xmc_vadc.c ****   else if (group_num == XMC_VADC_GROUP_INDEX_1 )
+ 856:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+ 857:../Libraries/XMCLib/src/xmc_vadc.c ****     shs_ptr->TIMCFG1 &= ~((uint32_t)SHS_TIMCFG1_SST_Msk);
+ 858:../Libraries/XMCLib/src/xmc_vadc.c ****     shs_ptr->TIMCFG1 |= (uint32_t)((uint32_t)sst_value << SHS_TIMCFG1_SST_Pos );
+ 859:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+ 860:../Libraries/XMCLib/src/xmc_vadc.c ****   else
+ 861:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+ 862:../Libraries/XMCLib/src/xmc_vadc.c ****   /* for MISRA*/
+ 863:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+ 864:../Libraries/XMCLib/src/xmc_vadc.c **** }
+ 865:../Libraries/XMCLib/src/xmc_vadc.c **** #endif
+ 866:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 867:../Libraries/XMCLib/src/xmc_vadc.c **** /* API to set the gain factor of the Sample and hold module*/
+ 868:../Libraries/XMCLib/src/xmc_vadc.c **** void XMC_VADC_GLOBAL_SHS_SetGainFactor(XMC_VADC_GLOBAL_SHS_t *const shs_ptr,
+ 869:../Libraries/XMCLib/src/xmc_vadc.c ****                                        uint8_t gain_value,
+ 870:../Libraries/XMCLib/src/xmc_vadc.c ****                                        XMC_VADC_GROUP_INDEX_t group_num,
+ 871:../Libraries/XMCLib/src/xmc_vadc.c ****                                        uint8_t ch_num)
+ 872:../Libraries/XMCLib/src/xmc_vadc.c **** {
+ 391              	 .loc 1 872 0
+ 392              	 .cfi_startproc
+ 393              	.LVL31:
+ 394 0000 30B5     	 push {r4,r5,lr}
+ 395              	.LCFI5:
+ 396              	 .cfi_def_cfa_offset 12
+ 397              	 .cfi_offset 4,-12
+ 398              	 .cfi_offset 5,-8
+ 399              	 .cfi_offset 14,-4
+ 873:../Libraries/XMCLib/src/xmc_vadc.c ****   uint32_t ch_mask;
+ 874:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 875:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GLOBAL_SHS_SetGainFactor:Wrong SHS Pointer", (shs_ptr == (XMC_VADC_GLOBAL_SH
+ 876:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GLOBAL_SHS_SetGainFactor:Wrong Index number",(group_num <= XMC_VADC_GROUP_IN
+ 877:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 878:../Libraries/XMCLib/src/xmc_vadc.c ****   /*Calculate location of channel bit-field*/
+ 879:../Libraries/XMCLib/src/xmc_vadc.c ****   ch_mask = ((uint32_t)ch_num << (uint32_t)2);
+ 400              	 .loc 1 879 0
+ 401 0002 9B00     	 lsl r3,r3,#2
+ 402              	.LVL32:
+ 880:../Libraries/XMCLib/src/xmc_vadc.c ****   if (group_num == XMC_VADC_GROUP_INDEX_0 )
+ 403              	 .loc 1 880 0
+ 404 0004 002A     	 cmp r2,#0
+ 405 0006 0CD1     	 bne .L27
+ 881:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+ 882:../Libraries/XMCLib/src/xmc_vadc.c ****     shs_ptr->GNCTR00 &= ~((uint32_t)SHS_GNCTR00_GAIN0_Msk << ch_mask) ;
+ 406              	 .loc 1 882 0
+ 407 0008 8132     	 add r2,r2,#129
+ 408              	.LVL33:
+ 409 000a FF32     	 add r2,r2,#255
+ 410 000c 8458     	 ldr r4,[r0,r2]
+ 411 000e 0F25     	 mov r5,#15
+ 412 0010 9D40     	 lsl r5,r5,r3
+ 413 0012 AC43     	 bic r4,r5
+ 414 0014 8450     	 str r4,[r0,r2]
+ 883:../Libraries/XMCLib/src/xmc_vadc.c ****     shs_ptr->GNCTR00 |=  ((uint32_t)gain_value << ch_mask);
+ 415              	 .loc 1 883 0
+ 416 0016 8458     	 ldr r4,[r0,r2]
+ 417 0018 9940     	 lsl r1,r1,r3
+ 418              	.LVL34:
+ 419 001a 0B1C     	 mov r3,r1
+ 420              	.LVL35:
+ 421 001c 2343     	 orr r3,r4
+ 422 001e 8350     	 str r3,[r0,r2]
+ 423 0020 0DE0     	 b .L26
+ 424              	.LVL36:
+ 425              	.L27:
+ 884:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+ 885:../Libraries/XMCLib/src/xmc_vadc.c ****   else if (group_num == XMC_VADC_GROUP_INDEX_1 )
+ 426              	 .loc 1 885 0
+ 427 0022 012A     	 cmp r2,#1
+ 428 0024 0BD1     	 bne .L26
+ 886:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+ 887:../Libraries/XMCLib/src/xmc_vadc.c ****     shs_ptr->GNCTR10 &= ~((uint32_t)SHS_GNCTR10_GAIN0_Msk << ch_mask);
+ 429              	 .loc 1 887 0
+ 430 0026 9032     	 add r2,r2,#144
+ 431              	.LVL37:
+ 432 0028 FF32     	 add r2,r2,#255
+ 433 002a 8458     	 ldr r4,[r0,r2]
+ 434 002c 0F25     	 mov r5,#15
+ 435 002e 9D40     	 lsl r5,r5,r3
+ 436 0030 AC43     	 bic r4,r5
+ 437 0032 8450     	 str r4,[r0,r2]
+ 888:../Libraries/XMCLib/src/xmc_vadc.c ****     shs_ptr->GNCTR10 |=  ((uint32_t)gain_value << ch_mask);
+ 438              	 .loc 1 888 0
+ 439 0034 8458     	 ldr r4,[r0,r2]
+ 440 0036 9940     	 lsl r1,r1,r3
+ 441              	.LVL38:
+ 442 0038 0B1C     	 mov r3,r1
+ 443              	.LVL39:
+ 444 003a 2343     	 orr r3,r4
+ 445 003c 8350     	 str r3,[r0,r2]
+ 446              	.L26:
+ 889:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+ 890:../Libraries/XMCLib/src/xmc_vadc.c ****   else
+ 891:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+ 892:../Libraries/XMCLib/src/xmc_vadc.c ****     /* for MISRA*/
+ 893:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+ 894:../Libraries/XMCLib/src/xmc_vadc.c **** }
+ 447              	 .loc 1 894 0
+ 448              	 
+ 449 003e 30BD     	 pop {r4,r5,pc}
+ 450              	 .cfi_endproc
+ 451              	.LFE91:
+ 453              	 .section .text.XMC_VADC_GLOBAL_SHS_SetSigmaDeltaLoop,"ax",%progbits
+ 454              	 .align 2
+ 455              	 .global XMC_VADC_GLOBAL_SHS_SetSigmaDeltaLoop
+ 456              	 .code 16
+ 457              	 .thumb_func
+ 459              	XMC_VADC_GLOBAL_SHS_SetSigmaDeltaLoop:
+ 460              	.LFB92:
+ 895:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 896:../Libraries/XMCLib/src/xmc_vadc.c **** #if(XMC_VADC_SHS_FULL_SET_REG == 1U)
+ 897:../Libraries/XMCLib/src/xmc_vadc.c **** /* API to enable the gain and offset calibration of the Sample and hold module*/
+ 898:../Libraries/XMCLib/src/xmc_vadc.c **** void XMC_VADC_GLOBAL_SHS_EnableGainAndOffsetCalibrations(XMC_VADC_GLOBAL_SHS_t *const shs_ptr,
+ 899:../Libraries/XMCLib/src/xmc_vadc.c ****                                                          XMC_VADC_GROUP_INDEX_t group_num)
+ 900:../Libraries/XMCLib/src/xmc_vadc.c **** {
+ 901:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GLOBAL_SHS_EnableGainAndOffsetCalibrations:Wrong SHS Pointer",
+ 902:../Libraries/XMCLib/src/xmc_vadc.c ****              (shs_ptr == (XMC_VADC_GLOBAL_SHS_t*)(void*)SHS0))
+ 903:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GLOBAL_SHS_EnableGainAndOffsetCalibrations:Wrong group selected",
+ 904:../Libraries/XMCLib/src/xmc_vadc.c ****              (group_num <= (uint32_t)XMC_VADC_GROUP_INDEX_1))
+ 905:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 906:../Libraries/XMCLib/src/xmc_vadc.c ****   /* Enable gain and offset calibration*/
+ 907:../Libraries/XMCLib/src/xmc_vadc.c ****   if ( XMC_VADC_GROUP_INDEX_0 == group_num)
+ 908:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+ 909:../Libraries/XMCLib/src/xmc_vadc.c ****     shs_ptr->CALOC0 &= ~((uint32_t)SHS_CALOC0_DISCAL_Msk);
+ 910:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+ 911:../Libraries/XMCLib/src/xmc_vadc.c ****   else if ( XMC_VADC_GROUP_INDEX_1 == group_num)
+ 912:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+ 913:../Libraries/XMCLib/src/xmc_vadc.c ****     shs_ptr->CALOC1 &= ~((uint32_t)SHS_CALOC1_DISCAL_Msk);
+ 914:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+ 915:../Libraries/XMCLib/src/xmc_vadc.c ****   else
+ 916:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+ 917:../Libraries/XMCLib/src/xmc_vadc.c ****     /* for MISRA */
+ 918:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+ 919:../Libraries/XMCLib/src/xmc_vadc.c **** }
+ 920:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 921:../Libraries/XMCLib/src/xmc_vadc.c **** /* API to enable the gain and offset calibration of the Sample and hold module*/
+ 922:../Libraries/XMCLib/src/xmc_vadc.c **** void XMC_VADC_GLOBAL_SHS_DisableGainAndOffsetCalibrations(XMC_VADC_GLOBAL_SHS_t *const shs_ptr,
+ 923:../Libraries/XMCLib/src/xmc_vadc.c ****                                                           XMC_VADC_GROUP_INDEX_t group_num)
+ 924:../Libraries/XMCLib/src/xmc_vadc.c **** {
+ 925:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GLOBAL_SHS_DisableGainAndOffsetCalibrations:Wrong SHS Pointer",
+ 926:../Libraries/XMCLib/src/xmc_vadc.c ****                (shs_ptr == (XMC_VADC_GLOBAL_SHS_t*)(void*)SHS0))
+ 927:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GLOBAL_SHS_DisableGainAndOffsetCalibrations:Wrong group selected",
+ 928:../Libraries/XMCLib/src/xmc_vadc.c ****             (group_num <= (uint32_t)XMC_VADC_GROUP_INDEX_1))
+ 929:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 930:../Libraries/XMCLib/src/xmc_vadc.c ****   if ( XMC_VADC_GROUP_INDEX_0 == group_num)
+ 931:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+ 932:../Libraries/XMCLib/src/xmc_vadc.c ****     shs_ptr->CALOC0 |= (uint32_t)SHS_CALOC0_DISCAL_Msk;
+ 933:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+ 934:../Libraries/XMCLib/src/xmc_vadc.c ****   else if ( XMC_VADC_GROUP_INDEX_1 == group_num)
+ 935:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+ 936:../Libraries/XMCLib/src/xmc_vadc.c ****     shs_ptr->CALOC1 |= (uint32_t)SHS_CALOC1_DISCAL_Msk;
+ 937:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+ 938:../Libraries/XMCLib/src/xmc_vadc.c ****   else
+ 939:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+ 940:../Libraries/XMCLib/src/xmc_vadc.c ****     /* for MISRA */
+ 941:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+ 942:../Libraries/XMCLib/src/xmc_vadc.c **** }
+ 943:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 944:../Libraries/XMCLib/src/xmc_vadc.c **** /* API to get the offset calibration value of the Sample and hold module*/
+ 945:../Libraries/XMCLib/src/xmc_vadc.c **** uint8_t XMC_VADC_GLOBAL_SHS_GetOffsetCalibrationValue(XMC_VADC_GLOBAL_SHS_t *const shs_ptr,
+ 946:../Libraries/XMCLib/src/xmc_vadc.c ****                                                       XMC_VADC_GROUP_INDEX_t group_num,
+ 947:../Libraries/XMCLib/src/xmc_vadc.c ****                                                       XMC_VADC_SHS_GAIN_LEVEL_t gain_level)
+ 948:../Libraries/XMCLib/src/xmc_vadc.c **** {
+ 949:../Libraries/XMCLib/src/xmc_vadc.c ****   uint32_t calibration_value;
+ 950:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GLOBAL_SHS_GetOffsetCalibrationValue:Wrong SHS Pointer",
+ 951:../Libraries/XMCLib/src/xmc_vadc.c ****                (shs_ptr == (XMC_VADC_GLOBAL_SHS_t*)(void*)SHS0))
+ 952:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GLOBAL_SHS_GetOffsetCalibrationValue:Wrong Group number selected",
+ 953:../Libraries/XMCLib/src/xmc_vadc.c ****              (group_num == XMC_VADC_GROUP_INDEX_0)||(group_num == XMC_VADC_GROUP_INDEX_1))
+ 954:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GLOBAL_SHS_GetOffsetCalibrationValue:Wrong gain level selected",
+ 955:../Libraries/XMCLib/src/xmc_vadc.c ****              (gain_level == XMC_VADC_SHS_GAIN_LEVEL_0)||(gain_level == XMC_VADC_SHS_GAIN_LEVEL_1)||
+ 956:../Libraries/XMCLib/src/xmc_vadc.c ****              (gain_level == XMC_VADC_SHS_GAIN_LEVEL_2)||(gain_level == XMC_VADC_SHS_GAIN_LEVEL_3))
+ 957:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 958:../Libraries/XMCLib/src/xmc_vadc.c ****   calibration_value = 0U;
+ 959:../Libraries/XMCLib/src/xmc_vadc.c ****   if ( XMC_VADC_GROUP_INDEX_0 == group_num)
+ 960:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+ 961:../Libraries/XMCLib/src/xmc_vadc.c ****     calibration_value = (shs_ptr->CALOC0 >> (uint32_t)gain_level) & (uint32_t)SHS_CALOC0_CALOFFVAL0
+ 962:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+ 963:../Libraries/XMCLib/src/xmc_vadc.c ****   else if ( XMC_VADC_GROUP_INDEX_1 == group_num)
+ 964:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+ 965:../Libraries/XMCLib/src/xmc_vadc.c ****     calibration_value = (shs_ptr->CALOC1 >> (uint32_t)gain_level) & (uint32_t)SHS_CALOC1_CALOFFVAL0
+ 966:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+ 967:../Libraries/XMCLib/src/xmc_vadc.c ****   else
+ 968:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+ 969:../Libraries/XMCLib/src/xmc_vadc.c ****     /* for MISRA */
+ 970:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+ 971:../Libraries/XMCLib/src/xmc_vadc.c ****   return ((uint8_t)calibration_value);
+ 972:../Libraries/XMCLib/src/xmc_vadc.c **** }
+ 973:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 974:../Libraries/XMCLib/src/xmc_vadc.c **** /* API to set the offset calibration value of the Sample and hold module*/
+ 975:../Libraries/XMCLib/src/xmc_vadc.c **** void XMC_VADC_GLOBAL_SHS_SetOffsetCalibrationValue(XMC_VADC_GLOBAL_SHS_t *const shs_ptr,
+ 976:../Libraries/XMCLib/src/xmc_vadc.c ****                                                    XMC_VADC_GROUP_INDEX_t group_num,
+ 977:../Libraries/XMCLib/src/xmc_vadc.c ****                                                    XMC_VADC_SHS_GAIN_LEVEL_t gain_level,
+ 978:../Libraries/XMCLib/src/xmc_vadc.c ****                                                    uint8_t offset_calibration_value)
+ 979:../Libraries/XMCLib/src/xmc_vadc.c **** {
+ 980:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GLOBAL_SHS_SetOffsetCalibrationValue:Wrong SHS Pointer",
+ 981:../Libraries/XMCLib/src/xmc_vadc.c ****                (shs_ptr == (XMC_VADC_GLOBAL_SHS_t*)(void*)SHS0))
+ 982:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GLOBAL_SHS_SetOffsetCalibrationValue:Wrong Group number selected",
+ 983:../Libraries/XMCLib/src/xmc_vadc.c ****              (group_num == XMC_VADC_GROUP_INDEX_0)||(group_num == XMC_VADC_GROUP_INDEX_1))
+ 984:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GLOBAL_SHS_SetOffsetCalibrationValue:Wrong gain level selected",
+ 985:../Libraries/XMCLib/src/xmc_vadc.c ****              (gain_level == XMC_VADC_SHS_GAIN_LEVEL_0)||(gain_level == XMC_VADC_SHS_GAIN_LEVEL_1)||
+ 986:../Libraries/XMCLib/src/xmc_vadc.c ****              (gain_level == XMC_VADC_SHS_GAIN_LEVEL_2)||(gain_level == XMC_VADC_SHS_GAIN_LEVEL_3))
+ 987:../Libraries/XMCLib/src/xmc_vadc.c **** 
+ 988:../Libraries/XMCLib/src/xmc_vadc.c ****   if ( XMC_VADC_GROUP_INDEX_0 == group_num)
+ 989:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+ 990:../Libraries/XMCLib/src/xmc_vadc.c ****     shs_ptr->CALOC0 = (shs_ptr->CALOC0  & ~((uint32_t)SHS_CALOC0_CALOFFVAL0_Msk << (uint32_t)gain_l
+ 991:../Libraries/XMCLib/src/xmc_vadc.c ****                       (uint32_t)SHS_CALOC0_OFFWC_Msk;
+ 992:../Libraries/XMCLib/src/xmc_vadc.c ****     shs_ptr->CALOC0 |=  ((uint32_t)offset_calibration_value << (uint32_t)gain_level) | (uint32_t)SH
+ 993:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+ 994:../Libraries/XMCLib/src/xmc_vadc.c ****   else if ( XMC_VADC_GROUP_INDEX_1 == group_num)
+ 995:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+ 996:../Libraries/XMCLib/src/xmc_vadc.c ****     shs_ptr->CALOC1 = (shs_ptr->CALOC1 & ~((uint32_t)SHS_CALOC1_CALOFFVAL0_Msk << (uint32_t)gain_le
+ 997:../Libraries/XMCLib/src/xmc_vadc.c ****                       (uint32_t)SHS_CALOC1_OFFWC_Msk;
+ 998:../Libraries/XMCLib/src/xmc_vadc.c ****     shs_ptr->CALOC1 |=  ((uint32_t)offset_calibration_value << (uint32_t)gain_level) | (uint32_t)SH
+ 999:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+1000:../Libraries/XMCLib/src/xmc_vadc.c ****   else
+1001:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+1002:../Libraries/XMCLib/src/xmc_vadc.c ****     /* for MISRA */
+1003:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+1004:../Libraries/XMCLib/src/xmc_vadc.c **** }
+1005:../Libraries/XMCLib/src/xmc_vadc.c **** #endif
+1006:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1007:../Libraries/XMCLib/src/xmc_vadc.c **** /* API to set the values of sigma delta loop of the Sample and hold module*/
+1008:../Libraries/XMCLib/src/xmc_vadc.c **** void XMC_VADC_GLOBAL_SHS_SetSigmaDeltaLoop(XMC_VADC_GLOBAL_SHS_t *const shs_ptr,
+1009:../Libraries/XMCLib/src/xmc_vadc.c ****                                            XMC_VADC_GROUP_INDEX_t group_num,
+1010:../Libraries/XMCLib/src/xmc_vadc.c ****                                            XMC_VADC_SHS_LOOP_CH_t loop_select,
+1011:../Libraries/XMCLib/src/xmc_vadc.c ****                                            uint8_t ch_num)
+1012:../Libraries/XMCLib/src/xmc_vadc.c **** {
+ 461              	 .loc 1 1012 0
+ 462              	 .cfi_startproc
+ 463              	.LVL40:
+ 464 0000 30B5     	 push {r4,r5,lr}
+ 465              	.LCFI6:
+ 466              	 .cfi_def_cfa_offset 12
+ 467              	 .cfi_offset 4,-12
+ 468              	 .cfi_offset 5,-8
+ 469              	 .cfi_offset 14,-4
+1013:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GLOBAL_SHS_SetSigmaDeltaLoop:Wrong SHS Pointer",
+1014:../Libraries/XMCLib/src/xmc_vadc.c ****                (shs_ptr == (XMC_VADC_GLOBAL_SHS_t*)(void*)SHS0))
+1015:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GLOBAL_SHS_SetSigmaDeltaLoop:Wrong Group number selected",
+1016:../Libraries/XMCLib/src/xmc_vadc.c ****                (group_num == XMC_VADC_GROUP_INDEX_0)||(group_num == XMC_VADC_GROUP_INDEX_1))
+1017:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GLOBAL_SHS_SetSigmaDeltaLoop:Wrong Delta sigma loop selected",
+1018:../Libraries/XMCLib/src/xmc_vadc.c ****              (loop_select == XMC_VADC_SHS_LOOP_CH_0)||(loop_select == XMC_VADC_SHS_LOOP_CH_1))
+1019:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GLOBAL_SHS_SetSigmaDeltaLoop:Wrong Channel Number",
+1020:../Libraries/XMCLib/src/xmc_vadc.c ****              ((ch_num) < XMC_VADC_NUM_CHANNELS_PER_GROUP))
+1021:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1022:../Libraries/XMCLib/src/xmc_vadc.c ****   shs_ptr->LOOP &= ~(((uint32_t)SHS_LOOP_LPCH0_Msk | (uint32_t)SHS_LOOP_LPSH0_Msk | (uint32_t)SHS_L
+ 470              	 .loc 1 1022 0
+ 471 0002 046D     	 ldr r4,[r0,#80]
+1023:../Libraries/XMCLib/src/xmc_vadc.c ****                      << (uint32_t)loop_select);
+ 472              	 .loc 1 1023 0
+ 473 0004 054D     	 ldr r5,.L30
+ 474 0006 9540     	 lsl r5,r5,r2
+1022:../Libraries/XMCLib/src/xmc_vadc.c ****                      << (uint32_t)loop_select);
+ 475              	 .loc 1 1022 0
+ 476 0008 AC43     	 bic r4,r5
+ 477 000a 0465     	 str r4,[r0,#80]
+1024:../Libraries/XMCLib/src/xmc_vadc.c ****   shs_ptr->LOOP |= ((uint32_t)ch_num | ((uint32_t)group_num << (uint32_t)SHS_LOOP_LPSH0_Pos)) << (u
+ 478              	 .loc 1 1024 0
+ 479 000c 046D     	 ldr r4,[r0,#80]
+ 480 000e 0902     	 lsl r1,r1,#8
+ 481              	.LVL41:
+ 482 0010 0B43     	 orr r3,r1
+ 483              	.LVL42:
+ 484 0012 9340     	 lsl r3,r3,r2
+ 485 0014 221C     	 mov r2,r4
+ 486              	.LVL43:
+ 487 0016 1A43     	 orr r2,r3
+ 488 0018 0265     	 str r2,[r0,#80]
+1025:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1026:../Libraries/XMCLib/src/xmc_vadc.c **** }
+ 489              	 .loc 1 1026 0
+ 490              	 
+ 491 001a 30BD     	 pop {r4,r5,pc}
+ 492              	.L31:
+ 493              	 .align 2
+ 494              	.L30:
+ 495 001c 1F810000 	 .word 33055
+ 496              	 .cfi_endproc
+ 497              	.LFE92:
+ 499              	 .section .text.XMC_VADC_GLOBAL_BackgroundInit,"ax",%progbits
+ 500              	 .align 2
+ 501              	 .global XMC_VADC_GLOBAL_BackgroundInit
+ 502              	 .code 16
+ 503              	 .thumb_func
+ 505              	XMC_VADC_GLOBAL_BackgroundInit:
+ 506              	.LFB93:
+1027:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1028:../Libraries/XMCLib/src/xmc_vadc.c **** #endif
+1029:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1030:../Libraries/XMCLib/src/xmc_vadc.c **** #if (XMC_VADC_GSCAN_AVAILABLE == 1U)   
+1031:../Libraries/XMCLib/src/xmc_vadc.c **** /* API to initialize the group scan hardware of a kernel */
+1032:../Libraries/XMCLib/src/xmc_vadc.c **** void XMC_VADC_GROUP_ScanInit(XMC_VADC_GROUP_t *const group_ptr, const XMC_VADC_SCAN_CONFIG_t *confi
+1033:../Libraries/XMCLib/src/xmc_vadc.c **** {
+1034:../Libraries/XMCLib/src/xmc_vadc.c ****   uint32_t      reg;
+1035:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1036:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GROUP_ScanInit:Wrong Group Pointer", XMC_VADC_CHECK_GROUP_PTR(group_ptr))
+1037:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1038:../Libraries/XMCLib/src/xmc_vadc.c ****   /* All configurations have to be performed with the arbitration slot disabled */
+1039:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_VADC_GROUP_ScanDisableArbitrationSlot(group_ptr);
+1040:../Libraries/XMCLib/src/xmc_vadc.c ****   
+1041:../Libraries/XMCLib/src/xmc_vadc.c ****   /* Read in the existing contents of arbitration priority register */
+1042:../Libraries/XMCLib/src/xmc_vadc.c ****   reg = group_ptr->ARBPR;
+1043:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1044:../Libraries/XMCLib/src/xmc_vadc.c ****   /* Program the priority of the request source */
+1045:../Libraries/XMCLib/src/xmc_vadc.c ****   reg &= ~(uint32_t)VADC_G_ARBPR_PRIO1_Msk;
+1046:../Libraries/XMCLib/src/xmc_vadc.c ****   reg |= (uint32_t)((uint32_t)config->req_src_priority << VADC_G_ARBPR_PRIO1_Pos);
+1047:../Libraries/XMCLib/src/xmc_vadc.c ****   
+1048:../Libraries/XMCLib/src/xmc_vadc.c ****   /* Program the start mode */
+1049:../Libraries/XMCLib/src/xmc_vadc.c ****   if (XMC_VADC_STARTMODE_WFS != (XMC_VADC_STARTMODE_t)(config->conv_start_mode))
+1050:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+1051:../Libraries/XMCLib/src/xmc_vadc.c ****     reg |= (uint32_t)(VADC_G_ARBPR_CSM1_Msk);
+1052:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+1053:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1054:../Libraries/XMCLib/src/xmc_vadc.c ****   group_ptr->ARBPR = reg;
+1055:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1056:../Libraries/XMCLib/src/xmc_vadc.c ****   group_ptr->ASCTRL = (uint32_t)(config->asctrl |(VADC_G_ASCTRL_XTWC_Msk) |(VADC_G_ASCTRL_GTWC_Msk)
+1057:../Libraries/XMCLib/src/xmc_vadc.c ****                                                  (VADC_G_ASCTRL_TMWC_Msk));
+1058:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1059:../Libraries/XMCLib/src/xmc_vadc.c ****   group_ptr->ASMR  = (uint32_t)((config->asmr)| (uint32_t)((uint32_t)XMC_VADC_GATEMODE_IGNORE << VA
+1060:../Libraries/XMCLib/src/xmc_vadc.c ****   
+1061:../Libraries/XMCLib/src/xmc_vadc.c ****   if (XMC_VADC_STARTMODE_CNR == (XMC_VADC_STARTMODE_t)(config->conv_start_mode))
+1062:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+1063:../Libraries/XMCLib/src/xmc_vadc.c ****     group_ptr->ASMR |= (uint32_t)VADC_G_ASMR_RPTDIS_Msk;
+1064:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+1065:../Libraries/XMCLib/src/xmc_vadc.c ****   
+1066:../Libraries/XMCLib/src/xmc_vadc.c ****   /* Enable arbitration slot now */
+1067:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_VADC_GROUP_ScanEnableArbitrationSlot(group_ptr);
+1068:../Libraries/XMCLib/src/xmc_vadc.c ****   
+1069:../Libraries/XMCLib/src/xmc_vadc.c **** }
+1070:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1071:../Libraries/XMCLib/src/xmc_vadc.c **** /* API to select one of the 16 inputs as a trigger input for Group Scan request source */
+1072:../Libraries/XMCLib/src/xmc_vadc.c **** void XMC_VADC_GROUP_ScanSelectTrigger(XMC_VADC_GROUP_t *const group_ptr, XMC_VADC_TRIGGER_INPUT_SEL
+1073:../Libraries/XMCLib/src/xmc_vadc.c **** {
+1074:../Libraries/XMCLib/src/xmc_vadc.c ****   uint32_t scanctrl;
+1075:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1076:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GROUP_ScanSelectTrigger:Wrong Group Pointer", XMC_VADC_CHECK_GROUP_PTR(group
+1077:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GROUP_ScanSelectTrigger:Wrong Trigger Port", ((trigger_input)< XMC_VADC_NUM_
+1078:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1079:../Libraries/XMCLib/src/xmc_vadc.c ****   scanctrl      = group_ptr->ASCTRL;
+1080:../Libraries/XMCLib/src/xmc_vadc.c ****   scanctrl     |= (uint32_t) VADC_G_ASCTRL_XTWC_Msk;
+1081:../Libraries/XMCLib/src/xmc_vadc.c ****   scanctrl     &= ~((uint32_t)VADC_G_ASCTRL_XTSEL_Msk);
+1082:../Libraries/XMCLib/src/xmc_vadc.c ****   scanctrl     |= (uint32_t)((uint32_t)trigger_input << VADC_G_ASCTRL_XTSEL_Pos);
+1083:../Libraries/XMCLib/src/xmc_vadc.c ****   group_ptr->ASCTRL  = scanctrl;
+1084:../Libraries/XMCLib/src/xmc_vadc.c **** }
+1085:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1086:../Libraries/XMCLib/src/xmc_vadc.c **** /* Select a trigger edge*/
+1087:../Libraries/XMCLib/src/xmc_vadc.c **** void XMC_VADC_GROUP_ScanSelectTriggerEdge(XMC_VADC_GROUP_t *const group_ptr, const XMC_VADC_TRIGGER
+1088:../Libraries/XMCLib/src/xmc_vadc.c **** {
+1089:../Libraries/XMCLib/src/xmc_vadc.c ****   uint32_t scanctrl;
+1090:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1091:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GROUP_ScanSelectTriggerEdge:Wrong Group Pointer", XMC_VADC_CHECK_GROUP_PTR(g
+1092:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GROUP_ScanSelectTriggerEdge:Wrong Trigger Port", ((trigger_edge)<= XMC_VADC_
+1093:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1094:../Libraries/XMCLib/src/xmc_vadc.c ****   scanctrl      = group_ptr->ASCTRL;
+1095:../Libraries/XMCLib/src/xmc_vadc.c ****   scanctrl     |= (uint32_t) VADC_G_ASCTRL_XTWC_Msk;
+1096:../Libraries/XMCLib/src/xmc_vadc.c ****   scanctrl     &= ~((uint32_t)VADC_G_ASCTRL_XTMODE_Msk);
+1097:../Libraries/XMCLib/src/xmc_vadc.c ****   scanctrl     |= (uint32_t)((uint32_t)trigger_edge << VADC_G_ASCTRL_XTMODE_Pos);
+1098:../Libraries/XMCLib/src/xmc_vadc.c ****   group_ptr->ASCTRL  = scanctrl;
+1099:../Libraries/XMCLib/src/xmc_vadc.c **** }
+1100:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1101:../Libraries/XMCLib/src/xmc_vadc.c **** /* API to select one of the 16 inputs as a trigger gating input for Group Scan request source */
+1102:../Libraries/XMCLib/src/xmc_vadc.c **** void XMC_VADC_GROUP_ScanSelectGating(XMC_VADC_GROUP_t *const group_ptr, XMC_VADC_GATE_INPUT_SELECT_
+1103:../Libraries/XMCLib/src/xmc_vadc.c **** {
+1104:../Libraries/XMCLib/src/xmc_vadc.c ****   uint32_t scanctrl;
+1105:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1106:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GROUP_ScanSelectGating:Wrong Group Pointer", XMC_VADC_CHECK_GROUP_PTR(group_
+1107:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GROUP_ScanSelectGating:Wrong Gating Port", ((gating_input)< XMC_VADC_NUM_POR
+1108:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1109:../Libraries/XMCLib/src/xmc_vadc.c ****   scanctrl      = group_ptr->ASCTRL;
+1110:../Libraries/XMCLib/src/xmc_vadc.c ****   scanctrl     |= (uint32_t)VADC_G_ASCTRL_GTWC_Msk;
+1111:../Libraries/XMCLib/src/xmc_vadc.c ****   scanctrl     &= ~((uint32_t)VADC_G_ASCTRL_GTSEL_Msk);
+1112:../Libraries/XMCLib/src/xmc_vadc.c ****   scanctrl     |= (uint32_t)((uint32_t)gating_input << VADC_G_ASCTRL_GTSEL_Pos);
+1113:../Libraries/XMCLib/src/xmc_vadc.c ****   group_ptr->ASCTRL  = scanctrl;
+1114:../Libraries/XMCLib/src/xmc_vadc.c **** }
+1115:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1116:../Libraries/XMCLib/src/xmc_vadc.c **** /* API to stop an ongoing conversion of a sequence */
+1117:../Libraries/XMCLib/src/xmc_vadc.c **** void XMC_VADC_GROUP_ScanSequenceAbort(XMC_VADC_GROUP_t *const group_ptr)
+1118:../Libraries/XMCLib/src/xmc_vadc.c **** {
+1119:../Libraries/XMCLib/src/xmc_vadc.c ****   uint32_t asctrl;
+1120:../Libraries/XMCLib/src/xmc_vadc.c ****   bool arbitration_status;
+1121:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1122:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GROUP_ScanSequenceAbort:Wrong Group Pointer", XMC_VADC_CHECK_GROUP_PTR(group
+1123:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1124:../Libraries/XMCLib/src/xmc_vadc.c ****   /* To disable trigger and gating before abort*/
+1125:../Libraries/XMCLib/src/xmc_vadc.c ****   asctrl = group_ptr->ASCTRL;
+1126:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1127:../Libraries/XMCLib/src/xmc_vadc.c ****   group_ptr->ASCTRL =(0U | (uint32_t)VADC_G_ASCTRL_XTWC_Msk |
+1128:../Libraries/XMCLib/src/xmc_vadc.c ****                                   (uint32_t)VADC_G_ASCTRL_GTWC_Msk | (uint32_t)VADC_G_ASCTRL_TMWC_M
+1129:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1130:../Libraries/XMCLib/src/xmc_vadc.c ****   /* To disable Arbitration before abort*/
+1131:../Libraries/XMCLib/src/xmc_vadc.c ****   arbitration_status = (bool)((uint32_t)(group_ptr->ARBPR >> VADC_G_ARBPR_ASEN1_Pos) & 1U);
+1132:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_VADC_GROUP_ScanDisableArbitrationSlot(group_ptr);
+1133:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1134:../Libraries/XMCLib/src/xmc_vadc.c ****   group_ptr->ASMR &= ~((uint32_t)VADC_G_ASMR_ENGT_Msk);
+1135:../Libraries/XMCLib/src/xmc_vadc.c ****   group_ptr->ASMR |= (uint32_t)VADC_G_ASMR_CLRPND_Msk;
+1136:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1137:../Libraries/XMCLib/src/xmc_vadc.c ****     /* Enable the arbitration slot 1*/
+1138:../Libraries/XMCLib/src/xmc_vadc.c ****   group_ptr->ARBPR |= (uint32_t)((uint32_t)arbitration_status << VADC_G_ARBPR_ASEN1_Pos);
+1139:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1140:../Libraries/XMCLib/src/xmc_vadc.c ****   /* Enable any disabled gating*/
+1141:../Libraries/XMCLib/src/xmc_vadc.c ****   group_ptr->ASCTRL =(asctrl | (uint32_t)VADC_G_ASCTRL_XTWC_Msk |
+1142:../Libraries/XMCLib/src/xmc_vadc.c ****                                   (uint32_t)VADC_G_ASCTRL_GTWC_Msk | (uint32_t)VADC_G_ASCTRL_TMWC_M
+1143:../Libraries/XMCLib/src/xmc_vadc.c **** }
+1144:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1145:../Libraries/XMCLib/src/xmc_vadc.c **** /* API to find out number of channels awaiting conversion */
+1146:../Libraries/XMCLib/src/xmc_vadc.c **** uint32_t XMC_VADC_GROUP_ScanGetNumChannelsPending(XMC_VADC_GROUP_t *const group_ptr)
+1147:../Libraries/XMCLib/src/xmc_vadc.c **** {
+1148:../Libraries/XMCLib/src/xmc_vadc.c ****   uint32_t reg;
+1149:../Libraries/XMCLib/src/xmc_vadc.c ****   uint32_t i;
+1150:../Libraries/XMCLib/src/xmc_vadc.c ****   uint32_t count;
+1151:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1152:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GROUP_ScanGetNumChannelsPending:Wrong Group Pointer", XMC_VADC_CHECK_GROUP_P
+1153:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1154:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1155:../Libraries/XMCLib/src/xmc_vadc.c ****   count = 0U;
+1156:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1157:../Libraries/XMCLib/src/xmc_vadc.c ****   if (group_ptr->ASPND)
+1158:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+1159:../Libraries/XMCLib/src/xmc_vadc.c ****     reg = group_ptr->ASPND;
+1160:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1161:../Libraries/XMCLib/src/xmc_vadc.c ****     for(i=0U;i<XMC_VADC_NUM_CHANNELS_PER_GROUP;i++)
+1162:../Libraries/XMCLib/src/xmc_vadc.c ****     {
+1163:../Libraries/XMCLib/src/xmc_vadc.c ****       if (reg & 1U)
+1164:../Libraries/XMCLib/src/xmc_vadc.c ****       {
+1165:../Libraries/XMCLib/src/xmc_vadc.c ****         count++;
+1166:../Libraries/XMCLib/src/xmc_vadc.c ****       }
+1167:../Libraries/XMCLib/src/xmc_vadc.c ****       reg = (uint32_t)(reg >> (uint32_t)1);
+1168:../Libraries/XMCLib/src/xmc_vadc.c ****     }
+1169:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+1170:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1171:../Libraries/XMCLib/src/xmc_vadc.c ****   return count;
+1172:../Libraries/XMCLib/src/xmc_vadc.c **** }
+1173:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1174:../Libraries/XMCLib/src/xmc_vadc.c **** /* API to select a service request line (NVIC Node) for request source event */
+1175:../Libraries/XMCLib/src/xmc_vadc.c **** void XMC_VADC_GROUP_ScanSetReqSrcEventInterruptNode(XMC_VADC_GROUP_t *const group_ptr, const XMC_VA
+1176:../Libraries/XMCLib/src/xmc_vadc.c **** {
+1177:../Libraries/XMCLib/src/xmc_vadc.c ****   uint32_t sevnp;
+1178:../Libraries/XMCLib/src/xmc_vadc.c ****   sevnp = group_ptr->SEVNP;
+1179:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1180:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GROUP_ScanSetReqSrcEventInterruptNode:Wrong Group Pointer", XMC_VADC_CHECK_G
+1181:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GROUP_ScanSetReqSrcEventInterruptNode:Wrong Service Request", ((sr)  <= XMC_
+1182:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1183:../Libraries/XMCLib/src/xmc_vadc.c ****   sevnp &= ~((uint32_t)VADC_G_SEVNP_SEV1NP_Msk);
+1184:../Libraries/XMCLib/src/xmc_vadc.c ****   sevnp |= (uint32_t)((uint32_t)sr << VADC_G_SEVNP_SEV1NP_Pos);
+1185:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1186:../Libraries/XMCLib/src/xmc_vadc.c ****   group_ptr->SEVNP = sevnp;
+1187:../Libraries/XMCLib/src/xmc_vadc.c **** }
+1188:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1189:../Libraries/XMCLib/src/xmc_vadc.c **** /* Removes the selected channel from conversion*/
+1190:../Libraries/XMCLib/src/xmc_vadc.c **** void XMC_VADC_GROUP_ScanRemoveChannel(XMC_VADC_GROUP_t *const group_ptr, const uint32_t channel_num
+1191:../Libraries/XMCLib/src/xmc_vadc.c **** {
+1192:../Libraries/XMCLib/src/xmc_vadc.c ****   uint32_t assel;
+1193:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1194:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GROUP_ScanRemoveChannel:Wrong Group Pointer", XMC_VADC_CHECK_GROUP_PTR(group
+1195:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GROUP_ScanRemoveChannel:Wrong channel number", ((channel_num)< XMC_VADC_NUM_
+1196:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1197:../Libraries/XMCLib/src/xmc_vadc.c ****   assel = group_ptr->ASSEL; 
+1198:../Libraries/XMCLib/src/xmc_vadc.c ****   assel &= (~( 1 << channel_num));
+1199:../Libraries/XMCLib/src/xmc_vadc.c ****   group_ptr->ASSEL  = assel;
+1200:../Libraries/XMCLib/src/xmc_vadc.c **** }
+1201:../Libraries/XMCLib/src/xmc_vadc.c **** #endif
+1202:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1203:../Libraries/XMCLib/src/xmc_vadc.c **** /* API to initialize background scan request source hardware */
+1204:../Libraries/XMCLib/src/xmc_vadc.c **** void XMC_VADC_GLOBAL_BackgroundInit(XMC_VADC_GLOBAL_t *const global_ptr, const XMC_VADC_BACKGROUND_
+1205:../Libraries/XMCLib/src/xmc_vadc.c **** {
+ 507              	 .loc 1 1205 0
+ 508              	 .cfi_startproc
+ 509              	.LVL44:
+1206:../Libraries/XMCLib/src/xmc_vadc.c ****   #if (XMC_VADC_GROUP_AVAILABLE ==1U)
+1207:../Libraries/XMCLib/src/xmc_vadc.c ****   uint8_t i;
+1208:../Libraries/XMCLib/src/xmc_vadc.c ****   uint32_t reg;
+1209:../Libraries/XMCLib/src/xmc_vadc.c ****   uint32_t conv_start_mask;
+1210:../Libraries/XMCLib/src/xmc_vadc.c ****   #endif
+1211:../Libraries/XMCLib/src/xmc_vadc.c ****   
+1212:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GLOBAL_BackgroundInit:Wrong Module Pointer", (global_ptr == VADC))
+1213:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1214:../Libraries/XMCLib/src/xmc_vadc.c ****   #if (XMC_VADC_GROUP_AVAILABLE ==1U)
+1215:../Libraries/XMCLib/src/xmc_vadc.c ****   for(i=(uint8_t)0; i < XMC_VADC_MAXIMUM_NUM_GROUPS; i++)
+1216:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+1217:../Libraries/XMCLib/src/xmc_vadc.c ****     XMC_VADC_GROUP_BackgroundDisableArbitrationSlot((XMC_VADC_GROUP_t *)g_xmc_vadc_group_array[i]);
+1218:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+1219:../Libraries/XMCLib/src/xmc_vadc.c ****   
+1220:../Libraries/XMCLib/src/xmc_vadc.c ****   conv_start_mask = (uint32_t) 0;
+1221:../Libraries/XMCLib/src/xmc_vadc.c ****   if (XMC_VADC_STARTMODE_WFS != (XMC_VADC_STARTMODE_t)config->conv_start_mode)
+1222:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+1223:../Libraries/XMCLib/src/xmc_vadc.c ****     conv_start_mask = (uint32_t)VADC_G_ARBPR_CSM2_Msk;
+1224:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+1225:../Libraries/XMCLib/src/xmc_vadc.c ****   
+1226:../Libraries/XMCLib/src/xmc_vadc.c ****   for(i=0U; i < XMC_VADC_MAXIMUM_NUM_GROUPS; i++)
+1227:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+1228:../Libraries/XMCLib/src/xmc_vadc.c ****     reg = g_xmc_vadc_group_array[i]->ARBPR;
+1229:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1230:../Libraries/XMCLib/src/xmc_vadc.c ****     reg &= ~(uint32_t)(VADC_G_ARBPR_PRIO2_Msk);
+1231:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1232:../Libraries/XMCLib/src/xmc_vadc.c ****     /* Program the priority of the request source */
+1233:../Libraries/XMCLib/src/xmc_vadc.c ****     reg |= (uint32_t)((uint32_t)config->req_src_priority << VADC_G_ARBPR_PRIO2_Pos);
+1234:../Libraries/XMCLib/src/xmc_vadc.c ****   
+1235:../Libraries/XMCLib/src/xmc_vadc.c ****     /* Program the start mode */
+1236:../Libraries/XMCLib/src/xmc_vadc.c ****     reg |= conv_start_mask;
+1237:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1238:../Libraries/XMCLib/src/xmc_vadc.c ****     g_xmc_vadc_group_array[i]->ARBPR = reg;
+1239:../Libraries/XMCLib/src/xmc_vadc.c ****   
+1240:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+1241:../Libraries/XMCLib/src/xmc_vadc.c ****   #endif
+1242:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1243:../Libraries/XMCLib/src/xmc_vadc.c ****   /* program BRSCTRL register */
+1244:../Libraries/XMCLib/src/xmc_vadc.c ****   global_ptr->BRSCTRL = (uint32_t)(config->asctrl | (uint32_t)VADC_BRSCTRL_XTWC_Msk | (uint32_t)VAD
+ 510              	 .loc 1 1244 0
+ 511 0000 064B     	 ldr r3,.L33
+ 512 0002 4A68     	 ldr r2,[r1,#4]
+ 513 0004 1343     	 orr r3,r2
+ 514 0006 8022     	 mov r2,#128
+ 515 0008 9200     	 lsl r2,r2,#2
+ 516 000a 8350     	 str r3,[r0,r2]
+1245:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1246:../Libraries/XMCLib/src/xmc_vadc.c ****   /* program BRSMR register */
+1247:../Libraries/XMCLib/src/xmc_vadc.c ****   global_ptr->BRSMR = (uint32_t)((config->asmr)| (uint32_t)((uint32_t)XMC_VADC_GATEMODE_IGNORE << V
+ 517              	 .loc 1 1247 0
+ 518 000c 8A68     	 ldr r2,[r1,#8]
+ 519 000e 0123     	 mov r3,#1
+ 520 0010 1343     	 orr r3,r2
+ 521 0012 8122     	 mov r2,#129
+ 522 0014 9200     	 lsl r2,r2,#2
+ 523 0016 8350     	 str r3,[r0,r2]
+1248:../Libraries/XMCLib/src/xmc_vadc.c ****   
+1249:../Libraries/XMCLib/src/xmc_vadc.c **** #if (XMC_VADC_GROUP_AVAILABLE ==1U)
+1250:../Libraries/XMCLib/src/xmc_vadc.c ****   if (XMC_VADC_STARTMODE_CNR == (XMC_VADC_STARTMODE_t)(config->conv_start_mode))
+1251:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+1252:../Libraries/XMCLib/src/xmc_vadc.c ****     global_ptr->BRSMR |= (uint32_t)VADC_BRSMR_RPTDIS_Msk;
+1253:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+1254:../Libraries/XMCLib/src/xmc_vadc.c **** #endif
+1255:../Libraries/XMCLib/src/xmc_vadc.c ****   
+1256:../Libraries/XMCLib/src/xmc_vadc.c ****   #if (XMC_VADC_GROUP_AVAILABLE ==1U)
+1257:../Libraries/XMCLib/src/xmc_vadc.c ****   for(i=(uint8_t)0; i < XMC_VADC_MAXIMUM_NUM_GROUPS; i++)
+1258:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+1259:../Libraries/XMCLib/src/xmc_vadc.c ****     XMC_VADC_GROUP_BackgroundEnableArbitrationSlot((XMC_VADC_GROUP_t *)g_xmc_vadc_group_array[i]);
+1260:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+1261:../Libraries/XMCLib/src/xmc_vadc.c ****   #endif
+1262:../Libraries/XMCLib/src/xmc_vadc.c ****   
+1263:../Libraries/XMCLib/src/xmc_vadc.c **** }
+ 524              	 .loc 1 1263 0
+ 525              	 
+ 526 0018 7047     	 bx lr
+ 527              	.L34:
+ 528 001a C046     	 .align 2
+ 529              	.L33:
+ 530 001c 00808000 	 .word 8421376
+ 531              	 .cfi_endproc
+ 532              	.LFE93:
+ 534              	 .section .text.XMC_VADC_GLOBAL_BackgroundSelectTrigger,"ax",%progbits
+ 535              	 .align 2
+ 536              	 .global XMC_VADC_GLOBAL_BackgroundSelectTrigger
+ 537              	 .code 16
+ 538              	 .thumb_func
+ 540              	XMC_VADC_GLOBAL_BackgroundSelectTrigger:
+ 541              	.LFB94:
+1264:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1265:../Libraries/XMCLib/src/xmc_vadc.c **** /* API to select one of the 16 inputs as a trigger for background scan request source */
+1266:../Libraries/XMCLib/src/xmc_vadc.c **** void XMC_VADC_GLOBAL_BackgroundSelectTrigger(XMC_VADC_GLOBAL_t *const global_ptr, const uint32_t in
+1267:../Libraries/XMCLib/src/xmc_vadc.c **** {
+ 542              	 .loc 1 1267 0
+ 543              	 .cfi_startproc
+ 544              	.LVL45:
+ 545 0000 10B5     	 push {r4,lr}
+ 546              	.LCFI7:
+ 547              	 .cfi_def_cfa_offset 8
+ 548              	 .cfi_offset 4,-8
+ 549              	 .cfi_offset 14,-4
+1268:../Libraries/XMCLib/src/xmc_vadc.c ****   uint32_t scanctrl;
+1269:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1270:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("VADC_BCKGND_SelectTriggerInput:Wrong Module Pointer", (global_ptr == VADC))
+1271:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GLOBAL_BackgroundSelectTrigger:Wrong Trigger Port", ((input_num)< XMC_VADC_N
+1272:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1273:../Libraries/XMCLib/src/xmc_vadc.c ****   
+1274:../Libraries/XMCLib/src/xmc_vadc.c ****   scanctrl       = global_ptr->BRSCTRL;
+ 550              	 .loc 1 1274 0
+ 551 0002 8022     	 mov r2,#128
+ 552 0004 9200     	 lsl r2,r2,#2
+ 553 0006 8458     	 ldr r4,[r0,r2]
+ 554              	.LVL46:
+1275:../Libraries/XMCLib/src/xmc_vadc.c ****   scanctrl      |= (uint32_t)VADC_BRSCTRL_XTWC_Msk;
+1276:../Libraries/XMCLib/src/xmc_vadc.c ****   scanctrl      &= ~((uint32_t)VADC_BRSCTRL_XTSEL_Msk);
+ 555              	 .loc 1 1276 0
+ 556 0008 044B     	 ldr r3,.L36
+ 557 000a 2340     	 and r3,r4
+ 558 000c 8024     	 mov r4,#128
+ 559              	.LVL47:
+ 560 000e 2402     	 lsl r4,r4,#8
+ 561 0010 2343     	 orr r3,r4
+ 562              	.LVL48:
+1277:../Libraries/XMCLib/src/xmc_vadc.c ****   scanctrl      |= (uint32_t)(input_num << VADC_BRSCTRL_XTSEL_Pos);
+ 563              	 .loc 1 1277 0
+ 564 0012 0902     	 lsl r1,r1,#8
+ 565              	.LVL49:
+ 566 0014 1943     	 orr r1,r3
+ 567              	.LVL50:
+1278:../Libraries/XMCLib/src/xmc_vadc.c ****   global_ptr->BRSCTRL  = scanctrl;
+ 568              	 .loc 1 1278 0
+ 569 0016 8150     	 str r1,[r0,r2]
+1279:../Libraries/XMCLib/src/xmc_vadc.c **** }
+ 570              	 .loc 1 1279 0
+ 571              	 
+ 572 0018 10BD     	 pop {r4,pc}
+ 573              	.L37:
+ 574 001a C046     	 .align 2
+ 575              	.L36:
+ 576 001c FFF0FFFF 	 .word -3841
+ 577              	 .cfi_endproc
+ 578              	.LFE94:
+ 580              	 .section .text.XMC_VADC_GLOBAL_BackgroundSelectTriggerEdge,"ax",%progbits
+ 581              	 .align 2
+ 582              	 .global XMC_VADC_GLOBAL_BackgroundSelectTriggerEdge
+ 583              	 .code 16
+ 584              	 .thumb_func
+ 586              	XMC_VADC_GLOBAL_BackgroundSelectTriggerEdge:
+ 587              	.LFB95:
+1280:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1281:../Libraries/XMCLib/src/xmc_vadc.c **** /* Select a trigger edge*/
+1282:../Libraries/XMCLib/src/xmc_vadc.c **** void XMC_VADC_GLOBAL_BackgroundSelectTriggerEdge(XMC_VADC_GLOBAL_t *const global_ptr,
+1283:../Libraries/XMCLib/src/xmc_vadc.c ****                                                  const XMC_VADC_TRIGGER_EDGE_t trigger_edge)
+1284:../Libraries/XMCLib/src/xmc_vadc.c **** {
+ 588              	 .loc 1 1284 0
+ 589              	 .cfi_startproc
+ 590              	.LVL51:
+ 591 0000 10B5     	 push {r4,lr}
+ 592              	.LCFI8:
+ 593              	 .cfi_def_cfa_offset 8
+ 594              	 .cfi_offset 4,-8
+ 595              	 .cfi_offset 14,-4
+1285:../Libraries/XMCLib/src/xmc_vadc.c ****   uint32_t scanctrl;
+1286:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1287:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GLOBAL_BackgroundSelectTriggerEdge:Wrong Global Pointer", (global_ptr == VAD
+1288:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GLOBAL_BackgroundSelectTriggerEdge:Wrong Trigger Port",
+1289:../Libraries/XMCLib/src/xmc_vadc.c ****             ((trigger_edge)<= XMC_VADC_TRIGGER_EDGE_ANY))
+1290:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1291:../Libraries/XMCLib/src/xmc_vadc.c ****   scanctrl      = global_ptr->BRSCTRL;
+ 596              	 .loc 1 1291 0
+ 597 0002 8022     	 mov r2,#128
+ 598 0004 9200     	 lsl r2,r2,#2
+ 599 0006 8458     	 ldr r4,[r0,r2]
+ 600              	.LVL52:
+1292:../Libraries/XMCLib/src/xmc_vadc.c ****   scanctrl     |= (uint32_t) VADC_BRSCTRL_XTWC_Msk;
+1293:../Libraries/XMCLib/src/xmc_vadc.c ****   scanctrl     &= ~((uint32_t)VADC_BRSCTRL_XTMODE_Msk);
+ 601              	 .loc 1 1293 0
+ 602 0008 044B     	 ldr r3,.L39
+ 603 000a 2340     	 and r3,r4
+ 604 000c 8024     	 mov r4,#128
+ 605              	.LVL53:
+ 606 000e 2402     	 lsl r4,r4,#8
+ 607 0010 2343     	 orr r3,r4
+ 608              	.LVL54:
+1294:../Libraries/XMCLib/src/xmc_vadc.c ****   scanctrl     |= (uint32_t)((uint32_t)trigger_edge << VADC_BRSCTRL_XTMODE_Pos);
+ 609              	 .loc 1 1294 0
+ 610 0012 4903     	 lsl r1,r1,#13
+ 611              	.LVL55:
+ 612 0014 1943     	 orr r1,r3
+ 613              	.LVL56:
+1295:../Libraries/XMCLib/src/xmc_vadc.c ****   global_ptr->BRSCTRL  = scanctrl;
+ 614              	 .loc 1 1295 0
+ 615 0016 8150     	 str r1,[r0,r2]
+1296:../Libraries/XMCLib/src/xmc_vadc.c **** }
+ 616              	 .loc 1 1296 0
+ 617              	 
+ 618 0018 10BD     	 pop {r4,pc}
+ 619              	.L40:
+ 620 001a C046     	 .align 2
+ 621              	.L39:
+ 622 001c FF9FFFFF 	 .word -24577
+ 623              	 .cfi_endproc
+ 624              	.LFE95:
+ 626              	 .section .text.XMC_VADC_GLOBAL_BackgroundSelectGating,"ax",%progbits
+ 627              	 .align 2
+ 628              	 .global XMC_VADC_GLOBAL_BackgroundSelectGating
+ 629              	 .code 16
+ 630              	 .thumb_func
+ 632              	XMC_VADC_GLOBAL_BackgroundSelectGating:
+ 633              	.LFB96:
+1297:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1298:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1299:../Libraries/XMCLib/src/xmc_vadc.c **** /* API to select one of the 16 inputs as a trigger gate for background scan request source */
+1300:../Libraries/XMCLib/src/xmc_vadc.c **** void XMC_VADC_GLOBAL_BackgroundSelectGating(XMC_VADC_GLOBAL_t *const global_ptr, const uint32_t inp
+1301:../Libraries/XMCLib/src/xmc_vadc.c **** {
+ 634              	 .loc 1 1301 0
+ 635              	 .cfi_startproc
+ 636              	.LVL57:
+ 637 0000 10B5     	 push {r4,lr}
+ 638              	.LCFI9:
+ 639              	 .cfi_def_cfa_offset 8
+ 640              	 .cfi_offset 4,-8
+ 641              	 .cfi_offset 14,-4
+1302:../Libraries/XMCLib/src/xmc_vadc.c ****   uint32_t scanctrl;
+1303:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1304:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GLOBAL_BackgroundSelectGating:Wrong Module Pointer", (global_ptr == VADC))
+1305:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GLOBAL_BackgroundSelectGating:Wrong Gating Port", ((input_num)< XMC_VADC_NUM
+1306:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1307:../Libraries/XMCLib/src/xmc_vadc.c ****   scanctrl       = global_ptr->BRSCTRL;
+ 642              	 .loc 1 1307 0
+ 643 0002 8022     	 mov r2,#128
+ 644 0004 9200     	 lsl r2,r2,#2
+ 645 0006 8458     	 ldr r4,[r0,r2]
+ 646              	.LVL58:
+1308:../Libraries/XMCLib/src/xmc_vadc.c ****   scanctrl      |= (uint32_t)VADC_BRSCTRL_GTWC_Msk;
+1309:../Libraries/XMCLib/src/xmc_vadc.c ****   scanctrl      &= ~((uint32_t)VADC_BRSCTRL_GTSEL_Msk);
+ 647              	 .loc 1 1309 0
+ 648 0008 044B     	 ldr r3,.L42
+ 649 000a 2340     	 and r3,r4
+ 650 000c 8024     	 mov r4,#128
+ 651              	.LVL59:
+ 652 000e 2404     	 lsl r4,r4,#16
+ 653 0010 2343     	 orr r3,r4
+ 654              	.LVL60:
+1310:../Libraries/XMCLib/src/xmc_vadc.c ****   scanctrl      |= (uint32_t)(input_num << VADC_BRSCTRL_GTSEL_Pos);
+ 655              	 .loc 1 1310 0
+ 656 0012 0904     	 lsl r1,r1,#16
+ 657              	.LVL61:
+ 658 0014 1943     	 orr r1,r3
+ 659              	.LVL62:
+1311:../Libraries/XMCLib/src/xmc_vadc.c ****   global_ptr->BRSCTRL  = scanctrl;
+ 660              	 .loc 1 1311 0
+ 661 0016 8150     	 str r1,[r0,r2]
+1312:../Libraries/XMCLib/src/xmc_vadc.c **** }
+ 662              	 .loc 1 1312 0
+ 663              	 
+ 664 0018 10BD     	 pop {r4,pc}
+ 665              	.L43:
+ 666 001a C046     	 .align 2
+ 667              	.L42:
+ 668 001c FFFFF0FF 	 .word -983041
+ 669              	 .cfi_endproc
+ 670              	.LFE96:
+ 672              	 .section .text.XMC_VADC_GLOBAL_BackgroundAbortSequence,"ax",%progbits
+ 673              	 .align 2
+ 674              	 .global XMC_VADC_GLOBAL_BackgroundAbortSequence
+ 675              	 .code 16
+ 676              	 .thumb_func
+ 678              	XMC_VADC_GLOBAL_BackgroundAbortSequence:
+ 679              	.LFB97:
+1313:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1314:../Libraries/XMCLib/src/xmc_vadc.c **** /* API to abort ongoing conversion of a sequence */
+1315:../Libraries/XMCLib/src/xmc_vadc.c **** void XMC_VADC_GLOBAL_BackgroundAbortSequence(XMC_VADC_GLOBAL_t *const global_ptr)
+1316:../Libraries/XMCLib/src/xmc_vadc.c **** {
+ 680              	 .loc 1 1316 0
+ 681              	 .cfi_startproc
+ 682              	.LVL63:
+ 683 0000 70B5     	 push {r4,r5,r6,lr}
+ 684              	.LCFI10:
+ 685              	 .cfi_def_cfa_offset 16
+ 686              	 .cfi_offset 4,-16
+ 687              	 .cfi_offset 5,-12
+ 688              	 .cfi_offset 6,-8
+ 689              	 .cfi_offset 14,-4
+1317:../Libraries/XMCLib/src/xmc_vadc.c ****   uint32_t brsctrl;
+1318:../Libraries/XMCLib/src/xmc_vadc.c **** #if (XMC_VADC_GROUP_AVAILABLE ==1U)
+1319:../Libraries/XMCLib/src/xmc_vadc.c ****   uint32_t i;
+1320:../Libraries/XMCLib/src/xmc_vadc.c ****   uint8_t grp_asen2_flag[XMC_VADC_MAXIMUM_NUM_GROUPS];
+1321:../Libraries/XMCLib/src/xmc_vadc.c **** #endif
+1322:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GLOBAL_BackgroundAbortSequence:Wrong Module Pointer", (global_ptr == VADC))
+1323:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1324:../Libraries/XMCLib/src/xmc_vadc.c ****   /* To disable trigger and gating before abort*/
+1325:../Libraries/XMCLib/src/xmc_vadc.c ****   brsctrl = global_ptr->BRSCTRL;
+ 690              	 .loc 1 1325 0
+ 691 0002 8023     	 mov r3,#128
+ 692 0004 9B00     	 lsl r3,r3,#2
+ 693 0006 C258     	 ldr r2,[r0,r3]
+ 694              	.LVL64:
+1326:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1327:../Libraries/XMCLib/src/xmc_vadc.c ****   global_ptr->BRSCTRL =(0U | (uint32_t)VADC_BRSCTRL_XTWC_Msk | (uint32_t)VADC_BRSCTRL_GTWC_Msk);
+ 695              	 .loc 1 1327 0
+ 696 0008 054C     	 ldr r4,.L45
+ 697 000a C450     	 str r4,[r0,r3]
+1328:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1329:../Libraries/XMCLib/src/xmc_vadc.c ****   /* Disable Background Request source */
+1330:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1331:../Libraries/XMCLib/src/xmc_vadc.c **** #if (XMC_VADC_GROUP_AVAILABLE ==1U)
+1332:../Libraries/XMCLib/src/xmc_vadc.c ****   for(i=(uint8_t)0; i < XMC_VADC_MAXIMUM_NUM_GROUPS; i++)
+1333:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+1334:../Libraries/XMCLib/src/xmc_vadc.c ****     grp_asen2_flag[i] = (uint8_t)(g_xmc_vadc_group_array[i]->ARBPR >> VADC_G_ARBPR_ASEN2_Pos);
+1335:../Libraries/XMCLib/src/xmc_vadc.c ****     XMC_VADC_GROUP_BackgroundDisableArbitrationSlot((XMC_VADC_GROUP_t *)g_xmc_vadc_group_array[i]);
+1336:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+1337:../Libraries/XMCLib/src/xmc_vadc.c **** #endif
+1338:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1339:../Libraries/XMCLib/src/xmc_vadc.c ****   /* Abort the ongoing sequence */
+1340:../Libraries/XMCLib/src/xmc_vadc.c ****   global_ptr->BRSMR |= (uint32_t)VADC_BRSMR_CLRPND_Msk;
+ 698              	 .loc 1 1340 0
+ 699 000c 8125     	 mov r5,#129
+ 700 000e AD00     	 lsl r5,r5,#2
+ 701 0010 4159     	 ldr r1,[r0,r5]
+ 702 0012 8026     	 mov r6,#128
+ 703 0014 7600     	 lsl r6,r6,#1
+ 704 0016 3143     	 orr r1,r6
+ 705 0018 4151     	 str r1,[r0,r5]
+1341:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1342:../Libraries/XMCLib/src/xmc_vadc.c **** #if (XMC_VADC_GROUP_AVAILABLE ==1U)
+1343:../Libraries/XMCLib/src/xmc_vadc.c ****   /* Enable Background Request source */
+1344:../Libraries/XMCLib/src/xmc_vadc.c ****   for(i=(uint8_t)0; i < XMC_VADC_MAXIMUM_NUM_GROUPS; i++)
+1345:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+1346:../Libraries/XMCLib/src/xmc_vadc.c ****     if ((uint8_t)1 == grp_asen2_flag[i])
+1347:../Libraries/XMCLib/src/xmc_vadc.c ****     {
+1348:../Libraries/XMCLib/src/xmc_vadc.c ****       XMC_VADC_GROUP_BackgroundEnableArbitrationSlot((XMC_VADC_GROUP_t*)g_xmc_vadc_group_array[i]);
+1349:../Libraries/XMCLib/src/xmc_vadc.c ****     }
+1350:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+1351:../Libraries/XMCLib/src/xmc_vadc.c **** #endif
+1352:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1353:../Libraries/XMCLib/src/xmc_vadc.c ****   /* Re-enable any disabled trigger and gating*/
+1354:../Libraries/XMCLib/src/xmc_vadc.c ****   global_ptr->BRSCTRL =(brsctrl | (uint32_t)VADC_BRSCTRL_XTWC_Msk | (uint32_t)VADC_BRSCTRL_GTWC_Msk
+ 706              	 .loc 1 1354 0
+ 707 001a 2243     	 orr r2,r4
+ 708              	.LVL65:
+ 709 001c C250     	 str r2,[r0,r3]
+1355:../Libraries/XMCLib/src/xmc_vadc.c **** }
+ 710              	 .loc 1 1355 0
+ 711              	 
+ 712 001e 70BD     	 pop {r4,r5,r6,pc}
+ 713              	.L46:
+ 714              	 .align 2
+ 715              	.L45:
+ 716 0020 00808000 	 .word 8421376
+ 717              	 .cfi_endproc
+ 718              	.LFE97:
+ 720              	 .section .text.XMC_VADC_GLOBAL_BackgroundGetNumChannelsPending,"ax",%progbits
+ 721              	 .align 2
+ 722              	 .global XMC_VADC_GLOBAL_BackgroundGetNumChannelsPending
+ 723              	 .code 16
+ 724              	 .thumb_func
+ 726              	XMC_VADC_GLOBAL_BackgroundGetNumChannelsPending:
+ 727              	.LFB98:
+1356:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1357:../Libraries/XMCLib/src/xmc_vadc.c **** /* API to determine how many channels are awaiting conversion */
+1358:../Libraries/XMCLib/src/xmc_vadc.c **** uint32_t XMC_VADC_GLOBAL_BackgroundGetNumChannelsPending(XMC_VADC_GLOBAL_t *const global_ptr)
+1359:../Libraries/XMCLib/src/xmc_vadc.c **** {
+ 728              	 .loc 1 1359 0
+ 729              	 .cfi_startproc
+ 730              	.LVL66:
+ 731 0000 30B5     	 push {r4,r5,lr}
+ 732              	.LCFI11:
+ 733              	 .cfi_def_cfa_offset 12
+ 734              	 .cfi_offset 4,-12
+ 735              	 .cfi_offset 5,-8
+ 736              	 .cfi_offset 14,-4
+ 737 0002 041C     	 mov r4,r0
+ 738              	.LVL67:
+1360:../Libraries/XMCLib/src/xmc_vadc.c ****   uint32_t reg;
+1361:../Libraries/XMCLib/src/xmc_vadc.c ****   uint32_t i;
+1362:../Libraries/XMCLib/src/xmc_vadc.c ****   uint32_t j;
+1363:../Libraries/XMCLib/src/xmc_vadc.c ****   uint32_t count;
+1364:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1365:../Libraries/XMCLib/src/xmc_vadc.c ****   XMC_ASSERT("XMC_VADC_GLOBAL_BackgroundGetNumChannelsPending:Wrong Module Pointer", (global_ptr ==
+1366:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1367:../Libraries/XMCLib/src/xmc_vadc.c ****   count = 0U;
+ 739              	 .loc 1 1367 0
+ 740 0004 0020     	 mov r0,#0
+ 741              	.LVL68:
+1368:../Libraries/XMCLib/src/xmc_vadc.c ****   
+1369:../Libraries/XMCLib/src/xmc_vadc.c ****   /* Loop through all groups and find out who is awaiting conversion */
+1370:../Libraries/XMCLib/src/xmc_vadc.c ****   for(i = 0U; i < XMC_VADC_MAXIMUM_NUM_GROUPS; i++)
+ 742              	 .loc 1 1370 0
+ 743 0006 0021     	 mov r1,#0
+ 744 0008 13E0     	 b .L48
+ 745              	.LVL69:
+ 746              	.L53:
+1371:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+1372:../Libraries/XMCLib/src/xmc_vadc.c ****     if (global_ptr->BRSSEL[i])
+ 747              	 .loc 1 1372 0
+ 748 000a 0B1C     	 mov r3,r1
+ 749 000c 6033     	 add r3,r3,#96
+ 750 000e 9B00     	 lsl r3,r3,#2
+ 751 0010 1B59     	 ldr r3,[r3,r4]
+ 752 0012 002B     	 cmp r3,#0
+ 753 0014 0CD0     	 beq .L49
+1373:../Libraries/XMCLib/src/xmc_vadc.c ****     {
+1374:../Libraries/XMCLib/src/xmc_vadc.c ****       reg = global_ptr->BRSPND[i];
+ 754              	 .loc 1 1374 0
+ 755 0016 0B1C     	 mov r3,r1
+ 756 0018 7033     	 add r3,r3,#112
+ 757 001a 9B00     	 lsl r3,r3,#2
+ 758 001c 1A59     	 ldr r2,[r3,r4]
+ 759              	.LVL70:
+1375:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1376:../Libraries/XMCLib/src/xmc_vadc.c ****       for(j=0U;j<XMC_VADC_NUM_CHANNELS_PER_GROUP;j++)
+ 760              	 .loc 1 1376 0
+ 761 001e 0023     	 mov r3,#0
+ 762 0020 04E0     	 b .L50
+ 763              	.LVL71:
+ 764              	.L52:
+1377:../Libraries/XMCLib/src/xmc_vadc.c ****       {
+1378:../Libraries/XMCLib/src/xmc_vadc.c ****         if (reg & 1U)
+ 765              	 .loc 1 1378 0
+ 766 0022 D507     	 lsl r5,r2,#31
+ 767 0024 00D5     	 bpl .L51
+1379:../Libraries/XMCLib/src/xmc_vadc.c ****         {
+1380:../Libraries/XMCLib/src/xmc_vadc.c ****           count++;
+ 768              	 .loc 1 1380 0
+ 769 0026 0130     	 add r0,r0,#1
+ 770              	.LVL72:
+ 771              	.L51:
+1381:../Libraries/XMCLib/src/xmc_vadc.c ****         }
+1382:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1383:../Libraries/XMCLib/src/xmc_vadc.c ****         reg = reg >> 1U;
+ 772              	 .loc 1 1383 0 discriminator 2
+ 773 0028 5208     	 lsr r2,r2,#1
+ 774              	.LVL73:
+1376:../Libraries/XMCLib/src/xmc_vadc.c ****       {
+ 775              	 .loc 1 1376 0 discriminator 2
+ 776 002a 0133     	 add r3,r3,#1
+ 777              	.LVL74:
+ 778              	.L50:
+1376:../Libraries/XMCLib/src/xmc_vadc.c ****       {
+ 779              	 .loc 1 1376 0 is_stmt 0 discriminator 1
+ 780 002c 072B     	 cmp r3,#7
+ 781 002e F8D9     	 bls .L52
+ 782              	.LVL75:
+ 783              	.L49:
+1370:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+ 784              	 .loc 1 1370 0 is_stmt 1 discriminator 2
+ 785 0030 0131     	 add r1,r1,#1
+ 786              	.LVL76:
+ 787              	.L48:
+1370:../Libraries/XMCLib/src/xmc_vadc.c ****   {
+ 788              	 .loc 1 1370 0 is_stmt 0 discriminator 1
+ 789 0032 0129     	 cmp r1,#1
+ 790 0034 E9D9     	 bls .L53
+1384:../Libraries/XMCLib/src/xmc_vadc.c ****       }
+1385:../Libraries/XMCLib/src/xmc_vadc.c ****     }
+1386:../Libraries/XMCLib/src/xmc_vadc.c ****   }
+1387:../Libraries/XMCLib/src/xmc_vadc.c **** 
+1388:../Libraries/XMCLib/src/xmc_vadc.c ****   return count;
+1389:../Libraries/XMCLib/src/xmc_vadc.c **** }
+ 791              	 .loc 1 1389 0 is_stmt 1
+ 792              	 
+ 793              	.LVL77:
+ 794 0036 30BD     	 pop {r4,r5,pc}
+ 795              	 .cfi_endproc
+ 796              	.LFE98:
+ 798              	 .text
+ 799              	.Letext0:
+ 800              	 .file 2 "c:\\davev4-64bit\\dave-4.3.2\\eclipse\\arm-gcc-49\\arm-none-eabi\\include\\machine\\_default_types.h"
+ 801              	 .file 3 "c:\\davev4-64bit\\dave-4.3.2\\eclipse\\arm-gcc-49\\arm-none-eabi\\include\\stdint.h"
+ 802              	 .file 4 "C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Infineon/XMC1100_series/Include/XMC1100.h"
+ 803              	 .file 5 "C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/XMCLib/inc/xmc1_scu.h"
+ 804              	 .file 6 "C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/XMCLib/inc/xmc_vadc.h"
+ 805              	 .file 7 "C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/CMSIS/Infineon/XMC1100_series/Include/system_XMC1100.h"
+ 806              	 .file 8 "C:/Projekte/Infineon_Dave/eHaJo/FlapFlap/Libraries/XMCLib/inc/xmc_scu.h"
+DEFINED SYMBOLS
+                            *ABS*:00000000 xmc_vadc.c
+    {standard input}:18     .text.XMC_VADC_GLOBAL_EnableModule:00000000 $t
+    {standard input}:23     .text.XMC_VADC_GLOBAL_EnableModule:00000000 XMC_VADC_GLOBAL_EnableModule
+    {standard input}:44     .text.XMC_VADC_GLOBAL_DisableModule:00000000 $t
+    {standard input}:49     .text.XMC_VADC_GLOBAL_DisableModule:00000000 XMC_VADC_GLOBAL_DisableModule
+    {standard input}:69     .text.XMC_VADC_GLOBAL_Init:00000000 $t
+    {standard input}:74     .text.XMC_VADC_GLOBAL_Init:00000000 XMC_VADC_GLOBAL_Init
+    {standard input}:134    .text.XMC_VADC_GLOBAL_Init:0000003c $d
+    {standard input}:141    .text.XMC_VADC_GLOBAL_InputClassInit:00000000 $t
+    {standard input}:146    .text.XMC_VADC_GLOBAL_InputClassInit:00000000 XMC_VADC_GLOBAL_InputClassInit
+    {standard input}:167    .text.XMC_VADC_GLOBAL_InputClassInit:0000000c $d
+    {standard input}:172    .text.XMC_VADC_GLOBAL_StartupCalibration:00000000 $t
+    {standard input}:177    .text.XMC_VADC_GLOBAL_StartupCalibration:00000000 XMC_VADC_GLOBAL_StartupCalibration
+    {standard input}:202    .text.XMC_VADC_GLOBAL_StartupCalibration:00000018 $d
+    {standard input}:207    .text.XMC_VADC_GLOBAL_SetCompareValue:00000000 $t
+    {standard input}:212    .text.XMC_VADC_GLOBAL_SetCompareValue:00000000 XMC_VADC_GLOBAL_SetCompareValue
+    {standard input}:237    .text.XMC_VADC_GLOBAL_GetCompareResult:00000000 $t
+    {standard input}:242    .text.XMC_VADC_GLOBAL_GetCompareResult:00000000 XMC_VADC_GLOBAL_GetCompareResult
+    {standard input}:274    .text.XMC_VADC_GLOBAL_SetResultEventInterruptNode:00000000 $t
+    {standard input}:279    .text.XMC_VADC_GLOBAL_SetResultEventInterruptNode:00000000 XMC_VADC_GLOBAL_SetResultEventInterruptNode
+    {standard input}:315    .text.XMC_VADC_GLOBAL_SetResultEventInterruptNode:00000020 $d
+    {standard input}:320    .text.XMC_VADC_GLOBAL_BackgroundSetReqSrcEventInterruptNode:00000000 $t
+    {standard input}:325    .text.XMC_VADC_GLOBAL_BackgroundSetReqSrcEventInterruptNode:00000000 XMC_VADC_GLOBAL_BackgroundSetReqSrcEventInterruptNode
+    {standard input}:361    .text.XMC_VADC_GLOBAL_SHS_Init:00000000 $t
+    {standard input}:366    .text.XMC_VADC_GLOBAL_SHS_Init:00000000 XMC_VADC_GLOBAL_SHS_Init
+    {standard input}:384    .text.XMC_VADC_GLOBAL_SHS_SetGainFactor:00000000 $t
+    {standard input}:389    .text.XMC_VADC_GLOBAL_SHS_SetGainFactor:00000000 XMC_VADC_GLOBAL_SHS_SetGainFactor
+    {standard input}:454    .text.XMC_VADC_GLOBAL_SHS_SetSigmaDeltaLoop:00000000 $t
+    {standard input}:459    .text.XMC_VADC_GLOBAL_SHS_SetSigmaDeltaLoop:00000000 XMC_VADC_GLOBAL_SHS_SetSigmaDeltaLoop
+    {standard input}:495    .text.XMC_VADC_GLOBAL_SHS_SetSigmaDeltaLoop:0000001c $d
+    {standard input}:500    .text.XMC_VADC_GLOBAL_BackgroundInit:00000000 $t
+    {standard input}:505    .text.XMC_VADC_GLOBAL_BackgroundInit:00000000 XMC_VADC_GLOBAL_BackgroundInit
+    {standard input}:530    .text.XMC_VADC_GLOBAL_BackgroundInit:0000001c $d
+    {standard input}:535    .text.XMC_VADC_GLOBAL_BackgroundSelectTrigger:00000000 $t
+    {standard input}:540    .text.XMC_VADC_GLOBAL_BackgroundSelectTrigger:00000000 XMC_VADC_GLOBAL_BackgroundSelectTrigger
+    {standard input}:576    .text.XMC_VADC_GLOBAL_BackgroundSelectTrigger:0000001c $d
+    {standard input}:581    .text.XMC_VADC_GLOBAL_BackgroundSelectTriggerEdge:00000000 $t
+    {standard input}:586    .text.XMC_VADC_GLOBAL_BackgroundSelectTriggerEdge:00000000 XMC_VADC_GLOBAL_BackgroundSelectTriggerEdge
+    {standard input}:622    .text.XMC_VADC_GLOBAL_BackgroundSelectTriggerEdge:0000001c $d
+    {standard input}:627    .text.XMC_VADC_GLOBAL_BackgroundSelectGating:00000000 $t
+    {standard input}:632    .text.XMC_VADC_GLOBAL_BackgroundSelectGating:00000000 XMC_VADC_GLOBAL_BackgroundSelectGating
+    {standard input}:668    .text.XMC_VADC_GLOBAL_BackgroundSelectGating:0000001c $d
+    {standard input}:673    .text.XMC_VADC_GLOBAL_BackgroundAbortSequence:00000000 $t
+    {standard input}:678    .text.XMC_VADC_GLOBAL_BackgroundAbortSequence:00000000 XMC_VADC_GLOBAL_BackgroundAbortSequence
+    {standard input}:716    .text.XMC_VADC_GLOBAL_BackgroundAbortSequence:00000020 $d
+    {standard input}:721    .text.XMC_VADC_GLOBAL_BackgroundGetNumChannelsPending:00000000 $t
+    {standard input}:726    .text.XMC_VADC_GLOBAL_BackgroundGetNumChannelsPending:00000000 XMC_VADC_GLOBAL_BackgroundGetNumChannelsPending
+                     .debug_frame:00000010 $d
+
+UNDEFINED SYMBOLS
+XMC_SCU_CLOCK_UngatePeripheralClock
+XMC_SCU_CLOCK_GatePeripheralClock
