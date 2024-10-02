@@ -91,7 +91,7 @@ while True:
         # Winkel und Stufe auf der Konsole ausgeben
         print(f"Winkel: {angle:.2f}°, Stufe: {step}")
 
-        # Wenn der GPIO20 auf HIGH gesetzt wurde und die Stufe 28 erreicht ist
+        # Wenn der GPIO20 auf HIGH gesetzt wurde und die Stufe 28 erreicht ist oder alternativ der Widerstand zur Ansteuerung des Triacs abbrennt
         if waiting_for_step_28 and step == 28:
             pin.value = False  # Setzt den GPIO20 auf LOW
             waiting_for_step_28 = False  # Beendet das Warten auf Stufe 28
