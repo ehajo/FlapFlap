@@ -16,7 +16,7 @@ import rtc
 # I2C Setup für den TLV493D-A1B6 an GP16 (SDA) und GP17 (SCL)
 i2c = busio.I2C(board.GP17, board.GP16)
 sensor = adafruit_tlv493d.TLV493D(i2c)
-sensor.fast_mode = True  # Fast Mode aktivieren
+sensor.fast_mode = False  # Fast Mode aktivieren
 
 # GPIO21 als Ausgang konfigurieren
 pin = digitalio.DigitalInOut(board.GP21)
@@ -45,13 +45,13 @@ def calculate_step(angle, zero_angle):
     return int(adjusted_angle / (360 / 62))
 
 # Funktion zur Mittelung von Sensorwerten
-def average_magnetic_field(sensor, num_samples=5):
+def average_magnetic_field(sensor, num_samples=3):
     total_x, total_y = 0, 0
     for _ in range(num_samples):
         magnetic = sensor.magnetic
         total_x += magnetic[0]
         total_y += magnetic[1]
-        time.sleep(0.01)  # Zeit zwischen den Messungen
+        # time.sleep(0.01)  # Zeit zwischen den Messungen
     return total_x / num_samples, total_y / num_samples
 
 # Hier das Uhrzeit Zeugs:
@@ -174,9 +174,12 @@ step_target = current_rtc_time.tm_min  # Zielstufe auf Minuten setzen
 magnetic = average_magnetic_field(sensor)
 angle = calculate_rotation(magnetic[0], magnetic[1])
 step = calculate_step(angle, calibrated_zero_angle)
+if step_target > 30: # Leerblatt bei 31, also +1
+    step_target = step_target + 1
 
 while True:
     # Überprüfung, ob Taste gedrückt ist (gegen Masse gezogen)
+    # TODO: Calibration-Modus erstellen. Wenn Taste gedrückt, die Automatik unten ausschalten!
     if not button.value:
         calibrate_zero_point()
         time.sleep(0.5)  # Entprellen der Taste
@@ -187,9 +190,11 @@ while True:
         # Aktualisiere die Zielstufe auf die aktuellen Minuten
         current_rtc_time = rtc.RTC().datetime
         step_target = current_rtc_time.tm_min  # Zielstufe auf aktuelle Minute setzen
-        if step_target > 30: # Leerblatt bei 31, also -1
-            step_target = step_target - 1
+        if step_target > 30: # Leerblatt bei 31, also +1
+            step_target = step_target + 1
         print(f"Zielstufe {step_target} erreicht. Zeit: {current_rtc_time.tm_hour}:{current_rtc_time.tm_min}:{current_rtc_time.tm_sec}")
+        if step != step_target:
+            continue
         time.sleep(1)  # Im Sekundentakt, das sollte reichen!
     else:
         pin.value = True  # Setze GPIO21 auf HIGH, solange die Zielstufe nicht erreicht ist
