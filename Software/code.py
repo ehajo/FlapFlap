@@ -16,7 +16,7 @@ import rtc
 # I2C Setup für den TLV493D-A1B6 an GP16 (SDA) und GP17 (SCL)
 i2c = busio.I2C(board.GP17, board.GP16)
 sensor = adafruit_tlv493d.TLV493D(i2c)
-sensor.fast_mode = False  # Fast Mode aktivieren
+sensor.fast_mode = False  # Fast Mode deaktivieren
 
 # GPIO21 als Ausgang konfigurieren
 pin = digitalio.DigitalInOut(board.GP21)
@@ -151,7 +151,8 @@ def save_config():
 # Nullpunktkalibrierung
 def calibrate_zero_point():
     global calibrated_zero_angle
-    magnetic = average_magnetic_field(sensor)
+    magnetic = average_magnetic_field(sensor, 1) # Erste Messung verwerfen
+    magnetic = average_magnetic_field(sensor, 10) # Und dann gscheid Glätten
     calibrated_zero_angle = calculate_rotation(magnetic[0], magnetic[1])
     print(f"Nullpunkt kalibriert bei {calibrated_zero_angle:.2f}°")
     save_config()  # Speichere die Kalibrierung in der Konfigurationsdatei
