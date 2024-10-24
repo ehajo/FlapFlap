@@ -41,8 +41,11 @@ def calculate_rotation(x, y):
 
 # Funktion zur Berechnung der Stufe auf Basis des Winkels und Nullpunkts
 def calculate_step(angle, zero_angle):
+    global pages
     adjusted_angle = (zero_angle - angle) % 360
-    return int(adjusted_angle / (360 / 62))
+    return int(adjusted_angle / (360 / pages))
+    # 62 Blaetter Minutenanzeige
+    # 40 Blaetter Stundenanzeige
 
 # Funktion zur Mittelung von Sensorwerten
 def average_magnetic_field(sensor, num_samples=3):
@@ -122,19 +125,24 @@ def get_ntp_time():
 # Funktion zum Laden der Konfiguration (Nullpunktwinkel)
 def load_config():
     global calibrated_zero_angle
+    global pages
     try:
         with open("/config.json", "r") as f:
             config = json.load(f)
             calibrated_zero_angle = config.get("calibrated_zero_angle", 0)
             print(f"Konfiguration geladen: Nullpunkt = {calibrated_zero_angle}")
+            pages = config.get("pages", 20)
+            print(f"Konfiguration geladen: Anzahl Blaetter = {pages}")
     except OSError:
         print("Keine Konfigurationsdatei gefunden. Verwende Standardwerte.")
 
 # Funktion zum Speichern der Konfiguration      
 def save_config():
     global calibrated_zero_angle
+    global pages
     config = {
-        "calibrated_zero_angle": calibrated_zero_angle
+        "calibrated_zero_angle": calibrated_zero_angle,
+        "pages": pages
     }
     # Deaktiviere den Schreibschutz, bevor du schreibst
     storage.remount("/", readonly=False, disable_concurrent_write_protection=True)
@@ -170,13 +178,19 @@ running = True  # Starte direkt im laufenden Zustand
 
 # Aktualisiere die Zielstufe auf die aktuellen Minuten
 current_rtc_time = rtc.RTC().datetime
-step_target = current_rtc_time.tm_min  # Zielstufe auf Minuten setzen
+if pages == 62:
+    step_target = current_rtc_time.tm_min  # Zielstufe auf Minuten setzen
+if pages == 40:
+    step_target = current_rtc_time.tm_hour  # Zielstufe auf Minuten setzen
+    
 
+magnetic = average_magnetic_field(sensor) # einen Wert verwerfen
 magnetic = average_magnetic_field(sensor)
 angle = calculate_rotation(magnetic[0], magnetic[1])
 step = calculate_step(angle, calibrated_zero_angle)
-if step_target > 30: # Leerblatt bei 31, also +1
-    step_target = step_target + 1
+if pages == 62:
+    if step_target > 30: # Leerblatt bei 31, also +1
+        step_target = step_target + 1
 
 while True:
     # Überprüfung, ob Taste gedrückt ist (gegen Masse gezogen)
@@ -190,9 +204,12 @@ while True:
         pin.value = False
         # Aktualisiere die Zielstufe auf die aktuellen Minuten
         current_rtc_time = rtc.RTC().datetime
-        step_target = current_rtc_time.tm_min  # Zielstufe auf aktuelle Minute setzen
-        if step_target > 30: # Leerblatt bei 31, also +1
-            step_target = step_target + 1
+        if pages == 62:
+            step_target = current_rtc_time.tm_min  # Zielstufe auf aktuelle Minute setzen
+            if step_target > 30: # Leerblatt bei 31, also +1
+                step_target = step_target + 1
+        if pages == 40:
+            step_target = current_rtc_time.tm_hour  # Zielstufe auf aktuelle Stunde setzen
         print(f"Zielstufe {step_target} erreicht. Zeit: {current_rtc_time.tm_hour}:{current_rtc_time.tm_min}:{current_rtc_time.tm_sec}")
         if step != step_target:
             continue
@@ -200,6 +217,7 @@ while True:
     else:
         pin.value = True  # Setze GPIO21 auf HIGH, solange die Zielstufe nicht erreicht ist
         # Sensorwerte lesen und aktuelle Stufe berechnen und zwar nur, wenn Zielstufe sich geändert hat
+        magnetic = average_magnetic_field(sensor) # ersten wert verwerfen
         magnetic = average_magnetic_field(sensor)
         angle = calculate_rotation(magnetic[0], magnetic[1])
         step = calculate_step(angle, calibrated_zero_angle)
