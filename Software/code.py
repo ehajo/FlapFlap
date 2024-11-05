@@ -12,11 +12,24 @@ import wifi
 import socketpool
 import adafruit_ntp
 import rtc
+import struct
 
 # I2C Setup für den TLV493D-A1B6 an GP16 (SDA) und GP17 (SCL)
 i2c = busio.I2C(board.GP17, board.GP16)
 sensor = adafruit_tlv493d.TLV493D(i2c)
 sensor.fast_mode = False  # Fast Mode deaktivieren
+
+# DS3231-Uhr initialisieren
+ds3231 = None
+try:
+    import adafruit_ds3231
+    ds3231 = adafruit_ds3231.DS3231(i2c)
+    print("DS3231 RTC initialisiert")
+except ValueError:
+    print("Kein DS3231 RTC verbunden")
+    
+# UART-Initialisierung auf UART0 (TX=Pin 0, RX=Pin 1)
+uart = busio.UART(board.GP0, board.GP1, baudrate=9600, timeout=0.1)
 
 # GPIO21 als Ausgang konfigurieren
 pin = digitalio.DigitalInOut(board.GP21)
@@ -42,10 +55,14 @@ def calculate_rotation(x, y):
 # Funktion zur Berechnung der Stufe auf Basis des Winkels und Nullpunkts
 def calculate_step(angle, zero_angle):
     global pages
+    if type == "Sekunden": 
+        pages = 62
+    elif type == "Minuten":
+        pages = 62
+    else: 
+        pages = 40
     adjusted_angle = (zero_angle - angle) % 360
     return int(adjusted_angle / (360 / pages))
-    # 62 Blaetter Minutenanzeige
-    # 40 Blaetter Stundenanzeige
 
 # Funktion zur Mittelung von Sensorwerten
 def average_magnetic_field(sensor, num_samples=3):
@@ -54,42 +71,26 @@ def average_magnetic_field(sensor, num_samples=3):
         magnetic = sensor.magnetic
         total_x += magnetic[0]
         total_y += magnetic[1]
-        # time.sleep(0.01)  # Zeit zwischen den Messungen
     return total_x / num_samples, total_y / num_samples
 
-# Hier das Uhrzeit Zeugs:
 # Funktion zur Ermittlung, ob Sommerzeit (MESZ) aktiv ist
 def is_dst_europe(now):
-    """Überprüft, ob Sommerzeit (MESZ) für Europa gilt"""
     year = now.tm_year
-    # Sommerzeit beginnt am letzten Sonntag im März
     start_dst = time.mktime((year, 3, 31, 2, 0, 0, 6, 0, -1))
-    while time.localtime(start_dst).tm_wday != 6:  # Wochentag prüfen (Sonntag = 6)
-        start_dst -= 86400  # Einen Tag zurückgehen
-
-    # Sommerzeit endet am letzten Sonntag im Oktober
+    while time.localtime(start_dst).tm_wday != 6:
+        start_dst -= 86400
     end_dst = time.mktime((year, 10, 31, 3, 0, 0, 6, 0, -1))
-    while time.localtime(end_dst).tm_wday != 6:  # Wochentag prüfen (Sonntag = 6)
-        end_dst -= 86400  # Einen Tag zurückgehen
-
-    # Prüfen, ob wir uns in der Sommerzeit befinden
+    while time.localtime(end_dst).tm_wday != 6:
+        end_dst -= 86400
     return start_dst <= time.mktime(now) < end_dst
 
 # Funktion zur Umrechnung der UTC-Zeit auf die Berliner Zeitzone
 def get_berlin_time(current_time):
-    # Konvertiere die UTC-Zeit in lokale Zeit (MEZ/MESZ)
     berlin_time = list(current_time)
-    
-    # MEZ ist UTC + 1 Stunde
     berlin_time[3] += 1
-    
-    # Prüfen, ob Sommerzeit (MESZ) aktiv ist
     if is_dst_europe(current_time):
-        berlin_time[3] += 1  # Sommerzeit ist UTC + 2 Stunden
-
-    # Um die Zeit korrekt zu behandeln (Überlauf bei Stunden)
+        berlin_time[3] += 1
     berlin_time = time.localtime(time.mktime(tuple(berlin_time)))
-    
     return berlin_time
 
 # WLAN-Verbindung
@@ -108,43 +109,52 @@ def connect_to_wifi():
     except OSError:
         print("Fehler beim Laden der WLAN-Konfiguration.")
 
-# Funktion zur Abfrage der aktuellen Zeit über NTP und Umrechnung auf Berliner Zeit
-def get_ntp_time():
+# Funktion zur Abfrage der aktuellen Zeit über NTP oder DS3231
+def get_time():
     try:
-        pool = socketpool.SocketPool(wifi.radio)
-        ntp = adafruit_ntp.NTP(pool)
-        current_time = ntp.datetime  # Hole UTC-Zeit
-        berlin_time = get_berlin_time(current_time)  # Wandle in Berliner Zeit um
-        rtc.RTC().datetime = berlin_time  # Systemzeit setzen
-        print("Aktuelle Uhrzeit (Berlin): ", berlin_time)
-        return berlin_time
+        if ds3231:
+            return ds3231.datetime
+        elif wifi.radio.ipv4_address:
+            pool = socketpool.SocketPool(wifi.radio)
+            ntp = adafruit_ntp.NTP(pool)
+            current_time = ntp.datetime
+            berlin_time = get_berlin_time(current_time)
+            rtc.RTC().datetime = berlin_time
+            if ds3231:
+                ds3231.datetime = berlin_time
+            # print("Aktuelle Uhrzeit (Berlin): ", berlin_time)
+            return berlin_time
     except Exception as e:
-        print(f"Fehler beim Abrufen der NTP-Zeit: {e}")
-        return None
+        print(f"Fehler bei Zeitabfrage: {e}")
+    return rtc.RTC().datetime
 
 # Funktion zum Laden der Konfiguration (Nullpunktwinkel)
 def load_config():
     global calibrated_zero_angle
-    global pages
+    global type
     try:
         with open("/config.json", "r") as f:
             config = json.load(f)
-            calibrated_zero_angle = config.get("calibrated_zero_angle", 0)
+            calibrated_zero_angle = config.get("calibrated_zero_angle", 1.234)
             print(f"Konfiguration geladen: Nullpunkt = {calibrated_zero_angle}")
-            pages = config.get("pages", 20)
-            print(f"Konfiguration geladen: Anzahl Blaetter = {pages}")
+            type = config.get("type", "Minuten")
+            if type == "Sekunden":
+                print("Ich bin eine Sekundenanzeige!")
+            elif type == "Minuten":
+                print("Ich bin eine Minutenanzeige!")
+            else:
+                print("Ich bin eine Stundenanzeige!")
     except OSError:
         print("Keine Konfigurationsdatei gefunden. Verwende Standardwerte.")
 
 # Funktion zum Speichern der Konfiguration      
 def save_config():
     global calibrated_zero_angle
-    global pages
+    global type
     config = {
         "calibrated_zero_angle": calibrated_zero_angle,
-        "pages": pages
+        "type": type
     }
-    # Deaktiviere den Schreibschutz, bevor du schreibst
     storage.remount("/", readonly=False, disable_concurrent_write_protection=True)
     try:
         with open("config.json", "w") as f:
@@ -153,74 +163,72 @@ def save_config():
     except Exception as e:
         print(f"Fehler beim Speichern der Konfiguration: {e}")
     finally:
-        # Setze den Schreibschutz nach dem Schreiben wieder
         storage.remount("/", readonly=True)
 
 # Nullpunktkalibrierung
 def calibrate_zero_point():
     global calibrated_zero_angle
-    magnetic = average_magnetic_field(sensor, 1) # Erste Messung verwerfen
-    magnetic = average_magnetic_field(sensor, 10) # Und dann gscheid Glätten
+    magnetic = average_magnetic_field(sensor, 1) 
+    magnetic = average_magnetic_field(sensor, 10)
     calibrated_zero_angle = calculate_rotation(magnetic[0], magnetic[1])
     print(f"Nullpunkt kalibriert bei {calibrated_zero_angle:.2f}°")
-    save_config()  # Speichere die Kalibrierung in der Konfigurationsdatei
+    save_config()
 
 # Hauptprogramm
-print("FlapFlap Version 0.9.1")
+print("FlapFlap Version 0.9.2")
 print("(c) eHaJo, 2024, Twitch-Livestream-Projekt")
-load_config()  # Lade die Konfigurationswerte beim Start
+load_config()
 connect_to_wifi()
-get_ntp_time()  # Zeit bei Programmstart abrufen
-last_output_time = time.monotonic()  # Für die 1-Sekunden-Taktung
+get_time()
+last_output_time = time.monotonic()
 
-# Hauptschleife
-running = True  # Starte direkt im laufenden Zustand
+running = True
 
-# Aktualisiere die Zielstufe auf die aktuellen Minuten
-current_rtc_time = rtc.RTC().datetime
-if pages == 62:
-    step_target = current_rtc_time.tm_min  # Zielstufe auf Minuten setzen
-if pages == 40:
-    step_target = current_rtc_time.tm_hour  # Zielstufe auf Minuten setzen
+current_rtc_time = get_time()
+if type == "Sekunden":
+    step_target = current_rtc_time.tm_sec
+elif type == "Minuten":
+    step_target = current_rtc_time.tm_min
+else: 
+    step_target = current_rtc_time.tm_hour
     
-
-magnetic = average_magnetic_field(sensor) # einen Wert verwerfen
+magnetic = average_magnetic_field(sensor)
 magnetic = average_magnetic_field(sensor)
 angle = calculate_rotation(magnetic[0], magnetic[1])
 step = calculate_step(angle, calibrated_zero_angle)
-if pages == 62:
-    if step_target > 30: # Leerblatt bei 31, also +1
-        step_target = step_target + 1
+if type == "Minuten" or type == "Sekunden":
+    if step_target > 30:
+        step_target += 1
 
 while True:
-    # Überprüfung, ob Taste gedrückt ist (gegen Masse gezogen)
-    # TODO: Calibration-Modus erstellen. Wenn Taste gedrückt, die Automatik unten ausschalten!
     if not button.value:
         calibrate_zero_point()
-        time.sleep(0.5)  # Entprellen der Taste
-
-    # Überprüfen, ob die Zielstufe erreicht wurde
+        time.sleep(0.5)
     if step == step_target:
         pin.value = False
-        # Aktualisiere die Zielstufe auf die aktuellen Minuten
-        current_rtc_time = rtc.RTC().datetime
-        if pages == 62:
-            step_target = current_rtc_time.tm_min  # Zielstufe auf aktuelle Minute setzen
-            if step_target > 30: # Leerblatt bei 31, also +1
-                step_target = step_target + 1
-        if pages == 40:
-            step_target = current_rtc_time.tm_hour  # Zielstufe auf aktuelle Stunde setzen
-        print(f"Zielstufe {step_target} erreicht. Zeit: {current_rtc_time.tm_hour}:{current_rtc_time.tm_min}:{current_rtc_time.tm_sec}")
+        current_rtc_time = get_time() # Uhrzeit abfragen
+        # Minuten und Sekunden in 2 Bytes verpacken:
+        bytes_to_send = struct.pack(">H", current_rtc_time.tm_min) + struct.pack(">H", current_rtc_time.tm_sec)
+        uart.write(bytes_to_send) # Daten losschicken
+        if type == "Sekunden":
+            step_target = current_rtc_time.tm_sec
+            if step_target > 30:
+                step_target += 1
+        elif type == "Minuten":
+            step_target = current_rtc_time.tm_min
+            if step_target > 30:
+                step_target += 1
+        else: 
+            step_target = current_rtc_time.tm_hour
         if step != step_target:
+            print("Flap.")
             continue
-        time.sleep(1)  # Im Sekundentakt, das sollte reichen!
+        time.sleep(0.2)
     else:
-        pin.value = True  # Setze GPIO21 auf HIGH, solange die Zielstufe nicht erreicht ist
-        # Sensorwerte lesen und aktuelle Stufe berechnen und zwar nur, wenn Zielstufe sich geändert hat
-        magnetic = average_magnetic_field(sensor) # ersten wert verwerfen
+        pin.value = True
+        magnetic = average_magnetic_field(sensor)
         magnetic = average_magnetic_field(sensor)
         angle = calculate_rotation(magnetic[0], magnetic[1])
         step = calculate_step(angle, calibrated_zero_angle)
         print(f"Winkel: {angle:.2f}°, Aktuelle Stufe: {step}, Zielstufe: {step_target}")
-        time.sleep(0.01)  # GPIO21 für 50ms auf HIGH setzen
-
+        time.sleep(0.01)
