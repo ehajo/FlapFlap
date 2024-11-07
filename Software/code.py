@@ -112,9 +112,7 @@ def connect_to_wifi():
 # Funktion zur Abfrage der aktuellen Zeit über NTP oder DS3231
 def get_time():
     try:
-        if ds3231:
-            return ds3231.datetime
-        elif wifi.radio.ipv4_address:
+        if wifi.radio.ipv4_address:
             pool = socketpool.SocketPool(wifi.radio)
             ntp = adafruit_ntp.NTP(pool)
             current_time = ntp.datetime
@@ -124,6 +122,8 @@ def get_time():
                 ds3231.datetime = berlin_time
             # print("Aktuelle Uhrzeit (Berlin): ", berlin_time)
             return berlin_time
+        elif ds3231:
+            return ds3231.datetime
     except Exception as e:
         print(f"Fehler bei Zeitabfrage: {e}")
     return rtc.RTC().datetime
@@ -199,7 +199,6 @@ step = calculate_step(angle, calibrated_zero_angle)
 if type == "Minuten" or type == "Sekunden":
     if step_target > 30:
         step_target += 1
-
 while True:
     if not button.value:
         calibrate_zero_point()
@@ -207,9 +206,12 @@ while True:
     if step == step_target:
         pin.value = False
         current_rtc_time = get_time() # Uhrzeit abfragen
-        # Minuten und Sekunden in 2 Bytes verpacken:
-        bytes_to_send = struct.pack(">H", current_rtc_time.tm_min) + struct.pack(">H", current_rtc_time.tm_sec)
-        uart.write(bytes_to_send) # Daten losschicken
+        # Stunden, Minuten und Sekunden in 3 Bytes verpacken:
+        sekunde = current_rtc_time.tm_sec
+        minute = current_rtc_time.tm_min
+        stunde = current_rtc_time.tm_hour
+        data_to_send = bytes([sekunde, minute, stunde])
+        uart.write(data_to_send) # Daten losschicken
         if type == "Sekunden":
             step_target = current_rtc_time.tm_sec
             if step_target > 30:
@@ -218,12 +220,12 @@ while True:
             step_target = current_rtc_time.tm_min
             if step_target > 30:
                 step_target += 1
-        else: 
+        else:
             step_target = current_rtc_time.tm_hour
         if step != step_target:
             print("Flap.")
             continue
-        time.sleep(0.2)
+        time.sleep(0.1)
     else:
         pin.value = True
         magnetic = average_magnetic_field(sensor)
