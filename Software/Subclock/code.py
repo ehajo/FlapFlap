@@ -41,12 +41,7 @@ def calculate_rotation(x, y):
 # Funktion zur Berechnung der Stufe auf Basis des Winkels und Nullpunkts
 def calculate_step(angle, zero_angle):
     global pages
-    if type == "Sekunden": 
-        pages = 62
-    elif type == "Minuten":
-        pages = 62
-    else: 
-        pages = 40
+    pages = 62 if type in ["Sekunden", "Minuten", "nix62"] else 40
     adjusted_angle = (zero_angle - angle) % 360
     return int(adjusted_angle / (360 / pages))
 
@@ -125,10 +120,16 @@ def uart_read():
                     step_target = 0
                 if step_target > 30:
                     step_target += 1
-            else:
+            elif type == "Stunden":   
                 step_target = data[2]  # Byte 2 Stunde
                 if step_target > 40:
-                    step_target = 0
+                    step_target = 0     
+            elif type == "nix62":
+                step_target = 31
+            elif type == "nix40":
+                step_target = 26
+            else:
+                step_target = 0
         
         print(f"Daten empfangen: step_target: {step_target}, Anzahl Bytes: {len(data)}")
             
@@ -138,8 +139,16 @@ def flush_uart_input():
         uart.read(uart.in_waiting)  # Alle Daten im Puffer lesen und verwerfen
 
 # Hauptprogramm
-print("FlapFlap SubClock Version 0.1.1")
-print("(c) eHaJo, 2024, Twitch-Livestream-Projekt")
+sys.stdout.write("╔════════════════════════════════════════╗\r")
+sys.stdout.write("║                                        ║\r")
+sys.stdout.write("║       ⏰ FlapFlap Version 1.0.0        ║\r")
+sys.stdout.write("║           Subclock Software            ║\r")
+sys.stdout.write("║   (c) eHaJo, 2024, Twitch-Livestream   ║\r")
+sys.stdout.write("║     Projekt - https://www.eHaJo.de     ║\r")
+sys.stdout.write("║                                        ║\r")
+sys.stdout.write("╚════════════════════════════════════════╝\r\r")
+
+
 load_config()
 
 running = True
@@ -156,12 +165,11 @@ while True:
         calibrate_zero_point()
         time.sleep(0.5)
     if step == step_target:
-        uart_read()
         pin.value = False
+        uart_read()
         if step != step_target:
             print("Flap.")
             continue
-        # time.sleep(0.1)
     else:
         pin.value = True
         magnetic = average_magnetic_field(sensor)

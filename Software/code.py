@@ -55,12 +55,7 @@ def calculate_rotation(x, y):
 # Funktion zur Berechnung der Stufe auf Basis des Winkels und Nullpunkts
 def calculate_step(angle, zero_angle):
     global pages
-    if type == "Sekunden": 
-        pages = 62
-    elif type == "Minuten":
-        pages = 62
-    else: 
-        pages = 40
+    pages = 62 if type in ["Sekunden", "Minuten", "nix62"] else 40
     adjusted_angle = (zero_angle - angle) % 360
     return int(adjusted_angle / (360 / pages))
 
@@ -175,8 +170,16 @@ def calibrate_zero_point():
     save_config()
 
 # Hauptprogramm
-print("FlapFlap Version 0.9.2")
-print("(c) eHaJo, 2024, Twitch-Livestream-Projekt")
+sys.stdout.write("╔════════════════════════════════════════╗\r")
+sys.stdout.write("║                                        ║\r")
+sys.stdout.write("║       ⏰ FlapFlap Version 1.0.0        ║\r")
+sys.stdout.write("║          Masterclock Software          ║\r")
+sys.stdout.write("║   (c) eHaJo, 2024, Twitch-Livestream   ║\r")
+sys.stdout.write("║     Projekt - https://www.eHaJo.de     ║\r")
+sys.stdout.write("║                                        ║\r")
+sys.stdout.write("╚════════════════════════════════════════╝\r\r")
+
+time.sleep(2)
 load_config()
 connect_to_wifi()
 get_time()
@@ -185,14 +188,20 @@ last_output_time = time.monotonic()
 running = True
 
 current_rtc_time = get_time()
-if type == "Sekunden":
+if type == "Sekunden":  # FlapFlap zeigt Sekunde an
     step_target = current_rtc_time.tm_sec
-elif type == "Minuten":
+elif type == "Minuten": # FlapFlap zeigt Minute an
     step_target = current_rtc_time.tm_min
-else: 
+elif type == "Stunden": # FlapFlap zeigt Stunde an
     step_target = current_rtc_time.tm_hour
+elif type == "nix62":   # Minuten-FlapFlap zeigt Leerblatt an
+    step_target = 31    # Leerblatt ist nach Minute 30
+elif type == "nix40":   # Stunden-FlapFlap zeigt Leerblatt an
+    step_target = 26
+else:                   # Wenn nicht konfiguriert: 0 anzeigen
+    step_target = 0
     
-magnetic = average_magnetic_field(sensor)
+magnetic = average_magnetic_field(sensor) # Einmal wegwerfen damits funktioniert
 magnetic = average_magnetic_field(sensor)
 angle = calculate_rotation(magnetic[0], magnetic[1])
 step = calculate_step(angle, calibrated_zero_angle)
@@ -200,37 +209,45 @@ if type == "Minuten" or type == "Sekunden":
     if step_target > 30:
         step_target += 1
 while True:
-    if not button.value:
+    if not button.value: # Mit der Taste kann das Nullblatt kalibriert werden
         calibrate_zero_point()
         time.sleep(0.5)
     if step == step_target:
-        pin.value = False
+        pin.value = False   # Motor ausschalten
         current_rtc_time = get_time() # Uhrzeit abfragen
+        
         # Stunden, Minuten und Sekunden in 3 Bytes verpacken:
         sekunde = current_rtc_time.tm_sec
         minute = current_rtc_time.tm_min
         stunde = current_rtc_time.tm_hour
         data_to_send = bytes([sekunde, minute, stunde])
         uart.write(data_to_send) # Daten losschicken
+        
         if type == "Sekunden":
             step_target = current_rtc_time.tm_sec
-            if step_target > 30:
+            if step_target > 30: # Leerblatt nach Blatt 30 dazuzählen
                 step_target += 1
         elif type == "Minuten":
             step_target = current_rtc_time.tm_min
-            if step_target > 30:
+            if step_target > 30: # Leerblatt nach Blatt 30 dazuzählen
                 step_target += 1
-        else:
+        elif type == "Stunden":
             step_target = current_rtc_time.tm_hour
+        elif type == "nix62":
+            step_target = 31
+        elif type == "nix40":
+            step_target = 26
+        else:
+            step_target = 0  # Standardwert, falls `type` keinen Treffer hat
         if step != step_target:
             print("Flap.")
             continue
         time.sleep(0.1)
     else:
-        pin.value = True
-        magnetic = average_magnetic_field(sensor)
+        pin.value = True # Motor starten
+        magnetic = average_magnetic_field(sensor) # einmal verwerfen damits passt
         magnetic = average_magnetic_field(sensor)
         angle = calculate_rotation(magnetic[0], magnetic[1])
-        step = calculate_step(angle, calibrated_zero_angle)
+        step = calculate_step(angle, calibrated_zero_angle) # aktuellen Step berechnen
         print(f"Winkel: {angle:.2f}°, Aktuelle Stufe: {step}, Zielstufe: {step_target}")
         time.sleep(0.01)
