@@ -9,11 +9,11 @@ Die FlapFlap Software bietet eine Vielzahl von Funktionen, die auf den folgenden
 
 ### 1. Normale Uhr
 
-Die normale Uhr liest den Magnetfeldsensor aus, um den Rotationswinkel der Uhr zu berechnen. Der Mikrocontroller zeigt basierend auf diesem Winkel und der konfigurierten Logik die Zeit in **Sekunden**, **Minuten** oder **Stunden** an.
+Die normale Uhr liest den Magnetfeldsensor aus, um den Rotationswinkel der Uhr zu berechnen. Der Mikrocontroller zeigt basierend auf diesem Winkel und der konfigurierten Logik die Zeit in **Sekunden**, **Minuten** oder **Stunden** an. Die aktuelle Uhrzeit wird per NTP-Protokoll bei funktionierendem WLAN geladen, ansonsten über einen RTC-Chip, der per I²C angeschlossen ist.
 
-- **Sekunden**: Zeigt die Sekunden an, die über UART empfangen werden.
-- **Minuten**: Zeigt die Minuten an, die über UART empfangen werden.
-- **Stunden**: Zeigt die Stunden an, die über UART empfangen werden.
+- **Sekunden**: Zeigt die Sekunden an.
+- **Minuten**: Zeigt die Minuten an.
+- **Stunden**: Zeigt die Stunden an.
 
 ### 2. Sub-Clock
 
@@ -76,8 +76,8 @@ Die `config.json`-Datei speichert die Konfiguration für die Uhr, einschließlic
     - `"Sekunden"`: Die Uhr zeigt die Sekunden an. Der empfangene Datenstrom steuert die Sekunden.
     - `"Minuten"`: Die Uhr zeigt die Minuten an. Der empfangene Datenstrom steuert die Minuten.
     - `"Stunden"`: Die Uhr zeigt die Stunden an. Der empfangene Datenstrom steuert die Stunden.
-    - `"nix62"`: Diese Einstellung zeigt immer die Stufe 31 an, was in vielen Fällen für eine nicht funktionale Zeitdarstellung verwendet wird (beispielsweise für eine Sub-Clock, die keine genaue Zeit anzeigt).
-    - `"nix40"`: Diese Einstellung zeigt immer die Stufe 26 an, eine weitere alternative Darstellung ohne genaue Zeit (kann für experimentelle Sub-Clock-Implementierungen verwendet werden).
+    - `"nix62"`: Diese Einstellung zeigt immer die Stufe 31 an, bedeutet bei einer Minutenanzeige das Leerfeld.
+    - `"nix40"`: Diese Einstellung zeigt immer die Stufe 26 an, bedeutet bei einer Stundenanzeige das Leerfeld.
     - **Beispiel für Konfigurationen**:
       - **Sekundenanzeige**:
         ```json
@@ -114,6 +114,16 @@ Die `config.json`-Datei speichert die Konfiguration für die Uhr, einschließlic
           "type": "nix40"
         }
         ```
+
+## wlan.json
+
+Die `wlan.json`-Datei speichert die Konfiguration für die WLAN-Einstellungen. Passe diese bitte an deine Zugangsdaten zu deinem Heimnetz an.
+```json
+{
+    "wifi_ssid": "your-ssid",
+    "wifi_password": "1234567890"
+}
+```
 
 ## Kalibrierung
 
