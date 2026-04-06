@@ -25,8 +25,8 @@ DEFAULT_TYPE = "Minuten"
 DEFAULT_CALIBRATION_LEAF = 0
 
 NTP_SYNC_INTERVAL = 24 * 3600
-NTP_RETRIES = 3
-NTP_TIMEOUT = 5
+NTP_RETRIES = 2
+NTP_TIMEOUT = 3
 
 DISPLAY_MOVE_TIMEOUT = 6.0
 MAX_FAILED_MOVE_CYCLES = 60
@@ -39,20 +39,14 @@ MAX_UNCHANGED_STEP_COUNT = 3
 TIME_REFRESH_INTERVAL = 1.0
 BUTTON_DEBOUNCE_TIME = 0.5
 
-UART_HEADER_1 = 0xAA
-UART_HEADER_2 = 0x55
-
 server = None
+pool = None
 
 i2c = busio.I2C(board.GP17, board.GP16)
 sensor = adafruit_tlv493d.TLV493D(i2c)
-sensor.fast_mode = False
 
 startup_sync_done = False
 startup_fixed_target = None
-startup_phase = True
-startup_time = 0
-
 ds3231 = None
 try:
     import adafruit_ds3231
@@ -60,8 +54,6 @@ try:
     print("DS3231 RTC initialisiert")
 except ValueError:
     print("Kein DS3231 RTC verbunden")
-
-uart = busio.UART(board.GP0, board.GP1, baudrate=9600, timeout=0.1)
 
 pin = digitalio.DigitalInOut(board.GP21)
 pin.direction = digitalio.Direction.OUTPUT
@@ -82,9 +74,19 @@ cached_rtc_time = None
 last_button_press_time = 0
 fatal_error = False
 failed_move_cycles = 0
+_last_log_time = 0
+LOG_MIN_INTERVAL = 10
+_i2c_reset_count = 0
+MAX_I2C_RESETS = 5
 
 
 def log_error(message):
+    global _last_log_time
+    now = time.monotonic()
+    if now - _last_log_time < LOG_MIN_INTERVAL:
+        print(f"Log übersprungen (Rate Limit): {message}")
+        return
+    _last_log_time = now
     try:
         if storage.getmount("/").readonly:
             storage.remount("/", readonly=False, disable_concurrent_write_protection=True)
@@ -98,6 +100,29 @@ def log_error(message):
                 storage.remount("/", readonly=True)
         except RuntimeError:
             pass
+
+
+def reset_i2c():
+    global i2c, sensor, ds3231, _i2c_reset_count
+    if _i2c_reset_count >= MAX_I2C_RESETS:
+        print("I2C-Reset-Limit erreicht, kein weiterer Reset")
+        return
+    _i2c_reset_count += 1
+    try:
+        i2c.deinit()
+    except Exception:
+        pass
+    time.sleep(0.1)
+    try:
+        i2c = busio.I2C(board.GP17, board.GP16)
+        sensor = adafruit_tlv493d.TLV493D(i2c)
+        print(f"I2C-Bus und Sensor zurückgesetzt ({_i2c_reset_count}/{MAX_I2C_RESETS})")
+    except Exception as e:
+        print(f"I2C-Reset fehlgeschlagen: {e}")
+    try:
+        ds3231 = adafruit_ds3231.DS3231(i2c)
+    except Exception:
+        ds3231 = None
 
 
 def calculate_rotation(x, y):
@@ -145,11 +170,11 @@ def read_current_step(num_samples=SENSOR_SAMPLES):
 
 def is_dst_europe(now):
     year = now.tm_year
-    start_dst = time.mktime((year, 3, 31, 2, 0, 0, 6, 0, -1))
+    start_dst = time.mktime((year, 3, 31, 1, 0, 0, 0, 0, 0))
     while time.localtime(start_dst).tm_wday != 6:
         start_dst -= 86400
 
-    end_dst = time.mktime((year, 10, 31, 3, 0, 0, 6, 0, -1))
+    end_dst = time.mktime((year, 10, 31, 1, 0, 0, 0, 0, 0))
     while time.localtime(end_dst).tm_wday != 6:
         end_dst -= 86400
 
@@ -186,7 +211,7 @@ def connect_to_wifi():
 
 
 def ensure_wifi_connection():
-    if not wifi.radio.ipv4_address:
+    if not wifi.radio.connected:
         print("WLAN-Verbindung verloren, versuche Neuverbindung...")
         log_error("WLAN-Verbindung verloren")
         return connect_to_wifi()
@@ -200,7 +225,6 @@ def get_time():
     try:
         if current_monotonic - last_ntp_sync > NTP_SYNC_INTERVAL and ensure_wifi_connection():
             print("Synchronisiere mit NTP...")
-            pool = socketpool.SocketPool(wifi.radio)
             ntp = adafruit_ntp.NTP(pool)
 
             for attempt in range(NTP_RETRIES):
@@ -317,7 +341,6 @@ def start_webserver():
 
     try:
         print("Initialisiere Webserver...")
-        pool = socketpool.SocketPool(wifi.radio)
         server = Server(pool, "/www")
         print("Webserver-Instanz erstellt")
 
@@ -471,7 +494,7 @@ def start_webserver():
                 log_error(f"Zeiteinstellungsfehler: {e}")
                 return Response(request, f"Fehler: {e}", status=400)
 
-        if wifi.radio.ipv4_address:
+        if wifi.radio.connected:
             server.start(host=str(wifi.radio.ipv4_address), port=8080)
             print(f"Webserver läuft unter {wifi.radio.ipv4_address}:8080")
         else:
@@ -490,19 +513,6 @@ def handle_button():
     if not button.value and (now - last_button_press_time) > BUTTON_DEBOUNCE_TIME:
         last_button_press_time = now
         calibrate_zero_point()
-
-
-def send_uart_data(current_rtc_time):
-    try:
-        sec = current_rtc_time.tm_sec & 0xFF
-        minute = current_rtc_time.tm_min & 0xFF
-        hour = current_rtc_time.tm_hour & 0xFF
-        checksum = sec ^ minute ^ hour ^ UART_HEADER_1 ^ UART_HEADER_2
-        packet = bytes([UART_HEADER_1, UART_HEADER_2, sec, minute, hour, checksum])
-        uart.write(packet)
-    except Exception as e:
-        print(f"UART-Fehler: {e}")
-        log_error(f"UART-Fehler: {e}")
 
 
 def determine_step_target(current_rtc_time):
@@ -597,7 +607,6 @@ def move_one_cycle_to_target(current_rtc_time):
                         startup_fixed_target = None
                         print("Startup-Synchronisation abgeschlossen, Sekundenanzeige läuft jetzt live")
 
-                    send_uart_data(current_rtc_time)
                     return final_step
 
                 time.sleep(0.01)
@@ -648,6 +657,7 @@ def move_one_cycle_to_target(current_rtc_time):
         failed_move_cycles += 1
         print(f"Sensorfehler: {e} ({failed_move_cycles}/{max_failed_cycles_limit})")
         log_error(f"Sensorfehler: {e} ({failed_move_cycles}/{max_failed_cycles_limit})")
+        reset_i2c()
 
         if failed_move_cycles >= max_failed_cycles_limit:
             fatal_error = True
@@ -661,6 +671,7 @@ def move_one_cycle_to_target(current_rtc_time):
         failed_move_cycles += 1
         print(f"Regelungsfehler: {e} ({failed_move_cycles}/{max_failed_cycles_limit})")
         log_error(f"Regelungsfehler: {e} ({failed_move_cycles}/{max_failed_cycles_limit})")
+        reset_i2c()
 
         if failed_move_cycles >= max_failed_cycles_limit:
             fatal_error = True
@@ -675,14 +686,14 @@ def update_display(current_rtc_time):
 
 
 try:
-    sys.stdout.write("╔════════════════════════════════════════╗\r")
-    sys.stdout.write("║                                        ║\r")
-    sys.stdout.write("║       ⏰ FlapFlap Version 1.2.0        ║\r")
-    sys.stdout.write("║          Masterclock Software          ║\r")
-    sys.stdout.write("║   (c) eHaJo, 2024, Twitch-Livestream   ║\r")
-    sys.stdout.write("║     Projekt - https://www.eHaJo.de     ║\r")
-    sys.stdout.write("║                                        ║\r")
-    sys.stdout.write("╚════════════════════════════════════════╝\r\r")
+    sys.stdout.write("╔════════════════════════════════════════╗\n")
+    sys.stdout.write("║                                        ║\n")
+    sys.stdout.write("║       ⏰ FlapFlap Version 1.2.0        ║\n")
+    sys.stdout.write("║          FlapFlap Software             ║\n")
+    sys.stdout.write("║   (c) eHaJo, 2024, Twitch-Livestream   ║\n")
+    sys.stdout.write("║     Projekt - https://www.eHaJo.de     ║\n")
+    sys.stdout.write("║                                        ║\n")
+    sys.stdout.write("╚════════════════════════════════════════╝\n\n")
 
     time.sleep(1.5)
     startup_time = time.monotonic()
@@ -691,6 +702,7 @@ try:
     time.sleep(0.2)
 
     connect_to_wifi()
+    pool = socketpool.SocketPool(wifi.radio)
     start_webserver()
 
     cached_rtc_time = get_time_cached(force=True)
@@ -709,6 +721,7 @@ try:
             time.sleep(0.2)
             continue
 
+        time.sleep(0.05)
         current_rtc_time = get_time_cached()
         step = update_display(current_rtc_time)
 
