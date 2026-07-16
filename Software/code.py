@@ -287,9 +287,10 @@ def load_config():
             else:
                 print("Ich bin eine Stundenanzeige!")
 
-    except OSError as e:
-        print(f"Keine Konfigurationsdatei gefunden: {e}")
+    except (OSError, ValueError) as e:
+        print(f"Konfiguration fehlt oder korrupt: {e}, erstelle Defaults")
         log_error(f"Konfigurationsfehler: {e}")
+        save_config()
 
 
 def save_config():
@@ -301,8 +302,14 @@ def save_config():
 
     try:
         storage.remount("/", readonly=False, disable_concurrent_write_protection=True)
-        with open("config.json", "w") as f:
+        with open("/config.tmp", "w") as f:
             json.dump(config, f)
+        import os
+        try:
+            os.remove("/config.json")
+        except OSError:
+            pass
+        os.rename("/config.tmp", "/config.json")
         print("Konfiguration gespeichert!")
     except (RuntimeError, OSError) as e:
         print(f"Fehler beim Speichern der Konfiguration (ignoriert): {e}")

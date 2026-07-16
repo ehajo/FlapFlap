@@ -48,3 +48,5 @@ Temporary Items
 
 # Directory for Pulsonix Backups:
 001-Pulsonix
+/Platine/KiCad/flapflap/flapflap-backups
+/Platine/KiCad/flapflap/production/backups

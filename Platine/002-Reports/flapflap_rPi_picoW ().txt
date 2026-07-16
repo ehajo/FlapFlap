@@ -1,0 +1,14 @@
+﻿Report Written : 20.04.2026 20:28:51
+Design Path    : C:\Users\Hannes\Documents\GitHub\FlapFlap\Platine\flapflap_rPi_picoW.sch
+Design Title   : 
+Created        : 08.10.2024 21:15:45
+Last Saved     : 18.11.2024 20:12:13
+Editing Time   : 417 min
+
+Invalid Accel part name 'Raspberry Pi Pico W'.  Name has been changed to  'Raspberry Pi Pic'.
+Invalid Accel part name 'acdc-youmile_230-5'.  Name has been changed to  'acdc-youmile_230'.
+Invalid Accel part name 'C_Kerko_0805_0,1µ'.  Name has been changed to  'C_Kerko_0805_0,1'.
+Invalid Accel part name 'Stiftleiste_5pol_gerade'.  Name has been changed to  'Stiftleiste_5pol'.
+Invalid Accel part name 'Stiftleiste_2pol_gerade'.  Name has been changed to  'Stiftleiste_2pol'.
+
+                ---------------- End Of Report ----------------

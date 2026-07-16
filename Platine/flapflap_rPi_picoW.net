@@ -1,0 +1,200 @@
+ACCEL_ASCII "C:\\Users\\Hannes\\Documents\\GitHub\\FlapFlap\\Platine\\flapflap_rPi_picoW.net"
+
+(asciiHeader
+  (asciiVersion 2 2)
+  (program "Pulsonix Schematic")
+  (fileUnits Mil)
+)
+(netlist "Netlist_1"
+  (compInst "IC1"
+    (compRef "Raspberry Pi Pic_1")
+    (originalName "Raspberry Pi Pic")
+  )
+  (compInst "X1"
+    (compRef "691322110002_1")
+    (originalName "691322110002")
+  )
+  (compInst "IC2"
+    (compRef "acdc-youmile_230_1")
+    (originalName "acdc-youmile_230")
+  )
+  (compInst "IC3"
+    (compRef "TLV493D-A1B6_1")
+    (originalName "TLV493D-A1B6")
+  )
+  (compInst "C1"
+    (compRef "C_Kerko_0805_0,1_1")
+    (originalName "C_Kerko_0805_0,1")
+  )
+  (compInst "IC4"
+    (compRef "MOC3043SM_1")
+    (originalName "MOC3043SM")
+  )
+  (compInst "R1"
+    (compRef "R_0805_generic_1")
+    (originalName "R_0805_generic")
+    (attr "Value" "470R" (textStyleRef "(Default)") )
+  )
+  (compInst "T1"
+    (compRef "T835-600B-TR_1")
+    (originalName "T835-600B-TR")
+  )
+  (compInst "R3"
+    (compRef "R_1/4W_generic_1")
+    (originalName "R_1/4W_generic")
+    (attr "Value" "1k" (textStyleRef "(Default)") )
+  )
+  (compInst "X2"
+    (compRef "691382010004_1")
+    (originalName "691382010004")
+  )
+  (compInst "C2"
+    (compRef "890273326007CS_1")
+    (originalName "890273326007CS")
+    (attr "Value" "1u5/100V" (textStyleRef "(Default)") )
+  )
+  (compInst "RTC"
+    (compRef "Stiftleiste_5pol_1")
+    (originalName "Stiftleiste_5pol")
+  )
+  (compInst "LED1"
+    (compRef "LED_0805_rot_1")
+    (originalName "LED_0805_rot")
+  )
+  (compInst "R4"
+    (compRef "R_0805_generic_1")
+    (originalName "R_0805_generic")
+    (attr "Value" "470R" (textStyleRef "(Default)") )
+  )
+  (compInst "UART"
+    (compRef "Stiftleiste_2pol_1")
+    (originalName "Stiftleiste_2pol")
+  )
+  (compInst "ZERO"
+    (compRef "434 121 043 836_1")
+    (originalName "434 121 043 836")
+  )
+  (compInst "R2"
+    (compRef "R_2W_generic_1")
+    (originalName "R_2W_generic")
+    (attr "Value" "3k3/2W" (textStyleRef "(Default)") )
+  )
+  (compInst "SJ1"
+    (compRef "Solderjumper_1")
+    (originalName "Solderjumper")
+    (patternName "SJ-big_soldered")
+  )
+  (compInst "R5"
+    (compRef "R_0805_generic_1")
+    (originalName "R_0805_generic")
+    (attr "Value" "1k" (textStyleRef "(Default)") )
+  )
+  (compInst "R6"
+    (compRef "R_0805_generic_1")
+    (originalName "R_0805_generic")
+    (attr "Value" "1k" (textStyleRef "(Default)") )
+  )
+  (net "$21"
+    (node "R1" "2")
+    (node "IC4" "1")
+  )
+  (net "$24"
+    (node "R3" "2")
+    (node "T1" "2")
+    (node "R2" "2")
+  )
+  (net "$25"
+    (node "IC4" "4")
+    (node "R2" "1")
+  )
+  (net "$27"
+    (node "X2" "4")
+    (node "X2" "3")
+    (node "T1" "3")
+  )
+  (net "$31"
+    (node "X2" "2")
+    (node "C2" "2")
+  )
+  (net "$40"
+    (node "R4" "2")
+    (node "LED1" "2")
+  )
+  (net "$42"
+    (node "UART" "1")
+    (node "IC1" "2")
+  )
+  (net "$43"
+    (node "UART" "2")
+    (node "IC1" "1")
+  )
+  (net "$48"
+    (node "R4" "1")
+    (node "R1" "1")
+    (node "IC1" "27")
+  )
+  (net "$55"
+    (node "IC3" "6")
+    (node "IC1" "21")
+    (node "RTC" "4")
+    (node "R6" "1")
+  )
+  (net "$56"
+    (node "IC3" "1")
+    (node "IC1" "22")
+    (node "RTC" "3")
+    (node "R5" "1")
+  )
+  (net "$64"
+    (node "ZERO" "1")
+    (node "IC1" "29")
+  )
+  (net "$72"
+    (node "SJ1" "2")
+    (node "IC2" "4")
+  )
+  (net "+3V3"
+    (node "IC1" "36")
+    (node "IC3" "4")
+    (node "C1" "2")
+    (node "RTC" "5")
+    (node "R5" "2")
+    (node "R6" "2")
+  )
+  (net "+5V"
+    (node "IC2" "2")
+    (node "IC1" "39")
+  )
+  (net "48V_L"
+    (node "X1" "1")
+    (node "X2" "1")
+    (node "IC4" "6")
+    (node "C2" "1")
+    (node "SJ1" "1")
+  )
+  (net "48V_N"
+    (node "X1" "2")
+    (node "R3" "1")
+    (node "IC2" "3")
+    (node "T1" "1")
+  )
+  (net "GND"
+    (node "IC2" "1")
+    (node "IC1" "28")
+    (node "IC1" "33")
+    (node "IC1" "38")
+    (node "IC1" "18")
+    (node "IC1" "13")
+    (node "IC1" "8")
+    (node "IC1" "23")
+    (node "IC1" "3")
+    (node "IC3" "2")
+    (node "IC3" "3")
+    (node "IC3" "5")
+    (node "C1" "1")
+    (node "IC4" "2")
+    (node "LED1" "1")
+    (node "RTC" "1")
+    (node "ZERO" "2")
+  )
+)

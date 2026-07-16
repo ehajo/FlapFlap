@@ -1,0 +1,288 @@
+esphome:
+  name: flapflap-stunde
+  on_boot:
+    priority: -100
+    then:
+      - delay: 1s
+      - lambda: |-
+          id(tlv_test).set_pages((int) id(pages_number).state);
+          id(tlv_test).set_zero_angle(id(zero_angle_number).state);
+          id(tlv_test).set_calibration_leaf((int) id(calibration_leaf_number).state);
+          id(tlv_test).set_target_leaf((int) id(target_leaf_number).state);
+          id(tlv_test).set_mode("Stunden");
+
+external_components:
+  - source:
+      type: local
+      path: my_components
+
+esp32:
+  board: esp32-c3-devkitm-1
+  framework:
+    type: arduino
+
+logger:
+  level: DEBUG
+
+api:
+  encryption:
+    key: "VgD8k05glNhFwXwStnMPbjwfET4pIDJ3TDBhezexu5A="
+
+ota:
+  - platform: esphome
+    password: "1b5f8b66616918112e6f7647a8effe6e"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  output_power: 8.5dB
+
+time:
+  - platform: sntp
+    id: internet_time
+    timezone: Europe/Berlin
+
+i2c:
+  sda: GPIO0
+  scl: GPIO1
+  scan: true
+  frequency: 100kHz
+
+binary_sensor:
+  - platform: gpio
+    id: flap_button
+    name: "FlapFlap Taster"
+    pin:
+      number: GPIO10
+      mode:
+        input: true
+        pullup: true
+      inverted: true
+    filters:
+      - delayed_on: 20ms
+      - delayed_off: 20ms
+    on_press:
+      then:
+        - lambda: |-
+            id(tlv_test).pulse_once();
+
+button:
+  - platform: restart
+    name: "FlapFlap Neustart"
+
+  - platform: template
+    name: "FlapFlap Hier kalibrieren"
+    on_press:
+      then:
+        - lambda: |-
+            id(tlv_test).calibrate_here();
+            auto call = id(zero_angle_number).make_call();
+            call.set_value(id(tlv_test).get_zero_angle());
+            call.perform();
+
+  - platform: template
+    name: "FlapFlap Sensor neu initialisieren"
+    on_press:
+      then:
+        - lambda: |-
+            id(tlv_test).reinitialize_sensor();
+
+  - platform: template
+    name: "FlapFlap Einzelpuls"
+    on_press:
+      then:
+        - lambda: |-
+            id(tlv_test).pulse_once();
+
+  - platform: template
+    name: "FlapFlap Ein Blatt weiter"
+    on_press:
+      then:
+        - lambda: |-
+            id(tlv_test).advance_one_leaf();
+
+  - platform: template
+    name: "FlapFlap Zu Zielblatt fahren"
+    on_press:
+      then:
+        - lambda: |-
+            id(tlv_test).start_move_to_target();
+
+  - platform: template
+    name: "FlapFlap Stop"
+    on_press:
+      then:
+        - lambda: |-
+            id(tlv_test).stop_move();
+
+number:
+  - platform: template
+    name: "FlapFlap Nullwinkel"
+    id: zero_angle_number
+    min_value: 0
+    max_value: 359.9
+    step: 0.1
+    optimistic: true
+    restore_value: true
+    initial_value: 0.0
+    set_action:
+      - lambda: |-
+          id(tlv_test).set_zero_angle(x);
+
+  - platform: template
+    name: "FlapFlap Kalibrierblatt"
+    id: calibration_leaf_number
+    min_value: 0
+    max_value: 61
+    step: 1
+    optimistic: true
+    restore_value: true
+    initial_value: 0
+    set_action:
+      - lambda: |-
+          id(tlv_test).set_calibration_leaf((int) x);
+
+  - platform: template
+    name: "FlapFlap Zielblatt"
+    id: target_leaf_number
+    min_value: 0
+    max_value: 61
+    step: 1
+    optimistic: true
+    restore_value: true
+    initial_value: 0
+    set_action:
+      - lambda: |-
+          id(tlv_test).set_target_leaf((int) x);
+
+  - platform: template
+    name: "FlapFlap Blattanzahl"
+    id: pages_number
+    min_value: 1
+    max_value: 100
+    step: 1
+    optimistic: true
+    restore_value: true
+    initial_value: 62
+    set_action:
+      - lambda: |-
+          id(tlv_test).set_pages((int) x);
+
+select:
+  - platform: template
+    name: "FlapFlap Modus"
+    id: mode_select
+    optimistic: true
+    restore_value: false
+    options:
+      - Sekunden
+      - Minuten
+      - Stunden
+      - Leerblatt
+      - Kalibrierung
+      - Manuell
+    initial_option: Stunden
+    set_action:
+      - lambda: |-
+          id(tlv_test).set_mode(x);
+
+tlv493d_test:
+  id: tlv_test
+  update_interval: 20ms
+  zero_angle: 0.0
+  calibration_leaf: 0
+  target_leaf: 0
+  pages: 62
+  mode: "Stunden"
+  sensor_samples: 8
+  motor_pin: GPIO3
+  motor_pulse_ms: 30
+  motor_settle_ms: 35
+  move_timeout_ms: 15000
+  max_pulses_per_move: 120
+  unchanged_limit: 8
+  move_stop_lead: 0.35
+  seconds_stop_lead: 0.12
+
+sensor:
+  - platform: template
+    name: "FlapFlap X"
+    unit_of_measurement: "uT"
+    accuracy_decimals: 1
+    update_interval: 500ms
+    lambda: |-
+      return id(tlv_test).get_x_ut();
+
+  - platform: template
+    name: "FlapFlap Y"
+    unit_of_measurement: "uT"
+    accuracy_decimals: 1
+    update_interval: 500ms
+    lambda: |-
+      return id(tlv_test).get_y_ut();
+
+  - platform: template
+    name: "FlapFlap Z"
+    unit_of_measurement: "uT"
+    accuracy_decimals: 1
+    update_interval: 500ms
+    lambda: |-
+      return id(tlv_test).get_z_ut();
+
+  - platform: template
+    name: "FlapFlap Winkel"
+    unit_of_measurement: "°"
+    accuracy_decimals: 1
+    update_interval: 500ms
+    lambda: |-
+      return id(tlv_test).get_angle_deg();
+
+  - platform: template
+    name: "FlapFlap Aktuelles Blatt"
+    accuracy_decimals: 0
+    update_interval: 250ms
+    lambda: |-
+      return id(tlv_test).get_current_leaf();
+
+  - platform: template
+    name: "FlapFlap Zielblatt aktiv"
+    accuracy_decimals: 0
+    update_interval: 250ms
+    lambda: |-
+      return id(tlv_test).get_target_leaf();
+
+  - platform: template
+    name: "FlapFlap Aktiver Nullwinkel"
+    unit_of_measurement: "°"
+    accuracy_decimals: 1
+    update_interval: 1s
+    lambda: |-
+      return id(tlv_test).get_zero_angle();
+
+  - platform: template
+    name: "FlapFlap Pulse im aktuellen Lauf"
+    accuracy_decimals: 0
+    update_interval: 250ms
+    lambda: |-
+      return id(tlv_test).get_move_pulses();
+
+text_sensor:
+  - platform: template
+    name: "FlapFlap Status"
+    update_interval: 250ms
+    lambda: |-
+      return {id(tlv_test).get_status_text()};
+
+interval:
+  - interval: 1s
+    then:
+      - lambda: |-
+          auto now = id(internet_time).now();
+          if (now.is_valid()) {
+            id(tlv_test).update_clock_time(now.hour, now.minute, now.second);
+          }
+
+  - interval: 10s
+    then:
+      - lambda: |-
+          ESP_LOGD("main", "FlapFlap aktiv: I2C GPIO0/1, Taster GPIO10, MOC GPIO3");

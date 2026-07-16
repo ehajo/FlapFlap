@@ -1,12 +1,12 @@
 CAMPlot
 -------
 
-Report Written : 18.11.2024 20:11:13
+Report Written : 20.04.2026 20:20:01
 Design Path    : C:\Users\Hannes\Documents\GitHub\FlapFlap\Platine\flapflap_rPi_picoW.sch
 Design Title   : 
 Created        : 08.10.2024 21:15:45
-Last Saved     : 23.10.2024 20:50:02
-Editing Time   : 407 min
+Last Saved     : 18.11.2024 20:12:13
+Editing Time   : 408 min
 
 Formatting Information
 ----------------------
@@ -24,7 +24,7 @@ Plot Details
     PDF Output
     ----------
 
-    Plot Name:       PDF Kunde
+    Plot Name:       PDF intern
 
     Contains:        Page1
 
@@ -53,13 +53,13 @@ Summary Information
     Outputs covered by CAM Plots
     ----------------------------
 
-    PDF Kunde: PDF, Artwork, Enabled
-    PDF intern: PDF, Artwork
+    PDF Kunde: PDF, Artwork
+    PDF intern: PDF, Artwork, Enabled
 
     Outputs not covered by CAM Plots
     --------------------------------
 
 
-Plotting took 0.190 Seconds
+Plotting took 0.165 Seconds
 
                 ---------------- End Of Report ----------------
